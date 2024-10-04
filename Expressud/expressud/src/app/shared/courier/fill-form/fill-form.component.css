@@ -1,0 +1,116 @@
+form {
+    border: 1px solid #ccc; /* Add border */
+    padding: 30px; /* Add padding */
+    margin-top: 5%;
+    border-radius: 10px;
+  
+  }
+  .container{
+    margin-bottom: 60px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .header{
+    text-align: center;
+    font-size: 2.3rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 700;
+    padding: 10px;
+
+  }
+  form h1{
+    font-size: 1.5rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 400;
+    padding: 10px;
+  }
+  h2{
+    font-size: 1.5rem;
+    padding: 20px;
+    text-align: center;
+    margin-top: 30px;
+  }
+  label {
+    display: block;
+    font-weight: 300;
+    font-size: 18px;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+
+  
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
+  .success-message {
+    color: green;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .order-content {
+    padding: 20px;
+    border: 1px solid #ccc;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .order-content__header {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .order-content__mobile {
+    display: none;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .order-content__mobile {
+      display: block;
+    }
+  }
+  
+  .order-content__description {
+    margin-bottom: 20px;
+  }
+  
+  .order-content__description textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }
+  
+  .order-content__error {
+    color: red;
+    margin-bottom: 20px;
+  }
+  
+  .image-uploader__button {
+    margin-top: 10px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .order-content__description textarea {
+      min-height: 150px;
+    }
+  }
+  .tracking{
+    display: flex;
+    justify-content: center;
+    margin-top: 30%;
+  }

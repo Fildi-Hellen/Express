@@ -1,0 +1,9 @@
+<section>
+  <div class="hero-section">
+    <ngx-slick-carousel #slickModal="slick-carousel" [config]="slideConfig">
+      <div ngxSlickItem *ngFor="let slide of slides" class="slide">
+        <img [src]="slide.img" alt="">
+      </div>
+    </ngx-slick-carousel>
+  </div>
+</section>

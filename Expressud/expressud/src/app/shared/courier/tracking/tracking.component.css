@@ -1,0 +1,30 @@
+h1{
+    font-size: 2.1rem;
+    font-weight: 600;
+    font-family: 'Times New Roman', Times, serif;
+}
+.card{
+    margin-top: 20%;
+    border: 1px solid rgba(0, 0, 0, 0.125); /* Add border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.card-header{
+    font-size: 1.1rem;
+    font-weight: 200;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+}
+
+.card-body {
+    padding: 1.25rem; /* Add padding */
+  }
+  
+  .card-title {
+    font-size: 1.25rem; /* Change title font size */
+    margin-bottom: 0.5rem; /* Add bottom margin to title */
+  }
+  
+  .card-text {
+    font-size: 1rem; /* Change text font size */
+  }

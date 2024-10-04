@@ -1,0 +1,22 @@
+.container {
+    max-width: 600px;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  input.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+  
+  button.btn {
+    width: 100%;
+    background: #201658;
+  }
+  

@@ -1,0 +1,61 @@
+.homeGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 30px;
+  margin-bottom: 50px; /* Adjust as needed */
+}
+
+.homeGrid > div {
+  flex-basis: calc(50% - 10px); /* Adjust the width of each column */
+}
+
+.h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333; /* Adjust the color as needed */
+}
+
+p {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #666; /* Adjust the color as needed */
+}
+
+ul.homeList {
+  list-style: none;
+  padding: 0;
+}
+
+ul.homeList li {
+  margin-bottom: 10px;
+}
+
+ul.homeList li a {
+  text-decoration: none;
+  color: #007bff; 
+  font-size: 20px;
+}
+
+ul.homeList li a:hover {
+  text-decoration: underline;
+}
+
+.storeBlobWrapper {
+  flex-basis: calc(50% - 10px); /* Adjust the width of each column */
+ 
+}
+
+.homeBlobImg {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px; /* Add border radius */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add box shadow */
+  transition: transform 0.3s ease; /* Add transition for smooth hover effect */
+}
+
+.homeBlobImg:hover {
+  transform: scale(1.05); /* Add zoom effect on hover */
+}

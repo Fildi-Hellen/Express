@@ -1,0 +1,68 @@
+
+
+.total{
+    font-size: 24px;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc; /* Add border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+    transition: all 0.3s ease; /* Add transition for smooth effect */
+    margin-top: 10px;
+  }
+  /* Style for the container */
+.order-summary-container {
+  padding: 20px; /* Add padding to the container */
+}
+
+/* Style for the heading */
+.order-summary-heading {
+  font-size: 2.3rem;
+  font-weight: 400; /* Add bold font weight */
+  margin-bottom: 10px; /* Add margin at the bottom */
+  font-family: 'Times New Roman', Times, serif;
+  padding:20px;
+}
+
+/* Style for the list */
+.order-summary-list {
+
+  border-radius: 5px;
+  list-style-type: none; /* Remove default list style */
+  padding-left: 0; /* Remove default padding */
+  border: 1px solid #ccc; /* Add border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+  transition: all 0.3s ease; /* Add transition for smooth effect */
+}
+
+.order-summary-list:hover {
+  border-color: #666; /* Change border color on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Change shadow on hover */
+}
+
+/* Style for list items */
+.order-summary-item {
+  font-size: 18px; /* Set font size */
+  margin-bottom: 5px; /* Add margin at the bottom */
+  padding: 5px;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 400;
+}
+
+#btn {
+  width: 80%; /* Adjust the width as needed */
+}
+
+.phone{
+  padding: 40px;
+}
+.address{
+  padding: 40px;
+}
+h1{
+  font-size: 2.3rem;
+    padding: 10px;
+    font-weight: 400;
+    font-family: 'Times New Roman', Times, serif;
+}

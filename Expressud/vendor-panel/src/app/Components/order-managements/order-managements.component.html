@@ -1,0 +1,46 @@
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Order Management</h2>
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Orders</h3>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" *ngFor="let order of orders" (click)="viewOrderDetails(order.id)">
+                        {{ order.id }} - {{ order.status }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-6" *ngIf="selectedOrder">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Order Details</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Order ID:</strong> {{ selectedOrder.id }}</p>
+                    <p><strong>Total Amount:</strong> {{ selectedOrder.total_amount }}</p>
+                    <p><strong>Delivery Address:</strong> {{ selectedOrder.delivery_address }}</p>
+                    <p><strong>Phone Number:</strong> {{ selectedOrder.phone_number }}</p>
+                    <p><strong>Status:</strong> {{ selectedOrder.status }}</p>
+                    <h4 class="mt-4"> <strong>Items</strong></h4>
+                    <ul class="list-group list-group-flush">
+                        <strong><li class="list-group-item" *ngFor="let item of selectedOrder.items">
+                          {{ item.product_name }} - {{ item.quantity }} - {{ item.price }}
+                      </li></strong>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-around">
+                        <button class="btn btn-primary" (click)="updateOrderStatus(selectedOrder.id, 'Preparing')">Preparing</button>
+                        <button class="btn btn-secondary" (click)="updateOrderStatus(selectedOrder.id, 'Out for Delivery')">Out for Delivery</button>
+                        <button class="btn btn-success" (click)="updateOrderStatus(selectedOrder.id, 'Delivered')">Delivered</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+  

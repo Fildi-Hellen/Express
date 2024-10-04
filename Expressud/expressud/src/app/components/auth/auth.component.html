@@ -1,0 +1,56 @@
+<!-- auth.component.html
+<div *ngIf="isLoginFormVisible">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <div>
+        <label for="username">Username</label>
+        <input type="text" formControlName="username">
+        <div *ngIf="loginForm.get('username').errors?.required" class="error-message">Username is required</div>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" formControlName="password">
+        <div *ngIf="loginForm.get('password').errors?.required" class="error-message">Password is required</div>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <button (click)="toggleForgotPassword()">Forgot Password?</button>
+  </div>
+  
+  <div *ngIf="isRegisterFormVisible">
+    <h2>Register</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+      <div>
+        <label for="fullName">Full Name</label>
+        <input type="text" formControlName="fullName">
+        <div *ngIf="registerForm.get('fullName').errors?.required" class="error-message">Full Name is required</div>
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input type="email" formControlName="email">
+        <div *ngIf="registerForm.get('email').errors?.required" class="error-message">Email is required</div>
+        <div *ngIf="registerForm.get('email').errors?.email" class="error-message">Invalid email format</div>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" formControlName="password">
+        <div *ngIf="registerForm.get('password').errors?.required" class="error-message">Password is required</div>
+      </div>
+      <div>
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" formControlName="confirmPassword">
+        <div *ngIf="registerForm.get('confirmPassword').errors?.required" class="error-message">Confirm Password is required</div>
+        <div *ngIf="registerForm.get('confirmPassword').value !== registerForm.get('password').value" class="error-message">Passwords do not match</div>
+      </div>
+      <button type="submit">Register</button>
+    </form>
+  </div>
+  
+  <div *ngIf="isForgotPasswordVisible">
+    <h2>Forgot Password</h2>
+     Implement forgot password functionality
+  </div>
+  
+  <button (click)="toggleRegisterForm()">New user? Register here</button>
+  <button (click)="loginWithGoogle()">Login with Google</button>
+  <button (click)="loginWithFacebook()">Login with Facebook</button>  -->

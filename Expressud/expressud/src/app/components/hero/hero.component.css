@@ -1,0 +1,33 @@
+/* Base styles for the carousel */
+.hero-section {
+	margin-top: 20px; /* Adjust margin as needed */
+  width: 100%; /* Set the width of the hero section */
+  max-width: 100%; /* Ensure the hero section doesn't overflow */
+  overflow: hidden; 
+
+  }
+/*   
+   img {
+    height: 100%;
+    width: auto;
+    object-fit: cover; 
+  } */
+  
+ 
+  
+  .slide img {
+    width: 100%; /* Set the width to 100% to fill the container */
+    height: auto; /* Allow the height to adjust proportionally based on the width */
+    object-fit: cover; /* Ensure the image covers the entire container */
+    max-height: 100%; /* Limit the maximum height to prevent overflow */
+}
+
+  
+  
+  /* Media query for smaller screens */
+  @media (max-width: 768px) {
+	.carousel-caption {
+	  padding: 10px;
+	}
+  }
+  

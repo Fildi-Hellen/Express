@@ -1,0 +1,47 @@
+p{
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  font-family: 'Times New Roman', Times, serif;
+  margin: 60px;
+  padding: 20px;
+}
+/* Targeting the container class */
+.container {
+  display: flex; /* Enable flexbox */
+  justify-content: space-between; /* Distribute items evenly along the main axis */
+  padding: 0; /* Remove default padding */
+}
+
+/* Targeting the child divs */
+.container > div {
+  flex: 1; /* Each div takes up equal space */
+  max-width: 50%; /* Limit each div to half the container width */
+  padding: 10px; /* Optional padding */
+}
+
+/* Targeting the hero-text class */
+.hero-text {
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Stack items vertically */
+
+  justify-content: space-between; /* Space between items */
+}
+
+.hero-text p {
+  margin-bottom: 10px; /* Add bottom margin for spacing */
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden; /* Hide overflow if text exceeds container */
+  text-overflow: ellipsis; /* Display ellipsis if text overflows */
+}
+
+/* Optional: Adjust spacing between columns on small screens */
+@media (max-width: 767px) {
+  .container {
+      flex-direction: column; /* Stack items vertically on small screens */
+  }
+
+  .container > div {
+      max-width: 100%; /* Reset max-width to full width on small screens */
+  }
+}

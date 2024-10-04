@@ -1,0 +1,24 @@
+.container{
+    margin-top: 60px;
+    margin-top: 50px;
+}
+.para p{
+    font-size: 1.8rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 500;
+    margin-top: 20%;
+    font-style: italic;
+}
+/* .para{
+    align-items: center;
+    
+} */
+h2{
+    font-size: 1.8rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 500; 
+    font-style: italic; 
+}
+img{
+    border-radius: 10px;
+}
