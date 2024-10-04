@@ -1,0 +1,34 @@
+.blog__item__text:hover {
+    transform: scale(1.2); /* Increase the scale on hover to make it bigger */
+    cursor: pointer;
+}
+.blog__item__text{
+    transition: transform 0.3s ease-in-out;
+
+}
+h5{
+    font-size: 15px;
+}
+.section-title {
+	margin-bottom: 45px;
+	text-align: center;
+}
+
+
+.section-title span {
+	color: black;
+	font-size: 14px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	margin-bottom: 15px;
+	display: block;
+}
+
+.section-title h2 {
+	color: #111111;
+	font-weight: 700;
+	line-height: 46px;
+    font-size: 1.5rem;
+	font-family: 'Times New Roman', Times, serif;
+}

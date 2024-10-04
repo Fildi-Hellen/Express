@@ -1,0 +1,35 @@
+<div class="container my-5">
+  <h1 class="h1 text-center">Find the best solution for your business</h1>
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+      <div class="homeBar d-flex justify-content-between mb-3">
+        <label class="homeBarItem">
+          <input type="radio" name="solution" value="sell" (change)="selectedSolution = 'sell'" checked> Sell
+        </label>
+        <label class="homeBarItem">
+          <input type="radio" name="solution" value="manage" (change)="selectedSolution = 'manage'"> Upgrade
+        </label>
+        <label class="homeBarItem">
+          <input type="radio" name="solution" value="grow" (change)="selectedSolution = 'grow'"> Grow
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div *ngIf="selectedSolution === 'sell'">
+        <!-- Content for the 'Sell' option -->
+        <app-sell></app-sell>
+      </div>
+      <div *ngIf="selectedSolution === 'manage'">
+        <!-- Content for the 'Manage' option -->
+        <app-manage></app-manage>
+      </div>
+      <div *ngIf="selectedSolution === 'grow'">
+        <!-- Content for the 'Grow' option -->
+        <app-grow></app-grow>
+      </div>
+    </div>
+  </div>
+</div>

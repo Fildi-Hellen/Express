@@ -1,0 +1,6 @@
+<div class="container">
+    <button *ngFor="let category of categories" class="btn" [class.tab--is-active]="category === 'All stories'">
+      {{ category }}
+    </button>
+  </div>
+  

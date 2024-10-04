@@ -1,0 +1,18 @@
+<h1>Add a recipient</h1>
+<form (ngSubmit)="saveRecipient()" #recipientForm="ngForm">
+  <div class="form-group">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required [(ngModel)]="recipient.name" #name="ngModel" class="form-control">
+    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="text-danger">
+      Name is required.
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="phone">Phone Number:</label>
+    <input type="text" id="phone" name="phone" required [(ngModel)]="recipient.phone" #phone="ngModel" class="form-control">
+    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="text-danger">
+      Phone number is required.
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="recipientForm.invalid">Save</button>
+</form>

@@ -1,0 +1,82 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.parent-container {
+  position: relative;
+  height: 100%;
+  overflow: hidden; /* Prevents the parent container from scrolling */
+  display: flex;
+  justify-content: center; /* Centers the form horizontally */
+  align-items: center; /* Centers the form vertically */
+}
+
+.floating-form-container {
+  position: fixed; /* Fixes the form container */
+  top: 20px;
+  right: 90px;
+  width: 300px;
+
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensures it's above other content */
+}
+
+@media (max-width: 768px) {
+  .floating-form-container {
+    position: static; /* Resets positioning for mobile */
+    width: 100%;
+    max-height: none;
+    box-shadow: none;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  .container .row {
+    flex-direction: column;
+  }
+
+  .col-md-8 {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+/* Form and input styling */
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  margin-bottom: 40px;
+}
+
+label {
+  font-size: 1.6rem;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2.1rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 600;
+  padding: 10px;
+}
+
+textarea, input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+}
+
+.error-message {
+  color: red;
+  font-size: 10px;
+}

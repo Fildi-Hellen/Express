@@ -1,0 +1,44 @@
+<section class="categories spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="categories__text" [@slideFromLeft]="slideFromLeftState">
+          <h2>{{ category }}</h2>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="categories__hot__deal">
+          <!-- Your image carousel goes here -->
+         <app-image-carousel></app-image-carousel> 
+        </div>
+      </div>
+      
+      <div class="col-lg-4 offset-lg-1">
+        <div class="categories__deal__countdown" [@slideFromRight]="slideFromRightState">
+          <span>Deal Of The Week</span>
+          <h2>Multi offers</h2>
+          <div class="categories__deal__countdown__timer" id="countdown">
+            <div class="cd-item">
+              <span>{{ countdown.days }}</span>
+              <p>Days</p>
+            </div>
+            <div class="cd-item">
+              <span>{{ countdown.hours }}</span>
+              <p>Hours</p>
+            </div>
+            <div class="cd-item">
+              <span>{{ countdown.minutes }}</span>
+              <p>Minutes</p>
+            </div>
+            <div class="cd-item">
+              <span>{{ countdown.seconds }}</span>
+              <p>Seconds</p>
+            </div>
+          </div>
+          <a href="#" class="primary-btn">Shop now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

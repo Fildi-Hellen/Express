@@ -1,0 +1,36 @@
+<div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h4>Your Order Summary</h4>
+      </div>
+    </div>
+    <div class="row" *ngFor="let cartItem of cart">
+      <div class="col-12 pt-2">
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-4">
+                <img class="img-small-height" [src]="cartItem.photoUrl"/>
+              </div>
+              <div class="col-lg-8 col-md-8 col-sm-8">
+                <p>{{ cartItem.name }}</p>
+                <p>{{ cartItem.name }}</p>
+                <p><i class="fa fa-ssp name" aria-hidden="true"></i> SSP {{ cartItem.price }} * {{ cartItem.quantity }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 text-end">
+                <p>Total: SSP {{ cartItem.price * cartItem.quantity }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <p>Total Amount: SSP {{ totalAmount }}</p>
+      </div>
+    </div>
+  </div>
+  

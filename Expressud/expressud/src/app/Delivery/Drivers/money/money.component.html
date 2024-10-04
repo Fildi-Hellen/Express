@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Your Money</h2>
+        <p>Balance: ${{ balance }}</p>
+        <form (submit)="withdraw()">
+          <div class="mb-3">
+            <label for="amount" class="form-label">Withdraw Amount</label>
+            <input type="number" class="form-control" id="amount" [(ngModel)]="withdrawAmount" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Withdraw</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <h2>Transaction History</h2>
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let transaction of transactions">
+                {{ transaction.date | date: 'short' }} - {{ transaction.amount > 0 ? 'Deposit' : 'Withdrawal' }}: ${{ getAbsoluteValue(transaction.amount) }}
+              </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  

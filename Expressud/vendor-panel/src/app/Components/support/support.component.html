@@ -1,0 +1,85 @@
+
+<section class="contact">
+    <div class="content">
+      <h2>Contact Us</h2>
+      <p>Expressud, an innovative e-commerce and on-demand delivery service headquartered in the vibrant city of Juba, South Sudan, welcomes your inquiries . </p>
+    </div>
+    
+      <div class="container">
+        <div class="contactInfo">
+          <div class="box">
+            <div class="icon"><i class="fa-solid fa-location-dot"></i></div>
+            <div class="text">
+              <h3>Adress</h3>
+              <address class="body-lg" >
+                Juba,
+                South Sudan
+              </address>
+            </div>
+          </div>
+          
+    
+        <div class="box">
+          <div class="icon"><i class="fa-solid fa-phone"></i></div>
+          <div class="text">
+            <h3>Phone</h3>
+            <a href="tel:+212644377779" class="body-lg" >+212644377779</a>
+          </div>
+        </div>
+      
+      <div class="box">
+        <div class="icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+        <div class="text">
+          <h3>Email</h3>
+          <a href="tel:expressud7@gmail.com" class="body-lg" >expressud7gmail.com</a>
+        </div>
+      </div>
+    </div>
+   
+    
+  
+      
+    <form [formGroup]="contactForm" (ngSubmit)="submitForm()" class="contactForm">
+      <h2>Send Your Message </h2>
+      <div>
+        <label for="name">Name</label>
+        <input id="name" formControlName="name">
+        <div *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched" class="error-message">
+          Name is required
+        </div>
+      </div>
+    
+      <div>
+        <label for="email">Email</label>
+        <input id="email" formControlName="email">
+        <div *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched" class="error-message">
+          A valid email is required
+        </div>
+      </div>
+    
+      <div>
+        <label for="subject">Subject</label>
+        <input id="subject" formControlName="subject">
+        <div *ngIf="contactForm.get('subject')?.invalid && contactForm.get('subject')?.touched" class="error-message">
+          Subject is required
+        </div>
+      </div>
+    
+      <div>
+        <label for="message">Message</label>
+        <textarea id="message" formControlName="message"></textarea>
+        <div *ngIf="contactForm.get('message')?.invalid && contactForm.get('message')?.touched" class="error-message">
+          Message is required
+        </div>
+      </div>
+    
+      <button type="submit" id="btn">Send</button>
+    
+      <div *ngIf="messageReceived" class="error-message">
+        Your message has been sent successfully!
+      </div>
+    </form>  
+      </div>
+  </section>
+  
+  

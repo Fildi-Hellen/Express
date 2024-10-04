@@ -1,0 +1,22 @@
+.container{
+    /* background-color: #f3f2ee; */
+    background-size: cover;
+    width: 100%;
+    margin-top: 60px;
+
+}
+h1{
+    font-size: 2.0rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 400;
+    text-align: center;
+
+}
+p{
+    font-size: 2.3rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.5;
+}

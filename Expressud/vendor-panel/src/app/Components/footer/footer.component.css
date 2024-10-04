@@ -1,0 +1,138 @@
+
+/*---------------------
+  Footer
+-----------------------*/
+
+.footer {
+	background: #201658;
+	padding-top: 70px;
+}
+
+.footer__about {
+	margin-bottom: 30px;
+}
+
+.footer__about .footer__logo {
+	margin-bottom: 30px;
+}
+
+.footer__about .footer__logo a {
+	display: inline-block;
+}
+
+.footer__about p {
+	color: white;
+	margin-bottom: 30px;
+}
+
+.footer__widget {
+	margin-bottom: 30px;
+}
+
+.footer__widget h6 {
+	color: #ffffff;
+	font-size: 15px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	margin-bottom: 20px;
+}
+
+.footer__widget ul li {
+	line-height: 36px;
+	list-style: none;
+}
+
+.footer__widget ul li a {
+	color: white;
+	font-size: 15px;
+}
+
+.footer__widget .footer__newslatter p {
+	color: white;
+}
+
+.footer__widget .footer__newslatter form {
+	position: relative;
+}
+
+.footer__widget .footer__newslatter form input {
+	width: 100%;
+	font-size: 15px;
+	color: white;
+	background: transparent;
+	border: none;
+	padding: 15px 0;
+	border-bottom: 2px solid #ffffff;
+}
+
+.footer__widget .footer__newslatter form input::-webkit-input-placeholder {
+	color: white;
+}
+
+.footer__widget .footer__newslatter form input::-moz-placeholder {
+	color: white;
+}
+
+.footer__widget .footer__newslatter form input:-ms-input-placeholder {
+	color: white;
+}
+
+.footer__widget .footer__newslatter form input::-ms-input-placeholder {
+	color: white;
+}
+
+.footer__widget .footer__newslatter form input::placeholder {
+	color: white;
+}
+
+.footer__widget .footer__newslatter form button {
+	color: white;
+	font-size: 16px;
+	position: absolute;
+	right: 5px;
+	top: 0;
+	height: 100%;
+	background: transparent;
+	border: none;
+}
+
+.footer__copyright__text {
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	padding: 20px 0;
+	margin-top: 40px;
+}
+
+.footer__copyright__text p {
+	color: white;
+	margin-bottom: 0;
+}
+
+.footer__copyright__text p i {
+	color: #201658;
+}
+
+.footer__copyright__text p a {
+	color: #201658;
+}
+
+.footer-img {
+    display: flex;
+    justify-content: center; /* Align items horizontally */
+    align-items: center; /* Align items vertically */
+}
+
+.footer-img div {
+    margin: 0 10px; /* Add some spacing between images */
+}
+
+.footer-img img {
+    max-width: 100%; /* Ensure images do not exceed their container width */
+    height: auto; /* Maintain aspect ratio */
+}
+
+@media screen and (max-width: 768px) {
+    .footer-img img {
+        max-width: 80%; /* Adjust the size of the images for smaller screens */
+    }
+}

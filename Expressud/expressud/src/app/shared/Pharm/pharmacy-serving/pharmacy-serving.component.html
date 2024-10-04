@@ -1,0 +1,30 @@
+<div class="row m-4">
+    <div class="col-lg-4 col-md-6 col-sm-12" *ngFor="let item of pharmacyList">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-3 col-md-4 col-sm-12">
+              <img class="img-rounded img-height" [src]="item.photoUrl" />
+            </div>
+            <div class="col-lg-9 col-md-8 col-sm-12 text-end content">
+              {{item.categoryName}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-12 name">
+              <span class="item-name">{{item.name}}</span>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 text-end">
+              <button id="btn" (click)="navigate(item.pharmacyId)">Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row m-4">
+    <div class="col-12" *ngIf="pharmacyList.length == 0">
+      <p>No Restaurant Currently Serving this product Item</p>
+    </div>
+  </div>
+  

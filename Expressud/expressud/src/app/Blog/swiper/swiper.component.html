@@ -1,0 +1,24 @@
+<div class="swiper-container">
+  <div class="swiper-wrapper">
+    <ng-container *ngFor="let group of slideGroups">
+      <div class="swiper-slide-group">
+        <div *ngFor="let slide of group" class="swiper-slide">
+          <!-- Slide content -->
+          <figure>
+            <img [src]="slide.imageUrl" [alt]="slide.title" loading="lazy" decoding="async">
+          </figure>
+          <div class="tg-slider-container tg-flex-container tg-flex-item-centered">
+            <h2 class="entry-title"><a href="#" rel="bookmark">{{ slide.title }}</a></h2>
+            <div class="entry-meta">
+              <span class="cat-links"><a href="#" rel="category tag">{{ slide.category }}</a></span>
+              <span class="posted-on"><a href="#" rel="bookmark">{{ formatDate(slide.date) }}</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <!-- Next and Previous arrows -->
+  <a class="prev" (click)="plusSlides(-1)">&#10094;</a>
+  <a class="next" (click)="plusSlides(1)">&#10095;</a>
+</div>
