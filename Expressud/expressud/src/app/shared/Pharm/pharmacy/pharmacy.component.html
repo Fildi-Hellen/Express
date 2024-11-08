@@ -1,0 +1,13 @@
+<div class="row m-4">
+    <div class="col-lg-3 col-md-4 col-sm-6 pt-2" *ngFor="let category of pharmItems">
+      <div class="card" (click)=" navigateToPharmacyItem(category.id)">
+        <img class="card-img-top img-height" [src]="category.photoUrl">
+        <div class="card-body">
+          <h4 class="card-title">{{category.name}}</h4>  
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  

@@ -1,0 +1,62 @@
+[
+    {
+      "category": "General",
+      "questions": [
+        {
+          "question": "What is Expressud?",
+          "answer": "Expressud is an ecommerce platform that offers delivery services for groceries, food, real estate properties, pharmaceutical products, wholesale items, and more."
+        },
+        {
+          "question": "How can I place an order?",
+          "answer": "To place an order on Expressud, simply browse through our website or mobile app, select the items you want to purchase, and proceed to checkout. You can choose your preferred payment and delivery options during the checkout process."
+        },
+        {
+          "question": "What areas do you deliver to?",
+          "answer": "Expressud currently delivers to a wide range of locations. You can check if your area is covered by entering your address during the checkout process."
+        },
+        {
+          "question": "How can I track my order?",
+          "answer": "Once your order is confirmed, you will receive a confirmation email or SMS containing a tracking link. You can use this link to track the status of your order in real-time."
+        }
+      ]
+    },
+    {
+      "category": "Services",
+      "questions": [
+        {
+          "question": "What types of products do you deliver?",
+          "answer": "Expressud delivers a variety of products, including groceries, food items, real estate properties, pharmaceutical products, wholesale goods, and more."
+        },
+        {
+          "question": "Do you offer same-day delivery?",
+          "answer": "Yes, we offer same-day delivery for many of our products. You can check the estimated delivery time for each item during the checkout process."
+        },
+        {
+          "question": "Can I schedule a delivery for a specific time?",
+          "answer": "Yes, you can schedule your delivery for a specific date and time that is convenient for you. Simply select the desired delivery time slot during checkout."
+        },
+        {
+          "question": "What payment methods do you accept?",
+          "answer": "We accept various payment methods, including credit/debit cards, digital wallets, and cash on delivery (COD), depending on your location and the type of products you are purchasing."
+        }
+      ]
+    },
+    {
+      "category": "Account",
+      "questions": [
+        {
+          "question": "How do I create an account?",
+          "answer": "You can create an account on Expressud by clicking on the 'Sign Up' or 'Register' button and providing the required information. Alternatively, you can also sign up using your social media accounts."
+        },
+        {
+          "question": "How can I update my account information?",
+          "answer": "To update your account information, simply log in to your account, go to the 'My Account' section, and select the 'Edit Profile' option. From there, you can update your personal details, address, and contact information."
+        },
+        {
+          "question": "What should I do if I forget my password?",
+          "answer": "If you forget your password, you can click on the 'Forgot Password' link on the login page and follow the instructions to reset your password. You will receive an email with further instructions."
+        }
+      ]
+    }
+  ]
+  

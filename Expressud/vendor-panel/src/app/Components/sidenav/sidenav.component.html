@@ -1,0 +1,75 @@
+<mat-toolbar class="mat-elevation-z8">
+  <button mat-icon-button *ngIf="sidenav.mode === 'over'" (click)="sidenav.toggle()">
+    <mat-icon *ngIf="!sidenav.opened"> menu </mat-icon>
+    <mat-icon *ngIf="sidenav.opened"> close </mat-icon>
+  </button>
+  <span class="toolbar-text">Expressud</span>
+  <span class="spacer"></span> <!-- Spacer to push the link to the right -->
+  <a mat-button routerLink="/faq" class="link" style="color: white;">FAQ</a>
+</mat-toolbar>
+
+  
+  <mat-sidenav-container>
+    <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8">
+      <img
+        class="avatar mat-elevation-z8"
+        src="https://source.unsplash.com/c_GmwfHBDzk/200x200"
+      />
+  
+      <h4 class="name">John Smith</h4>
+      <p class="designation">Software Engineer</p>
+  
+      <mat-divider></mat-divider>
+  
+      <button mat-button class="menu-button" routerLink="/dashboard">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </button>
+      <button mat-button class="menu-button" routerLink="/order-managements">
+        <mat-icon>shopping_cart</mat-icon>
+        <span>New Orders</span>
+      </button>
+      <button mat-button class="menu-button" routerLink="/menu">
+        <mat-icon>menu</mat-icon>
+        <span>Menu</span>
+      </button>
+      <button mat-button class="menu-button" routerLink="/payments">
+        <mat-icon>wallet</mat-icon>
+        <span>Payment</span>
+      </button>
+      <!-- <button mat-button class="menu-button" routerLink="/order-managements">
+        <mat-icon>order-history</mat-icon>
+        <span>New Orders</span>
+      </button>
+   -->
+      <mat-divider></mat-divider>
+  
+      <button mat-button class="menu-button" routerLink="/notifications">
+        <mat-icon>notifications</mat-icon>
+        <span>Notification</span>
+      </button>
+
+      <button mat-button class="menu-button" routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-button class="menu-button" routerLink="/support">
+        <mat-icon>help</mat-icon>
+        <span>Help</span>
+      </button>
+      <!-- <button mat-button class="menu-button" routerLink="/about">
+        <mat-icon>info</mat-icon>
+        <span>About</span>
+      </button> -->
+      <button mat-button class="menu-button" routerLink="/settings">
+        <mat-icon>settings</mat-icon>
+        <span>Setting</span>
+      </button>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="content mat-elevation-z8">
+<!-- <h1>hello</h1> -->
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>

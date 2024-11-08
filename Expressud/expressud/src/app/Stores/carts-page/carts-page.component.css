@@ -1,0 +1,24 @@
+.container{
+    width: 80%;
+}
+h4{
+    font-size: 28px;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+}
+
+.card {
+    transition: transform 0.3s ease;
+    padding: 20px;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .total{
+    font-size: 24px;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    padding: 20px;
+  }

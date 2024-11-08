@@ -1,0 +1,32 @@
+<div class="container text-center">
+  <h1>Helping businesses in South Sudan go digital.</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <h3>
+        Expressud is another neighbor in town and that's why we want to help local shops and restaurants like yours grow online.
+      </h3>
+      <p>
+        Our mission is to empower thousands of local businesses to go digital. Thanks to our integrated solutions, we want to become the best digital ally for your business because local entrepreneurs and economies matter to us.
+      </p>
+    
+      <div>
+        <p class="login showing" (click)="toggleContent()" [ngClass]="{'blue-text': !isContentVisible}">
+          Read {{ isContentVisible ? 'less' : 'more' }}
+        </p>
+        <div *ngIf="isContentVisible">
+          <!-- Place your content here -->
+          <p>Expressud Partners started as our online signup feature built to enable restaurants to easily join the food delivery market. Now, Expressud Partners becomes Expressud Local: a full-suite solution tailored to local businesses including grocery stores, flower shops, pet stores and other local businesses. Through Expressud Local, small and medium enterprises can sell their products with more convenience, manage their businesses and grow online by leveraging Expressud’s digital platform.</p>
+          
+        </div>
+      </div>
+      
+        
+
+     
+      <button id="btn" (click)="openDialog()">Get Started</button>
+    </div>
+    <div class="col-md-6">
+      <img src="assets/img/blog/young.jpg" alt="" class="img-fluid">
+    </div>
+  </div>
+</div>

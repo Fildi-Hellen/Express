@@ -1,0 +1,35 @@
+.input-button__body {
+    padding: 30px;
+}
+
+input {
+    width: 100%; /* Adjust width as needed */
+    height: 40px; /* Adjust height as needed */
+    padding: 5px; /* Add padding for better appearance */
+    border: 1px solid #ccc; /* Add border for better visibility */
+    border-radius: 5px; /* Add border-radius for rounded corners */
+    box-sizing: border-box;
+}
+
+label {
+    font-size: 2.3rem;
+    padding: 10px;
+    font-weight: 400;
+    font-family: 'Times New Roman', Times, serif;
+    width: 100%;
+    flex-grow: 1; /* Ensure label spans full width */
+}
+
+::placeholder {
+    font-size: 1.4rem;
+}
+
+.input-button__body {
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Arrange items vertically */
+}
+
+.input-button__text-box {
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Arrange items vertically */
+}

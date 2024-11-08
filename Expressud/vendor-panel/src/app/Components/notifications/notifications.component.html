@@ -1,0 +1,10 @@
+<div class="notifications container mt-5">
+    <h2 class="text-center mb-4">Notifications</h2>
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let notification of notifications">
+        {{ notification.message }}
+        <button class="btn btn-sm btn-primary float-right" *ngIf="!notification.read" (click)="markAsRead(notification.id)">Mark as Read</button>
+      </li>
+    </ul>
+  </div>
+  

@@ -1,0 +1,40 @@
+<div class="row m-4">
+    <div class="col-lg-8 col-md-12">
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6" *ngFor="let item of pharmItemsList">
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-4">
+                 <img src="" alt="" srcset="" class="img-height img-rounded" [src]="item.photoUrl" >
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-8 text-end name">
+                  {{item.name}}
+                  <br>
+                  <small>{{item.description | slice:0-20}}</small>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-4 price">
+                  <i class="fa fa" aria-hidden="true"></i> $ {{item.price}}
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-8 text-end">
+                  <button id="btn" (click)="addToCart(item)">Add To Cart</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <app-carts-page></app-carts-page>
+    </div>
+  </div>
+  
+  <div class="row m-4">
+    <div class="col-12" *ngIf="pharmItemsList.length == 0">
+      <p>No Food Types Serving this product Item</p>
+    </div>
+  </div>
+  

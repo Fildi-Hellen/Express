@@ -1,0 +1,21 @@
+<div *ngIf="isLoggedIn">
+    <div class="profile-info">
+      <div class="profile-item">
+        <label>Name:</label>
+        <div>{{ userData.name }}</div>
+      </div>
+      <div class="profile-item">
+        <label>Email:</label>
+        <div>{{ userData.email }}</div>
+      </div>
+      <div class="profile-item">
+        <label>Password:</label>
+        <div>******</div> <!-- You may choose to not display the password for security reasons -->
+      </div>
+    </div>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+  <div *ngIf="!isLoggedIn">
+    <a routerLink="/login">login</a>
+  </div>
+  

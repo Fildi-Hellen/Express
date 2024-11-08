@@ -1,0 +1,33 @@
+<div class="floating-form-container">
+  <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="floating-form">
+    <div>
+      <h1>Tell Us What You Think:☺☺</h1>
+      <label for="rating">Rating:</label>
+      <div>
+        <mat-icon *ngFor="let star of [1, 2, 3, 4, 5]" (click)="setRating(star)" [style.color]="star <= currentRating ? 'gold' : 'gray'">star</mat-icon>
+      </div>
+      <div *ngIf="feedbackForm.get('rating')?.invalid && feedbackForm.get('rating')?.touched" class="error-message">
+        Rating is required.
+      </div>
+    </div>
+
+    
+    <div>
+      <div class="inputBox">
+        <label for="email">Email:</label>
+        <input type="email" formControlName="email">
+        
+        <div *ngIf="feedbackForm.get('email')?.invalid && feedbackForm.get('email')?.touched" class="error-message">
+          Valid email is required.
+        </div>
+      </div>
+
+      <label for="comment">Comment:</label>
+      <textarea id="comment" formControlName="comment" rows="4"></textarea>
+      <div *ngIf="feedbackForm.get('comment')?.invalid && feedbackForm.get('comment')?.touched" class="error-message">
+        Comment is required.
+      </div>
+    </div>
+    <button type="submit" [disabled]="feedbackForm.invalid" id="btn">Send</button>
+  </form>
+</div>

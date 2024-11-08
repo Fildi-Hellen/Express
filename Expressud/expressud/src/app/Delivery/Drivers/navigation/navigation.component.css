@@ -1,0 +1,12 @@
+agm-map {
+    height: 400px;
+  }
+  h1{
+    padding: 20px;
+    font-size: 1.9rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+  }
+  #btn{
+    margin: 10px;
+  }
