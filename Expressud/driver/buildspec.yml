@@ -11,15 +11,14 @@ phases:
       - ls -la  # Check contents of root directory
       - ls -la Expressud  # Check if 'Expressud' exists
       - ls -la Expressud/driver  # Check if 'driver' exists
-
       - cd Expressud/driver
       - npm install --legacy-peer-deps
 
   build:
     commands:
-     - echo "Changing to the correct directory"
-    - cd Expressud/driver
-    - ls -la
+      - echo "Changing to the correct directory"
+      - cd Expressud/driver
+      - ls -la
       - ng build --prod --output-path=dist/driver
 
   post_build:
