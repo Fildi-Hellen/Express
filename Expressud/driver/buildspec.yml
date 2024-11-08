@@ -9,14 +9,14 @@ phases:
       - npm install -g @angular/cli
       - echo Installing source NPM dependencies...
             - ls -la  # Debugging step to check the directory contents
-      - cd /Expressud/driver
+      - cd Expressud/driver
 
       - npm install --legacy-peer-deps
 
   build:
     commands:
       - echo Build started
-      - cd Express/Expressud/driver
+      - cd Expressud/driver
 
       - ng build --prod --output-path=dist/driver
 
