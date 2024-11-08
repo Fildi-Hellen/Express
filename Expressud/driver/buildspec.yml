@@ -17,10 +17,9 @@ phases:
 
   build:
     commands:
-      - echo Build started
-      - ls -la Expressud  # Check 'Expressud' directory again
-      - ls -la Expressud/driver  # Check if 'driver' exists before building
-      - cd Expressud/driver
+     - echo "Changing to the correct directory"
+    - cd Expressud/driver
+    - ls -la
       - ng build --prod --output-path=dist/driver
 
   post_build:
