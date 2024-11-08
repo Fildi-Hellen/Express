@@ -6,9 +6,14 @@ phases:
       nodejs: 18
     commands:
       - echo Installing source NPM dependencies...
-      - npm install --legacy-peer-deps
+      - npm install
       - npm install -g @angular/cli
   build:
     commands:
       - echo Build started 
       - ng build --prod --output-path=dist/driver # adjust per project
+artifacts:
+  files:
+    - '**/*'
+  base-directory: dist/driver # adjust per project
+  discard-paths: yes
