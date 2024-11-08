@@ -5,12 +5,18 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - echo Installing Angular CLI...
+      - npm install -g @angular/cli
       - echo Installing source NPM dependencies...
       - cd Expressud/vendor-panel
       - npm install --legacy-peer-deps
+
   build:
     commands:
-      - echo Build started 
-      - ng build --prod --output-path=dist/vendor-panel # adjust per project
+      - echo Build started
+      - cd Expressud/vendor-panel
+      - ng build --prod --output-path=dist/vendor-panel
 
-      
+  post_build:
+    commands:
+      - echo Build completed on $(date)
