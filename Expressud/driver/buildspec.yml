@@ -8,9 +8,9 @@ phases:
       - echo Installing Angular CLI...
       - npm install -g @angular/cli
       - echo Installing source NPM dependencies...
-      - ls -la  # Debugging step to check the root directory contents
-      - echo Checking Expressud/driver directory...
-      - ls -la Expressud/driver  # Debugging step to confirm the 'driver' directory exists
+      - ls -la  # Check contents of root directory
+      - ls -la Expressud  # Check if 'Expressud' exists
+      - ls -la Expressud/driver  # Check if 'driver' exists
 
       - cd Expressud/driver
       - npm install --legacy-peer-deps
@@ -18,7 +18,8 @@ phases:
   build:
     commands:
       - echo Build started
-      - ls -la Expressud/driver  # Confirm the contents of the 'driver' directory before building
+      - ls -la Expressud  # Check 'Expressud' directory again
+      - ls -la Expressud/driver  # Check if 'driver' exists before building
       - cd Expressud/driver
       - ng build --prod --output-path=dist/driver
 
