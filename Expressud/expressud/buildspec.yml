@@ -6,12 +6,12 @@ phases:
       nodejs: 18
     commands:
       - echo Installing source NPM dependencies...
+      - cd Express/Expressud/expressud  # Navigate to the directory containing package.json
       - npm install
       - npm install -g @angular/cli
   build:
     commands:
       - echo Build started 
       - ng build --prod --output-path=dist/expressud # adjust per project
-
 
 
