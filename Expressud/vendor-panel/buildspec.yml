@@ -6,6 +6,7 @@ phases:
       nodejs: 18
     commands:
       - echo Installing source NPM dependencies...
+      - cd Express/Expressud/vendor-panel  # Navigate to the directory containing package.json
       - npm install
       - npm install -g @angular/cli
   build:
