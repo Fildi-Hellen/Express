@@ -1,0 +1,27 @@
+version: 0.2
+
+env:
+    variables:
+        CACHE_CONTROL: "86400"
+        S3_BUCKET: "{{s3_bucket_url}}"
+        BUILD_FOLDER: "dist"
+        
+phases:
+  install:
+    runtime-versions:
+        nodejs: 18   # Update Node.js to version 18, recommended for Angular 17
+    commands:
+        - echo Installing source NPM dependencies...
+        - npm install
+        - npm install -g @angular/cli@17  # Ensure you're installing the CLI for Angular 17
+
+  build:
+    commands:
+        - echo Build started 
+        - ng build --prod  # Build the Angular app in production mode
+        
+artifacts:
+    files:
+        - '**/*'
+    base-directory: 'dist/*'  # Adjusted the base-directory to 'dist/*' to match your build output
+    discard-paths: yes
