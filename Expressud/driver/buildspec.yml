@@ -8,6 +8,7 @@ phases:
       - echo Installing Angular CLI...
       - npm install -g @angular/cli
       - echo Installing source NPM dependencies...
+            - ls -la  # Debugging step to check the directory contents
       - cd Expressud/driver
       - npm install --legacy-peer-deps
 
