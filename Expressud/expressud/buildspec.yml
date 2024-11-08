@@ -12,9 +12,6 @@ phases:
     commands:
       - echo Build started 
       - ng build --prod --output-path=dist/expressud # adjust per project
-artifacts:
-  files:
-    - '**/*'
-  base-directory: dist/expressud # adjust per project
-  discard-paths: yes
+
+
 
