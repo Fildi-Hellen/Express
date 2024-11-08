@@ -1,0 +1,37 @@
+<!-- src/app/admin/menu-item-list/menu-item-list.component.html -->
+<div class="container">
+    <h1>Pending Menu Items</h1>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Restaurant ID</th>
+          <th>Price</th>
+          <th>Menu Item Name</th>
+          <th>Item ID</th>
+          <th>Description</th>
+          <th>Restaurant Name</th>
+          <th>Availability</th>
+          <th>Photo URL</th>
+          <th>Category Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of menuItems">
+          <td>{{ item.restaurantID }}</td>
+          <td>{{ item.price }}</td>
+          <td>{{ item.menuItemName }}</td>
+          <td>{{ item.itemID }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.restaurantName }}</td>
+          <td>{{ item.availability }}</td>
+          <td>{{ item.photoUrl }}</td>
+          <td>{{ item.categoryName }}</td>
+          <td>
+            <button class="btn btn-success btn-sm" (click)="approveMenuItem(item.id)">Approve</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

@@ -1,0 +1,17 @@
+<!-- src/app/admin/category-form/category-form.component.html -->
+<div class="container">
+  <h1>{{ isEditMode ? 'Edit Category' : 'Add New Category' }}</h1>
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="categoryName">Category Name</label>
+      <input type="text" id="categoryName" formControlName="categoryName" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="photoUrl">Photo URL</label>
+      <input type="text" id="photoUrl" formControlName="photoUrl" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
+    <button type="button" class="btn btn-secondary" routerLink="/admin/categories">Cancel</button>
+  </form>
+</div>
+

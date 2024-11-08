@@ -1,0 +1,42 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 60px;
+}
+img{
+    width: 100px;
+}
+h3{
+    padding: 10px;
+}
+
+.about-banner {
+    flex: 0 0 50%; 
+    text-align: right; 
+}
+.about-content {
+    flex: 0 0 50%; 
+}
+.section-text{
+    padding-left: 30px;
+}
+.title-lg{
+    text-align: center;
+    font-size: 1.6rem;
+}
+.about-form{
+    padding-left: 30px;
+}
+  @media screen and (max-width: 768px) {
+   
+    .container {
+        flex-direction: column;
+    }
+    .about-banner,
+    .about-content {
+        width: 100%; 
+        text-align: center; 
+        margin-bottom: 20px; 
+    }
+}

@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h4>Your Order</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 pt-2" *ngFor="let cart of cartItems">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4">
+              <img class="img-small-height" [src]="cart.photoUrl" alt="Description of the image"/>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 text-end">
+              {{ cart.name }}
+              <br/>
+              <span *ngIf="cart.currency === 'USD'">&#36;</span>
+              <span *ngIf="cart.currency === 'SSP'">SSP</span>
+              {{ cart.price }} * {{ cart.quantity }}
+            </div>
+            <div class="col-12 text-end">
+              <button id="btn" (click)="removeFromCart(cart)" >Remove</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12" *ngIf="cartItems.length == 0">
+      <p>Cart Is Empty</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 text-end total">
+      Total Amount -
+      <span *ngIf="currency === 'USD'">&#36;</span>
+      <span *ngIf="currency === 'SSP'">SSP</span>
+      <span *ngIf="currency === 'Multiple'">Multiple Currencies</span>
+      {{ totalAmount }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 text-end">
+      <button id="btn" (click)="onProceedToCheckout()">Proceed to Checkout</button>
+    </div>
+  </div>
+</div>

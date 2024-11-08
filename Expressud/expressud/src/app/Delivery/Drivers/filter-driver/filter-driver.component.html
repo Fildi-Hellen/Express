@@ -1,0 +1,19 @@
+<div class="container">
+    <div class="row">
+      <!-- First Column -->
+      <div class="col-md-6 col-sm-12">
+        <div class="input-group mb-3">
+          <select class="form-select" [(ngModel)]="selectedItem">
+            <option value="all">Show All Entries</option>
+            <option *ngFor="let entry of entries" [value]="entry.id">{{ entry.id }} - {{ entry.date }}</option>
+          </select>
+          <button id="btn" (click)="search()">Search</button>
+        </div>
+      </div>
+      <!-- Second Column -->
+      <div class="col-md-6 col-sm-12">
+        <app-wallet></app-wallet>
+      </div>
+    </div>
+  </div>
+  

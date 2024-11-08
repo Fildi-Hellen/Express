@@ -1,0 +1,19 @@
+<div class="container mt-5">
+    <div class="input-group mb-3 shadow-sm">
+      <input type="text" class="form-control" placeholder="Search for items here!" [(ngModel)]="query" (keydown.enter)="onSearch()">
+      <div class="input-group-append">
+        <button class="btn" type="button" (click)="onSearch()">Search</button>
+      </div>
+    </div>
+  
+    <div *ngIf="results.length > 0" class="results-container mt-4">
+      <div *ngFor="let item of results" class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ item.name }}</h5>
+          <p class="card-text">{{ item.description }}</p>
+          <p class="card-text"><small class="text-muted">{{ item.category }}</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,92 @@
+/* Style the swiper container */
+.swiper-container {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  
+  /* Style the swiper wrapper */
+  .swiper-wrapper {
+    display: flex;
+    flex-wrap: nowrap; /* Ensure slides stay in a single row */
+  }
+  
+  /* Style the individual swiper slide */
+  .swiper-slide {
+    flex: 0 0 calc(33.33% - 20px); /* Display three slides per row */
+    margin-right: 20px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+  }
+  
+  /* Style the slide content */
+  .swiper-slide figure {
+    margin: 0;
+  }
+  
+  /* .swiper-slide img {
+    width: 100%;
+    height: auto;
+  } */
+  
+  .tg-slider-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+  }
+  
+  /* Style the entry title */
+  .entry-title a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  /* Style the entry meta */
+  .entry-meta {
+    margin-top: 5px;
+  }
+  
+  /* Style the previous and next arrows */
+  .prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    cursor: pointer;
+    font-size: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+  }
+  
+  .prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .prev {
+    left: 10px;
+  }
+  
+  .next {
+    right: 10px;
+  }
+  
+  /* Media queries for responsiveness */
+  @media screen and (max-width: 768px) {
+    .swiper-slide {
+      flex: 0 0 calc(50% - 20px); /* Display two slides per row on smaller screens */
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .swiper-slide {
+      flex: 0 0 100%; /* Display one slide per row on extra small screens */
+      margin-right: 0;
+    }
+  }
+  

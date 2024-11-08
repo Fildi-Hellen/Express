@@ -1,0 +1,18 @@
+<!-- src/app/customer/menu-item-list/menu-item-list.component.html -->
+<div class="container">
+    <h1>Menu Items</h1>
+    <div class="row">
+      <div class="col-md-4" *ngFor="let item of menuItems">
+        <div class="card mb-4">
+          <img class="card-img-top" [src]="item.photoUrl" alt="{{ item.menuItemName }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ item.menuItemName }}</h5>
+            <p class="card-text">{{ item.description }}</p>
+            <p class="card-text">{{ item.price | currency }}</p>
+            <p class="card-text"><small class="text-muted">{{ item.categoryName }}</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

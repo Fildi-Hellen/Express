@@ -1,0 +1,30 @@
+/* Styles for recipient form */
+.form-group {
+    margin-bottom: 20px;
+  }
+  
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+ 
+  
+  /* Media queries for responsiveness */
+  @media (min-width: 768px) {
+    .form-group {
+      width: 50%;
+      float: left;
+      padding-right: 10px; /* Adjust as needed */
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .form-group {
+      width: 100%;
+    }
+  }
+  

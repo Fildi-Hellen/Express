@@ -1,0 +1,81 @@
+/* Style the main wrapper */
+.mainwrapper {
+    padding: 20px;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    padding-right: 50px;
+  }
+  
+  /* Style the heading */
+  .h1 {
+    font-size: 1.9rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px;
+  }
+
+  
+  /* Style the divider */
+  .divider {
+    height: 2px;
+    background-color: #ccc;
+    margin: 20px 0;
+  }
+  
+  /* Style the blobgrid */
+  .blobgrid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Times New Roman', Times, serif;
+ 
+    
+  }
+  
+  /* Style the left content */
+  .blobgrid > div:first-child {
+    flex-grow: 1;
+  }
+  
+  /* Style the paragraph */
+  .blobgrid p {
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    font-family: 'Times New Roman', Times, serif;
+    padding: 10px;
+  }
+  
+  /* Style the list */
+  .maHomeList {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  .maHomeList li {
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    padding: 10px;
+  }
+  
+  /* Style the link */
+  .login {
+    color: blue;
+    text-decoration: underline;
+  }
+  
+  .login:hover {
+    color: darkblue;
+  }
+  
+  /* Style the image */
+  .maHomeImg {
+    max-width: 100%;
+    height: auto;
+  }
+  @media (max-width: 768px) {
+    .maHomeList li {
+      padding-left: 20px; /* Adjust padding for better readability on smaller screens */
+    }
+  }
+  

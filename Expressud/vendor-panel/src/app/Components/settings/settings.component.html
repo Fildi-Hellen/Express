@@ -1,0 +1,35 @@
+<form [formGroup]="profileForm" (ngSubmit)="saveSettings()" class="container mt-5 p-4 border rounded shadow-sm">
+  <div class="form-group">
+    <label for="storeName">Store Name:</label>
+    <input id="storeName" formControlName="storeName" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="address">Address:</label>
+    <input id="address" formControlName="address" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="contactEmail">Contact Email:</label>
+    <input id="contactEmail" formControlName="contactEmail" type="email" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="contactPhone">Contact Phone:</label>
+    <input id="contactPhone" formControlName="contactPhone" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="businessHours">Business Hours:</label>
+    <input id="businessHours" formControlName="businessHours" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="holidaySchedule">Holiday Schedule:</label>
+    <input id="holidaySchedule" formControlName="holidaySchedule" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="paymentOptions">Payment Options:</label>
+    <input id="paymentOptions" formControlName="paymentOptions" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="shippingOptions">Shipping Options:</label>
+    <input id="shippingOptions" formControlName="shippingOptions" type="text" class="form-control">
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
+</form>

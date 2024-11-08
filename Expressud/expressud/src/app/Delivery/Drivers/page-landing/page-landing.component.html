@@ -1,0 +1,27 @@
+<div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Order Date</th>
+          <th>Delivery Time</th>
+          <th>Delivery Type</th>
+          <th>Payment Method</th>
+          <th>Tracking Status</th>
+          <th>View Order</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders">
+          <td>{{ order.orderId }}</td>
+          <td>{{ order.orderDate }}</td>
+          <td>{{ order.deliveryTime }}</td>
+          <td>{{ order.deliveryType }}</td>
+          <td>{{ order.paymentMethod }}</td>
+          <td>{{ order.trackingStatus }}</td>
+          <td><button id="btn" (click)="viewOrder(order)" (click)="openDialog()">View</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
