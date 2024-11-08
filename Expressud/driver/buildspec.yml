@@ -6,7 +6,7 @@ phases:
       nodejs: 18
     commands:
       - echo Installing source NPM dependencies...
-      - cd Express/Expressud/driver  # Navigate to the directory containing package.json
+      - cd Expressud/driver  # Navigate to the directory containing package.json
       - npm install
       - npm install -g @angular/cli
   build:
