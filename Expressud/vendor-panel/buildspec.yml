@@ -12,8 +12,3 @@ phases:
     commands:
       - echo Build started 
       - ng build --prod --output-path=dist/vendor-panel # adjust per project
-artifacts:
-  files:
-    - '**/*'
-  base-directory: dist/vendor-panel # adjust per project
-  discard-paths: yes
