@@ -6,15 +6,9 @@ phases:
       nodejs: 18
     commands:
       - echo Installing source NPM dependencies...
-      - npm install
-      - npm install -g @angular/cli
+      - cd Expressud/expressud
+      - npm install --legacy-peer-deps
   build:
     commands:
       - echo Build started 
       - ng build --prod --output-path=dist/expressud # adjust per project
-artifacts:
-  files:
-    - '**/*'
-  base-directory: dist/expressud # adjust per project
-  discard-paths: yes
-
