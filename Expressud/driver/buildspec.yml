@@ -17,8 +17,9 @@ phases:
   build:
     commands:
       - echo "Changing to the correct directory"
-      - cd Expressud/driver
-      - ls -la
+      - ls -la /codebuild/output/src1536079573/src/Expressud  # Confirm 'Expressud' directory exists
+      - cd /codebuild/output/src1536079573/src/Expressud/driver  # Use absolute path to avoid directory issues
+      - ls -la  # Check contents to confirm successful navigation
       - ng build --prod --output-path=dist/driver
 
   post_build:
