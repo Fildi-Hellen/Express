@@ -9,16 +9,16 @@ phases:
       - npm install -g @angular/cli
       - echo Installing source NPM dependencies...
       - ls -la  # Check contents of root directory
-      - ls -la Expressud  # Check if 'Expressud' exists
-      - ls -la Expressud/driver  # Check if 'driver' exists
-      - cd Expressud/driver
+      - ls -la $CODEBUILD_SRC_DIR  # Check if source directory exists
+      - ls -la $CODEBUILD_SRC_DIR/Expressud  # Check if 'Expressud' exists
+      - cd $CODEBUILD_SRC_DIR/Expressud/driver
       - npm install --legacy-peer-deps
 
   build:
     commands:
       - echo "Changing to the correct directory"
-      - ls -la /codebuild/output/src1536079573/src/Expressud  # Confirm 'Expressud' directory exists
-      - cd /codebuild/output/src1536079573/src/Expressud/driver  # Use absolute path to avoid directory issues
+      - ls -la $CODEBUILD_SRC_DIR/Expressud  # Check if 'Expressud' directory exists
+      - cd $CODEBUILD_SRC_DIR/Expressud/driver  # Use CODEBUILD_SRC_DIR for absolute path
       - ls -la  # Check contents to confirm successful navigation
       - ng build --prod --output-path=dist/driver
 
