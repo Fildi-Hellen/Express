@@ -15,7 +15,7 @@ phases:
     commands:
       - echo Build started
       - cd $CODEBUILD_SRC_DIR/vendor-panel  # Use absolute path to ensure it is accessible
-      - ng build --prod --output-path=dist/vendor-panel
+      - ng build --configuration production --output-path=dist/vendor-panel
 
   post_build:
     commands:
