@@ -22,7 +22,5 @@ phases:
       - echo Build completed on $(date)
 
 artifacts:
-  files:
-    - '**/*'                          # Include all files in the output directory
-  base-directory: 'dist/vendor-panel'  # Specify the build output directory as the base
-  discard-paths: yes                   # Flatten the directory structure (optional)
+ files:
+    - dist/vendor-panel/**
