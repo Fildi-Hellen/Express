@@ -22,5 +22,6 @@ phases:
       - echo Build completed on $(date)
 
 artifacts:
- files:
-    - dist/vendor-panel/**
+  files:
+    - '**/*'                          # Include all files within the base directory
+  base-directory: 'vendor-panel/dist/vendor-panel'  # Specify the correct base directory for artifacts
