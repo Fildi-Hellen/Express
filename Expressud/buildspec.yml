@@ -8,16 +8,20 @@ phases:
       - echo Installing Angular CLI...
       - npm install -g @angular/cli
       - echo Installing source NPM dependencies...
-      - cd Expressud
+      - cd $CODEBUILD_SRC_DIR/Expressud
       - npm install --legacy-peer-deps
 
   build:
     commands:
       - echo Build started
-      - cd Expressud
-      - ng build --prod --output-path=dist/Expressud
+      - cd $CODEBUILD_SRC_DIR/Expressud  # Use absolute path to ensure it is accessible
+      - ng build --configuration production --output-path=dist/Expressud
 
   post_build:
     commands:
       - echo Build completed on $(date)
 
+artifacts:
+  files:
+    - '**/*'                          # Include all files within the base directory
+  base-directory: 'Expressud/dist/Expressud'  # Specify the correct base directory for artifacts
