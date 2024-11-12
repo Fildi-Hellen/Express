@@ -14,8 +14,8 @@ phases:
   build:
     commands:
       - echo Build started
-      - cd $CODEBUILD_SRC_DIR/Expressud  # Use absolute path to ensure it is accessible
-      - ng build --configuration production --output-path=dist/Expressud
+      - cd $CODEBUILD_SRC_DIR/Expressud
+      - ng build --configuration production --output-path=dist/expressud
 
   post_build:
     commands:
@@ -24,4 +24,4 @@ phases:
 artifacts:
   files:
     - '**/*'                          # Include all files within the base directory
-  base-directory: 'Expressud/dist/Expressud'  # Specify the correct base directory for artifacts
+  base-directory: 'Expressud/dist/expressud'  # Adjusted to match the output path
