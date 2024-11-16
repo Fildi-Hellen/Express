@@ -1,0 +1,77 @@
+{
+  "C:\\Users\\fildi hellen\\Desktop\\Express\\backendE": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.10",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>"
+    },
+    "composeServiceName": null,
+    "servicePath": "C:\\Users\\fildi hellen\\Desktop\\Express\\backendE",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "provider": {
+        "name": "aws",
+        "runtime": "provided.al2",
+        "region": "af-south-1"
+      },
+      "functions": {
+        "migrate": {
+          "handler": "public/index.php",
+          "layers": [
+            "${bref:layer.php-81}"
+          ],
+          "environment": {
+            "DB_HOST": "expressuddb.cdswaw8i23c6.af-south-1.rds.amazonaws.com",
+            "DB_DATABASE": "expressuddb",
+            "DB_USERNAME": "admin",
+            "DB_PASSWORD": "<REDACTED>"
+          },
+          "events": [
+            {
+              "schedule": {
+                "rate": "rate(1 day)"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "serviceRawFile": "provider:\r\n  name: aws\r\n  runtime: provided.al2\r\n  region: af-south-1\r\n\r\nfunctions:\r\n  migrate:\r\n    handler: public/index.php\r\n    layers:\r\n      - ${bref:layer.php-81}  # Ensure you are using the correct PHP 8.1 layer from Bref\r\n    environment:\r\n      DB_HOST: expressuddb.cdswaw8i23c6.af-south-1.rds.amazonaws.com\r\n      DB_DATABASE: expressuddb\r\n      DB_USERNAME: admin\r\n      DB_PASSWORD: 3|Y$(iC5.v7aX]A_a7>z9zNwOTbE\r\n    events:\r\n      - schedule:\r\n          rate: rate(1 day)  # This schedules the migration to run daily (can be adjusted)\r\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {},
+    "error": {
+      "message": "AWS credentials missing or invalid. Original error from AWS: Could not load credentials from any providers",
+      "code": "AWS_CREDENTIALS_MISSING"
+    },
+    "params": {},
+    "machineId": "6493e01a4e158e326b5d9635efb6a8ed",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "8eb4fa3b-b453-49a8-bce1-21ac8ffafc70",
+    "orgName": "expressud",
+    "userId": "hR0grWJswnMSDy3ZsS",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "expressud",
+    "subscription": null,
+    "userEmail": "intysilva1@gmail.com",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}
