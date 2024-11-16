@@ -1,0 +1,20 @@
+{
+    "name": "fildihellen/backend-e",
+    "autoload": {
+        "psr-4": {
+            "Fildihellen\\BackendE\\": "src/",
+            "App\\": "app/"
+        }
+    },
+    "require": {
+        "laravel/framework": "^11.32",
+        "bref/bref": "^2.3",
+        "bref/laravel-bridge": "^2.4",
+        "laravel/sanctum": "^4.0",
+        "nunomaduro/collision": "^8.5"
+    },
+    "require-dev": {
+        "laravel/sail": "^1.38",
+        "laravel/tinker": "^2.10"
+    }
+}
