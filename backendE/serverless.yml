@@ -1,18 +1,30 @@
+service: backend-e
+
 provider:
   name: aws
   runtime: provided.al2
   region: af-south-1
+  environment:
+    DB_HOST: ${ssm:/express/db/host}
+    DB_DATABASE: ${ssm:/express/db/name}
+    DB_USERNAME: ${ssm:/express/db/username}
+    DB_PASSWORD: ${ssm:/express/db/password}
+
+ iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ssm:GetParameter"
+        - "ssm:GetParameters"
+        - "ssm:GetParametersByPath"
+      Resource:
+        - "arn:aws:ssm:af-south-1:218381085969:parameter/express/db/*"   
 
 functions:
   migrate:
-    handler: public/index.php
+    handler: vendor/bin/bref
+    command: php artisan migrate --force
     layers:
-      - ${bref:layer.php-81}  # Ensure you are using the correct PHP 8.1 layer from Bref
-    environment:
-      DB_HOST: expressuddb.cdswaw8i23c6.af-south-1.rds.amazonaws.com
-      DB_DATABASE: expressuddb
-      DB_USERNAME: admin
-      DB_PASSWORD: 3|Y$(iC5.v7aX]A_a7>z9zNwOTbE
+      - ${bref:layer.php-81}
     events:
       - schedule:
-          rate: rate(1 day)  # This schedules the migration to run daily (can be adjusted)
+          rate: rate(1 day)
