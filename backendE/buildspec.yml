@@ -1,61 +1,25 @@
-# version: 0.2
-
-# phases:
-#   install:
-#     runtime-versions:
-#       php: 8.3  # Use the correct PHP version for your Laravel app
-#     commands:
-#       - echo Installing system dependencies...
-#       - yum install -y git unzip
-#       - curl -sS https://getcomposer.org/installer | php
-#       - mv composer.phar /usr/local/bin/composer
-#   pre_build:
-#     commands:
-#       - echo Installing PHP dependencies...
-#       - composer install --no-dev --optimize-autoloader
-#   build:
-#     commands:
-#       - echo Build phase complete. Nothing to build for Laravel.
-#   post_build:
-#     commands:
-#       - echo Packaging application...
-# artifacts:
-#   files:
-#     - '**/*'  # Include all files
-#     - '!node_modules/**/*'  # Exclude unnecessary directories
-
 version: 0.2
 
 phases:
   install:
     runtime-versions:
-      php: 8.3  # Ensure PHP 8.3 is selected
+      php: 8.3  # Use the correct PHP version for your Laravel app
     commands:
-      echo "Installing system dependencies..."
-      yum install -y git unzip
-      echo "PHP version:"
-      php -v  # Verify PHP version
-      echo "Composer version:"
-      composer --version  # Verify Composer version
-      echo "Directory contents:"
-      ls -la /codebuild/output/src2674887116/src  # List files in the source directory
-
+      - echo Installing system dependencies...
+      - yum install -y git unzip
+      - curl -sS https://getcomposer.org/installer | php
+      - mv composer.phar /usr/local/bin/composer
   pre_build:
     commands:
-      echo "Installing PHP dependencies..."
-      cd /codebuild/output/src2674887116/src  # Ensure we're in the correct directory
-      ls -la  # Check the contents and ensure composer.json exists
-      composer install --no-dev --optimize-autoloader  # Install Composer dependencies
-
+      - echo Installing PHP dependencies...
+      - composer install --no-dev --optimize-autoloader
   build:
     commands:
-      echo "Running build commands..."
-
+      - echo Build phase complete. Nothing to build for Laravel.
   post_build:
     commands:
-      echo "Post build actions..."
-
+      - echo Packaging application...
 artifacts:
   files:
-    - '**/*'  # Include all files in the build output
-  discard-paths: yes  # Remove the folder structure in the artifact
+    - '**/*'  # Include all files
+    - '!node_modules/**/*'  # Exclude unnecessary directories
