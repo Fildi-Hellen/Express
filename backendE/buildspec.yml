@@ -38,12 +38,12 @@ phases:
       echo "Composer version:"
       composer --version  # Verify Composer version
       echo "Directory contents:"
-      ls -la /codebuild/output/src862823641/src  # List files in the source directory
+      ls -la /codebuild/output/src2674887116/src  # List files in the source directory
 
   pre_build:
     commands:
       echo "Installing PHP dependencies..."
-      cd /codebuild/output/src862823641/src  # Ensure we're in the correct directory
+      cd /codebuild/output/src2674887116/src  # Ensure we're in the correct directory
       ls -la  # Check the contents and ensure composer.json exists
       composer install --no-dev --optimize-autoloader  # Install Composer dependencies
 
