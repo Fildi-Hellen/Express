@@ -106,7 +106,7 @@
 
 
 .header__logo {
-	padding: 30px 0;
+	padding: 0px 30px;
 
 	
     header{
@@ -173,12 +173,12 @@
 		min-width:8rem;
 	  }
 	  
-
 	
 }
 
- .header__logo a {
-	 display: inline-block; 
+ .header__logo  img {
+	  display: inline-block;  
+	 
 } 
 
 .header__menu {
@@ -286,13 +286,26 @@
 	margin-right: 70px;
 	position: relative;
 }
-.header__logo a img {
-    max-width: 100%; /* Ensure the logo is responsive */
-    height: auto; /* Maintain aspect ratio */
+.header__logo a {
+    display: inline-block;
+	margin-right: 5px;
+	position: relative;
 }
+@media screen and (max-width: 1024px) {
+    .header__logo a img {
+        max-width: 120px; /* Smaller size for medium screens */
+    }
+}
+
 @media screen and (max-width: 768px) {
     .header__logo a img {
-        max-width: 80%; /* Adjust the size of the logo for smaller screens */
+        max-width: 100px; /* Smaller size for small screens */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .header__logo a img {
+        max-width: 80px; /* Smallest size for mobile screens */
     }
 }
 

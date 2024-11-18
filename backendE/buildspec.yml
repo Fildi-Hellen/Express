@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      php: 8.3  # Use the correct PHP version for your Laravel app
+      php: 8.3
     commands:
       - echo Installing system dependencies...
       - yum install -y git unzip
@@ -12,7 +12,8 @@ phases:
   pre_build:
     commands:
       - echo Installing PHP dependencies...
-      - composer install
+      - cd backendE  # Navigate to the Laravel project directory
+      - composer install --no-dev --optimize-autoloader
   build:
     commands:
       - echo Build phase complete. Nothing to build for Laravel.
@@ -22,4 +23,3 @@ phases:
 artifacts:
   files:
     - '**/*'  # Include all files
-    - '!node_modules/**/*'  # Exclude unnecessary directories
