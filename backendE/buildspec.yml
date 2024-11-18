@@ -12,7 +12,7 @@ phases:
   pre_build:
     commands:
       - echo Installing PHP dependencies...
-      - composer install --no-dev --optimize-autoloader
+      - composer install
   build:
     commands:
       - echo Build phase complete. Nothing to build for Laravel.
