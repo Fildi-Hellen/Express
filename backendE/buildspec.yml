@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 8.1  # Use the correct PHP version for your Laravel app
+    commands:
+      - echo Installing system dependencies...
+      - yum install -y git unzip
+      - curl -sS https://getcomposer.org/installer | php
+      - mv composer.phar /usr/local/bin/composer
+  pre_build:
+    commands:
+      - echo Installing PHP dependencies...
+      - composer install --no-dev --optimize-autoloader
+  build:
+    commands:
+      - echo Build phase complete. Nothing to build for Laravel.
+  post_build:
+    commands:
+      - echo Packaging application...
+artifacts:
+  files:
+    - '**/*'  # Include all files
+    - '!node_modules/**/*'  # Exclude unnecessary directories

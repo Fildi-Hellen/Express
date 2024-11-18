@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: /
-    destination: /var/www/html
+    destination: /var/www/html  # Target Laravel application directory
 
 hooks:
   BeforeInstall:
@@ -11,7 +11,7 @@ hooks:
       timeout: 300
       runas: root
   AfterInstall:
-    - location: deploy.sh
+    - location: scripts/deploy.sh
       timeout: 300
       runas: root
   ApplicationStart:
