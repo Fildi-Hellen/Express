@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      php: 8.1  # Use the correct PHP version for your Laravel app
+      php: 8.3  # Use the correct PHP version for your Laravel app
     commands:
       - echo Installing system dependencies...
       - yum install -y git unzip
