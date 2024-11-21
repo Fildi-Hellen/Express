@@ -1,0 +1,30 @@
+<!-- Payment Form Template -->
+<form (submit)="processPayment(amount, selectedPaymentMethod)">
+    <div *ngIf="selectedPaymentMethod === 'stripe'">
+      <div id="card-element"></div> <!-- Stripe's Card Element -->
+      <button type="submit" id="btn">Pay with Stripe</button>
+    </div>
+    
+    <div *ngIf="selectedPaymentMethod === 'momo'">
+      <input type="text" [(ngModel)]="accountNumber" placeholder="Enter MOMO Account" required />
+      <input type="number" [(ngModel)]="amount" placeholder="Enter Amount" required />
+      <button type="submit" id="btn">Pay with MOMO</button>
+    </div>
+  
+    <div *ngIf="selectedPaymentMethod === 'mpase'">
+      <input type="text" [(ngModel)]="accountNumber" placeholder="Enter Mpase Account" required />
+      <input type="number" [(ngModel)]="amount" placeholder="Enter Amount" required />
+      <button type="submit" id="btn">Pay with Mpase</button>
+    </div>
+  </form>
+  
+  <!-- Select payment method -->
+  <div>
+    <label>Select Payment Method:</label>
+    <select [(ngModel)]="selectedPaymentMethod">
+      <option value="stripe">Stripe</option>
+      <option value="momo">MOMO</option>
+      <option value="mpase">Mpase</option>
+    </select>
+  </div>
+  

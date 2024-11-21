@@ -11,6 +11,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PharmaController;
 use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\RestaurantController;
@@ -73,4 +74,8 @@ Route::get('settings', [SettingsController::class, 'getSettings']);
 Route::put('settings', [SettingsController::class, 'updateSettings']);
 
 Route::get('search', [SearchController::class, 'search']);
+
+Route::post('/stripe/payment', [PaymentController::class, 'processStripePayment']);
+Route::post('/momo/payment', [PaymentController::class, 'processMomoPayment']);
+Route::post('/mpase/payment', [PaymentController::class, 'processMpasePayment']);
 

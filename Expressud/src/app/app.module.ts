@@ -108,6 +108,7 @@ import { PharmacyItemsComponent } from './shared/Pharm/pharmacy-items/pharmacy-i
 import { PharmacyServingComponent } from './shared/Pharm/pharmacy-serving/pharmacy-serving.component';
 import { SearchComponent } from './shared/search/search.component';
 import { VLoginComponent } from './auth/v-login/v-login.component';
+import { StripePaymentsComponent } from './Payments/stripe-payments/stripe-payments.component';
 
 
 
@@ -119,6 +120,7 @@ import { VLoginComponent } from './auth/v-login/v-login.component';
   declarations: [
     AppComponent,
     HomeComponent,
+    StripePaymentsComponent,
     StoreComponent,
     GoogleComponent,
     PopformComponent,

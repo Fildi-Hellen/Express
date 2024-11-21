@@ -89,6 +89,7 @@ import { PharmacyServingComponent } from './shared/Pharm/pharmacy-serving/pharma
 import { PharmacyItemsComponent } from './shared/Pharm/pharmacy-items/pharmacy-items.component';
 import { SearchComponent } from './shared/search/search.component';
 import { VLoginComponent } from './auth/v-login/v-login.component';
+import { StripePaymentsComponent } from './Payments/stripe-payments/stripe-payments.component';
 
 
 
@@ -106,6 +107,7 @@ const routes: Routes = [
   {path:'product',component:ProductComponent},
   {path:'hero',component:HeroComponent},
   {path:'instagram',component:InstagramComponent},
+  {path:'stripe-payments',component:StripePaymentsComponent},
   {path:'banner',component:BannerComponent},
   {path:'categories',component:CategoriesComponent},
   {path:'header',component:HeaderComponent},
