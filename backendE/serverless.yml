@@ -9,22 +9,71 @@ provider:
     DB_DATABASE: ${ssm:/express/db/name}
     DB_USERNAME: ${ssm:/express/db/username}
     DB_PASSWORD: ${ssm:/express/db/password}
-
- iamRoleStatements:
+  iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "ssm:GetParameter"
         - "ssm:GetParameters"
         - "ssm:GetParametersByPath"
       Resource:
-        - "arn:aws:ssm:af-south-1:218381085969:parameter/express/db/*"   
+        - "arn:aws:ssm:af-south-1:218381085969:parameter/express/db/*"
+    - Effect: "Allow"
+      Action:
+        - "rds:DescribeDBInstances"
+        - "rds:DescribeDBClusters"
+        - "rds:ModifyDBInstance"
+        - "rds:ModifyDBCluster"
+        - "rds:Connect"
+      Resource: "*"
 
 functions:
   migrate:
     handler: vendor/bin/bref
     command: php artisan migrate --force
     layers:
-      - ${bref:layer.php-81}
+      - arn:aws:lambda:af-south-1:209497400698:layer:php-81-fpm:20 # Example layer, replace with the latest
     events:
       - schedule:
           rate: rate(1 day)
+
+resources:
+  Resources:
+    LambdaExecutionRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: "LambdaDBHandlerRole"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service: 
+                  - "lambda.amazonaws.com"
+              Action: "sts:AssumeRole"
+        Policies:
+          - PolicyName: "AccessRDSandSSM"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "ssm:GetParameter"
+                    - "ssm:GetParameters"
+                    - "ssm:GetParametersByPath"
+                    - "rds:DescribeDBInstances"
+                    - "rds:DescribeDBClusters"
+                    - "rds:ModifyDBInstance"
+                    - "rds:ModifyDBCluster"
+                    - "rds:Connect"
+                  Resource: "*"
+                - Effect: "Allow"
+                  Action:
+                    - "logs:CreateLogGroup"
+                    - "logs:CreateLogStream"
+                    - "logs:PutLogEvents"
+                  Resource: "arn:aws:logs:*:*:*"
+                - Effect: "Allow"
+                  Action:
+                    - "codepipeline:PutJobSuccessResult"
+                    - "codepipeline:PutJobFailureResult"
+                  Resource: "*"
