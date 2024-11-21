@@ -2,7 +2,7 @@ service: backend-e
 
 provider:
   name: aws
-  runtime: provided.al2
+  runtime: nodejs20.x
   region: af-south-1
   environment:
     DB_HOST: ${ssm:/express/db/host}
