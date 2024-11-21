@@ -20,6 +20,19 @@ phases:
   post_build:
     commands:
       - echo Packaging application...
+      - echo Running database migrations...
+      - cd backendE  # Ensure you are in the Laravel directory
+      - php artisan migrate --force  # Run migrations, the --force flag is required for production
 artifacts:
   files:
     - '**/*'  # Include all files
+
+# Optionally, you can define environment variables or use Secrets Manager for DB credentials
+env:
+  variables:
+    DB_CONNECTION=mysql
+    DB_HOST=expressuddb.cdswaw8i23c6.af-south-1.rds.amazonaws.com
+    DB_PORT=3306
+    DB_DATABASE=expressuddb
+    DB_USERNAME=admin
+    DB_PASSWORD=password

@@ -2,7 +2,7 @@ service: backend-e
 
 provider:
   name: aws
-  runtime: nodejs20.x
+  runtime: nodejs20.x # Using the latest Node.js runtime
   region: af-south-1
   environment:
     DB_HOST: ${ssm:/express/db/host}
@@ -25,16 +25,31 @@ provider:
         - "rds:ModifyDBCluster"
         - "rds:Connect"
       Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+      Resource: "arn:aws:logs:*:*:*"
+    - Effect: "Allow"
+      Action:
+        - "codepipeline:PutJobSuccessResult"
+        - "codepipeline:PutJobFailureResult"
+      Resource: "*"
 
 functions:
   migrate:
-    handler: vendor/bin/bref
-    command: php artisan migrate --force
+    handler: artisan # Using Bref's artisan handler
+    description: "Run Laravel migrations"
     layers:
-      - arn:aws:lambda:af-south-1:209497400698:layer:php-81-fpm:20 # Example layer, replace with the latest
+      - arn:aws:lambda:af-south-1:209497400698:layer:php-81-fpm:20 # Use appropriate PHP layer
+    timeout: 120
+    memorySize: 512
+    environment:
+      ARTISAN_COMMAND: "migrate --force"
     events:
       - schedule:
-          rate: rate(1 day)
+          rate: rate(1 day) # Scheduled execution once daily
 
 resources:
   Resources:
@@ -47,7 +62,7 @@ resources:
           Statement:
             - Effect: "Allow"
               Principal:
-                Service: 
+                Service:
                   - "lambda.amazonaws.com"
               Action: "sts:AssumeRole"
         Policies:
