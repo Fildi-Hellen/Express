@@ -1,0 +1,7 @@
+paths:
+  - backendE/
+excludePaths:
+  - Expressud/
+  - driver/
+  - admin-panel/
+  - vendor-panel/
