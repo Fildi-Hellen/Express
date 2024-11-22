@@ -18,7 +18,7 @@ phases:
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/express/db/password" --with-decryption --query Parameter.Value --output text)
       - echo Environment variables loaded successfully.
       - echo Installing PHP dependencies...
-      - cd backendE  # Navigate to the Laravel project directory
+      - cd $CODEBUILD_SRC_DIR/backendE  # Navigate to the Laravel project directory
       - composer install --no-dev --optimize-autoloader
   build:
     commands:
@@ -27,7 +27,7 @@ phases:
     commands:
       - echo Packaging application...
       - echo Running database migrations...
-      - cd backendE  # Ensure you are in the Laravel directory
+      - cd $CODEBUILD_SRC_DIR/backendE  # Ensure you are in the Laravel directory
       - php artisan migrate --force  # Run migrations with the --force flag
 artifacts:
   files:
