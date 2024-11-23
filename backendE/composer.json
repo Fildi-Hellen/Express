@@ -7,15 +7,16 @@
         }
     },
     "require": {
-        "laravel/framework": "^11.32",
+        "laravel/framework": "^10.0",
         "bref/bref": "^2.3",
         "bref/laravel-bridge": "^2.4",
-        "laravel/sanctum": "^4.0",
-        "nunomaduro/collision": "^8.5",
+        "laravel/sanctum": "^3.0",
+        "nunomaduro/collision": "^7.0",
         "stripe/stripe-php": "^16.2"
     },
     "require-dev": {
         "laravel/sail": "^1.38",
-        "laravel/tinker": "^2.10"
+        "laravel/tinker": "^2.10",
+         "nunomaduro/collision": "^7.0"
     }
 }
