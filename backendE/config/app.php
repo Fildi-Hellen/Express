@@ -126,6 +126,7 @@ return [
     'providers' => [
     // Other providers...
     App\Providers\AppServiceProvider::class,
+    
 ],
 
 ];

@@ -26,11 +26,13 @@ phases:
       - echo Build phase complete. Nothing to build for Laravel.
   post_build:
     commands:
-      - echo Packaging application...
-      - echo Running database migrations...
-      - cd $CODEBUILD_SRC_DIR/backendE
+      - echo Clearing Laravel caches...
+      - php artisan cache:clear
       - php artisan config:clear
       - php artisan config:cache
+      - php artisan route:clear
+      - php artisan route:cache
+      - echo Running database migrations...
       - php artisan migrate --force
 artifacts:
   files:
