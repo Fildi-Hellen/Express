@@ -1,0 +1,70 @@
+<div class="container mt-4">
+    <!-- Verified Vendors Dropdown -->
+    <div class="mb-3">
+      <label for="verifiedVendorsDropdown" class="form-label">Verified Vendors</label>
+      <select class="form-select" id="verifiedVendorsDropdown">
+        <option *ngFor="let vendor of verifiedVendors" [value]="vendor.id">
+          {{ vendor.name }}
+        </option>
+      </select>
+    </div>
+  
+    <!-- Unverified Vendors Table -->
+    <div *ngIf="vendors.length" class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col" class="text-center">Actions</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vendor of vendors">
+            <td>{{ vendor.name }}</td>
+            <td>{{ vendor.email }}</td>
+            <td class="text-center">
+              <button 
+                class="btn btn-success btn-sm mr-2" 
+                (click)="verifyVendor(vendor)">
+                Verify
+              </button>
+              <button 
+                class="btn btn-danger btn-sm mr-2" 
+                (click)="rejectVendor(vendor.id)">
+                Reject
+              </button>
+              <button 
+                class="btn btn-warning btn-sm" 
+                (click)="requestMoreInfo(vendor.id, 'Please provide more details about your business.')">
+                Request More Info
+              </button>
+            </td>
+            <td>
+              <span 
+                class="badge"
+                [ngClass]="{
+                  'badge-success': vendor.status === 'Verified',
+                  'badge-danger': vendor.status === 'Rejected',
+                  'badge-warning': vendor.status === 'Info Requested'
+                }">
+                {{ vendor.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- No Vendors Message -->
+    <div *ngIf="!vendors.length" class="text-center mt-4">
+      <p class="alert alert-info">No unverified vendors.</p>
+    </div>
+  
+    <!-- Action Message -->
+    <p *ngIf="message" class="alert alert-success text-center mt-3">
+      {{ message }}
+    </p>
+  </div>
+  

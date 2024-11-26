@@ -1,0 +1,40 @@
+<!-- customer-menu-details.component.html -->
+
+<div class="container my-5">
+  <div class="card mb-4">
+    <div class="row g-0">
+      <div class="col-md-6">
+        <img
+          *ngIf="menu.image"
+          [src]="menu.imageUrl"
+          [alt]="menu.name"
+          class="img-fluid rounded-start w-100"
+        />
+      </div>
+      <div class="col-md-6">
+        <div class="card-body">
+          <h1 class="card-title">{{ menu.name }}</h1>
+          <p class="card-text">{{ menu.description }}</p>
+
+          <p *ngIf="menu.price" class="card-text h5 text-success">
+            <strong>Price:</strong> ${{ menu.price | number: '1.2-2' }}
+          </p>
+
+          <!-- Display additional attributes -->
+          <div *ngIf="menu.additionalAttributes" class="mt-3">
+            <ul class="list-group">
+              <li
+                *ngFor="let attr of menu.additionalAttributes | keyvalue"
+                class="list-group-item"
+              >
+                <strong>{{ attr.key | titlecase }}:</strong> {{ attr.value }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Add any action buttons or links here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 8.3
+    commands:
+      - echo Installing system dependencies...
+      - yum install -y git unzip
+      - curl -sS https://getcomposer.org/installer | php
+      - mv composer.phar /usr/local/bin/composer
+  pre_build:
+    commands:
+      - echo Fetching environment variables from AWS Parameter Store...
+      - export DB_HOST=$(aws ssm get-parameter --name "/express/db/host" --query Parameter.Value --output text)
+      - export DB_DATABASE=$(aws ssm get-parameter --name "/express/db/name" --query Parameter.Value --output text)
+      - export DB_USERNAME=$(aws ssm get-parameter --name "/express/db/username" --query Parameter.Value --output text)
+      - export DB_PASSWORD=$(aws ssm get-parameter --name "/express/db/password" --with-decryption --query Parameter.Value --output text)
+      - echo Environment variables loaded successfully.
+      - echo Installing PHP dependencies...
+      - cd $CODEBUILD_SRC_DIR/backend
+      - rm -rf vendor
+      - composer install --no-dev --optimize-autoloader
+  build:
+    commands:
+      - echo Build phase complete. Nothing to build for Laravel.
+  post_build:
+    commands:
+      - echo Clearing Laravel caches...
+      - php artisan cache:clear
+      - php artisan config:clear
+      - php artisan config:cache
+      - php artisan route:clear
+      - php artisan route:cache
+      - echo Running database migrations...
+      - php artisan migrate --force
+artifacts:
+  files:
+    - '**/*'

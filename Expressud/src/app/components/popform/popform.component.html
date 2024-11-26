@@ -4,11 +4,6 @@
       <input type="hidden" formControlName="role" value="vendor">
       <h1>Build your business online with Expressud</h1>
       <form [formGroup]="registerForm" (ngSubmit)="register()">
-        <div *ngIf="message" class="message">{{ message }}</div>
-        <div>
-          <h2>Start selling with Expressud</h2>
-          <h3>Register to become a partner. Sell more, increase your earnings and manage your online business with us.</h3>
-        </div>
         <div>
           <label for="establishmentName">Establishment Name:</label>
           <input type="text" id="establishmentName" formControlName="establishmentName">
@@ -61,19 +56,19 @@
           <input type="checkbox" id="promocode" formControlName="promocode">
           <label for="promocode">I have a promo code</label>
         </div>
+
         <div>
           <input type="checkbox" id="acceptUpdates" formControlName="acceptUpdates">
           <label for="acceptUpdates">I accept updates from Expressud</label>
         </div>
-        <div>
-          <input type="checkbox" id="acceptPrivacyPolicy" formControlName="acceptPrivacyPolicy">
+        <div><input type="checkbox" id="acceptPrivacyPolicy" formControlName="acceptPrivacyPolicy" [value]="true">
           <label for="acceptPrivacyPolicy">I accept the privacy policy</label>
         </div>
         
         <div>
           <button type="submit" [disabled]="registerForm.invalid" id="btn">Submit</button>
         </div>
-        <p>Already registered? <a routerLink="/v-login">Login</a></p>
+        <p>Already registered? <a routerLink="/vendor-login">Login</a></p>
         <p>Want to be a courier? <a routerLink="/deliver">Register here</a></p>
       </form>
     </div>
@@ -86,3 +81,5 @@
     </div>
   </div>
 </div>
+
+

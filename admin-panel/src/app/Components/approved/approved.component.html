@@ -1,0 +1,27 @@
+<!-- approved.component.html -->
+
+<h1 class="page-title">Unapproved Menus</h1>
+
+<div *ngIf="message" class="alert alert-info">{{ message }}</div>
+
+<div *ngFor="let menu of menus" class="menu-card">
+  <h2 class="menu-title">
+    {{ menu.name }} ({{ (menu.establishmentType || '') | titlecase }})
+  </h2>
+  <p class="menu-description">{{ menu.description }}</p>
+  <p *ngIf="menu.price" class="menu-price">
+    Price: ${{ menu.price | number: '1.2-2' }}
+  </p>
+
+  <!-- Display additional attributes -->
+  <div *ngIf="menu.additionalAttributes" class="menu-attributes">
+    <div *ngFor="let attr of menu.additionalAttributes | keyvalue" class="menu-attribute">
+      <p>
+        <span class="attribute-key">{{ (attr.key || '') | titlecase }}:</span>
+        <span class="attribute-value">{{ attr.value }}</span>
+      </p>
+    </div>
+  </div>
+
+  <button (click)="approveMenu(menu.id)" class="approve-button">Approve</button>
+</div>

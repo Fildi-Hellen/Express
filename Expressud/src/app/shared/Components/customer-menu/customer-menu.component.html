@@ -1,0 +1,33 @@
+<!-- available-items.component.html with Bootstrap classes -->
+
+<div class="container">
+  <h1 class="page-title text-center my-4">Available Items</h1>
+
+  <!-- Filter by Establishment Type -->
+  <form [formGroup]="filterForm" class="filter-form row mb-4">
+    <div class="col-md-6 offset-md-3">
+      <label for="establishmentType" class="form-label">Filter by Establishment Type:</label>
+      <select formControlName="establishmentType" id="establishmentType" class="form-select">
+        <option *ngFor="let type of establishmentTypes" [value]="type.value">
+          {{ type.display }}
+        </option>
+      </select>
+    </div>
+  </form>
+
+  <div *ngFor="let menu of menus" class="menu-item card mb-4">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img *ngIf="menu.image" [src]="menu.imageUrl" [alt]="menu.name" class="menu-image img-fluid rounded-start" />
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h2 class="menu-name card-title">{{ menu.name }}</h2>
+          <p class="menu-description card-text">{{ menu.description }}</p>
+          <p *ngIf="menu.price" class="menu-price card-text"><strong>Price:</strong> ${{ menu.price | number: '1.2-2' }}</p>
+          <a [routerLink]="['/menu', menu.id]" class="view-details btn btn-primary">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

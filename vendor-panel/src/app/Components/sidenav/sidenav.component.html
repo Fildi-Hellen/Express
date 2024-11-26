@@ -3,11 +3,12 @@
     <mat-icon *ngIf="!sidenav.opened"> menu </mat-icon>
     <mat-icon *ngIf="sidenav.opened"> close </mat-icon>
   </button>
-  <span class="toolbar-text">Expressud</span>
+  <div class="header__logo">
+    <a href="#" title="Go to Dashboard"><img src="assets/img/expre.png" alt=""></a>
+</div>
   <span class="spacer"></span> <!-- Spacer to push the link to the right -->
   <a mat-button routerLink="/faq" class="link" style="color: white;">FAQ</a>
 </mat-toolbar>
-
   
   <mat-sidenav-container>
     <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8">

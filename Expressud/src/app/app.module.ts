@@ -109,6 +109,10 @@ import { PharmacyServingComponent } from './shared/Pharm/pharmacy-serving/pharma
 import { SearchComponent } from './shared/search/search.component';
 import { VLoginComponent } from './auth/v-login/v-login.component';
 import { StripePaymentsComponent } from './Payments/stripe-payments/stripe-payments.component';
+import { CustomerMenuComponent } from './shared/Components/customer-menu/customer-menu.component';
+import { CustomerMenuDetailsComponent } from './shared/Components/customer-menu-details/customer-menu-details.component';
+import { VendorForgotPasswordComponent } from './auth/vendor-forgot-password/vendor-forgot-password.component';
+import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component';
 
 
 
@@ -132,6 +136,8 @@ import { StripePaymentsComponent } from './Payments/stripe-payments/stripe-payme
     LoginComponent,
     UnauthorizedComponent,
     AdminComponent,
+    CustomerMenuComponent,
+    CustomerMenuDetailsComponent,
     ConfirmMessageComponent,
     ProcessComponent,
     PaymentsComponent,
@@ -187,6 +193,8 @@ import { StripePaymentsComponent } from './Payments/stripe-payments/stripe-payme
     BlogHeaderComponent,
     TabComponent,
     SwiperComponent,
+    VendorForgotPasswordComponent,
+    VendorLoginComponent,
     AuthComponent,
     MoneyComponent,
     PageLandingComponent,

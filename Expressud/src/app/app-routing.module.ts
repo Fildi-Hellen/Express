@@ -90,6 +90,10 @@ import { PharmacyItemsComponent } from './shared/Pharm/pharmacy-items/pharmacy-i
 import { SearchComponent } from './shared/search/search.component';
 import { VLoginComponent } from './auth/v-login/v-login.component';
 import { StripePaymentsComponent } from './Payments/stripe-payments/stripe-payments.component';
+import { CustomerMenuComponent } from './shared/Components/customer-menu/customer-menu.component';
+import { CustomerMenuDetailsComponent } from './shared/Components/customer-menu-details/customer-menu-details.component';
+import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component';
+import { VendorForgotPasswordComponent } from './auth/vendor-forgot-password/vendor-forgot-password.component';
 
 
 
@@ -139,7 +143,7 @@ const routes: Routes = [
   {path:'sell',component:SellComponent},
   {path:'grow',component:GrowComponent},
   {path:'manage',component:ManageComponent},
-  { path: '', redirectTo: '/sell', pathMatch: 'full' },
+  // { path: '', redirectTo: '/sell', pathMatch: 'full' },
   {path:'blog-header',component:BlogHeaderComponent},
   {path:'tab',component:TabComponent},
   {path:'swiper',component:SwiperComponent},
@@ -148,10 +152,9 @@ const routes: Routes = [
   {path:'partner-documents',component:PartnerDocumentsComponent},
   {path:'image-carousel',component:ImageCarouselComponent},
   {path:'payments',component:PaymentsComponent},
- 
-  // { path: '', redirectTo: '/login', pathMatch: 'full' },
-
- 
+  { path: 'menus', component: CustomerMenuComponent},
+  { path: 'menu/:id', component: CustomerMenuDetailsComponent },
+  // { path: '', redirectTo: '/login', pathMatch: 'full' }, 
   {path:'filter-driver',component:FilterDriverComponent},
   {path:'header-driver',component:HeaderDriverComponent},
   // {path:'hero-driver',component:HeroDriverComponent,  canActivate: [AuthGuard, RoleGuard], data: { expectedRole: 'driver' }},
@@ -192,10 +195,11 @@ const routes: Routes = [
   {path:'pharmacy',component:PharmacyComponent},
   {path:'pharmacy-item/:categoryId',component:PharmacyServingComponent},
   {path:'pharmacy-items/:pharmacyId/:categoryId',component:PharmacyItemsComponent},
-  { path: '', redirectTo: '/carts-page', pathMatch: 'full' },
-  { path: '**', redirectTo: '/carts-page' },
+  { path: '**', redirectTo: 'home', pathMatch: 'full' },
   {path:'search',component:SearchComponent},
-  {path:'v-login',component:VLoginComponent}
+  {path:'v-login',component:VLoginComponent},
+  {path:'vendor-login',component:VendorLoginComponent},
+  {path:'vendor-forgot-password',component:VendorForgotPasswordComponent}
 
 
 

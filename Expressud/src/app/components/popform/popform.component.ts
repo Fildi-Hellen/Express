@@ -30,20 +30,38 @@ export class PopformComponent implements OnInit {
       password_confirmation: ['', [Validators.required]],
       promocode: [false],
       acceptUpdates: [false],
-      acceptPrivacyPolicy: [false]
+      acceptPrivacyPolicy: [false, Validators.requiredTrue]
+
     });
   }
 
+
+
   register() {
-    if (this.registerForm.valid) {
+      if (this.registerForm.valid) {
+        console.log('Form Data:', this.registerForm.value);
       this.vendorService.registerVendor(this.registerForm.value).subscribe(
-        response => {
+        (response: any) => {
           this.message = response.message;
+          this.message = response.message;
+        this.registerForm.reset(); // Clear the form fields
+        setTimeout(() => {
+          this.message = ''; // Clear the message after a delay
+        }, 5000);
+       
+
+
         },
-        error => {
-          this.message = 'There was an error during registration.';
+        (error) => {
+           console.error('Registration Error:', error); 
+          if (error.error && error.error.errors) {
+            this.message = Object.values(error.error.errors).join(' ');
+          } else {
+            this.message = 'There was an error during registration.';
+          }
         }
       );
     }
   }
 }
+
