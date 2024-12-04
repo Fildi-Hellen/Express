@@ -39,7 +39,13 @@ phases:
     commands:
       - echo "Testing database connectivity..."
       - yum install -y nmap-ncat
-      - nc -zv $DB_HOST $DB_PORT || echo "Failed to connect to DB_HOST: $DB_HOST on port $DB_PORT"
+      - |
+        if nc -zv $DB_HOST $DB_PORT; then
+          echo "Successfully connected to the database."
+        else
+          echo "Failed to connect to DB_HOST: $DB_HOST on port $DB_PORT"
+          exit 1
+        fi
       - echo "Current .env file:"
       - cat $CODEBUILD_SRC_DIR/backend/.env
       - echo "Clearing Laravel caches..."
