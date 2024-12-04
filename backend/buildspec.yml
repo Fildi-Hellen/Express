@@ -37,13 +37,18 @@ phases:
 
   post_build:
     commands:
-      - echo Clearing Laravel caches...
+      - echo "Testing database connectivity..."
+      - yum install -y nc || apt-get update && apt-get install -y netcat
+      - nc -zv $DB_HOST $DB_PORT
+      - echo "Current .env file:"
+      - cat $CODEBUILD_SRC_DIR/backend/.env
+      - echo "Clearing Laravel caches..."
       - php artisan cache:clear
       - php artisan config:clear
       - php artisan config:cache
       - php artisan route:clear
       - php artisan route:cache
-      - echo Running database migrations...
+      - echo "Running database migrations..."
       - php artisan migrate --force
 
 artifacts:
