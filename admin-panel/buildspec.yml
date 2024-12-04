@@ -14,8 +14,8 @@ phases:
   build:
     commands:
       - echo Build started
-      - cd $CODEBUILD_SRC_DIR/admin-panel  # Use absolute path to ensure it is accessible
-      - ng build --configuration production --output-path=dist/admin-panel
+      - cd $CODEBUILD_SRC_DIR/admin-panel
+      - ng build --configuration production --output-path=dist/admin-panel  # Correct output path
 
   post_build:
     commands:
@@ -24,4 +24,4 @@ phases:
 artifacts:
   files:
     - '**/*'                          # Include all files within the base directory
-  base-directory: 'admin-panel/dist/admin-panel'  # Specify the correct base directory for artifacts
+  base-directory: 'admin-panel/dist/admin-panel'  # Correct base directory for artifacts
