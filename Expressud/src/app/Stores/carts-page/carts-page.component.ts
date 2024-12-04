@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/Services/cart.service';
-import { FoodService } from 'src/app/Services/food.service';
 
 @Component({
   selector: 'app-carts-page',
@@ -9,39 +8,50 @@ import { FoodService } from 'src/app/Services/food.service';
   styleUrls: ['./carts-page.component.css']
 })
 export class CartsPageComponent implements OnInit {
-
   cartItems: any[] = [];
-  totalAmount: number = 0;
-  currency: string = 'SSP'; // Default currency
+  totalPrice: number = 0;
 
-  constructor(private cartService: CartService, private foodService: FoodService, private router: Router) {}
+
+  constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.cartService.cartItems$.subscribe(cartItems => {
-      this.cartItems = cartItems;
-      this.calculateTotalAmountAndCurrency();
-    });
+    this.loadCart();
   }
 
-  calculateTotalAmountAndCurrency(): void {
-    this.totalAmount = 0;
-    this.currency = this.cartItems.length > 0 ? this.cartItems[0].currency : 'SSP'; // Set currency to the first item's currency
-
-    this.totalAmount = this.cartItems.reduce((total, item) => {
-      if (item.currency !== this.currency) {
-        this.currency = 'Multiple';
-      }
-      return total + item.price * item.quantity;
-    }, 0);
+  // Load cart items
+  loadCart(): void {
+    this.cartItems = this.cartService.getCart();
+    this.calculateTotalPrice();
   }
 
+  // Remove item from cart
   removeFromCart(item: any): void {
     this.cartService.removeFromCart(item);
-    this.calculateTotalAmountAndCurrency(); // Recalculate after removing an item
+    this.loadCart();
   }
 
-  onProceedToCheckout(): void {
-    const cartItemsJson = JSON.stringify(this.cartItems);
-    this.router.navigate(['/checkout'], { queryParams: { cartItems: cartItemsJson, totalAmount: this.totalAmount, currency: this.currency } });
+  // Increase item quantity
+  increaseQuantity(item: any): void {
+    this.cartService.updateQuantity(item, item.quantity + 1);
+    this.loadCart();
   }
+
+  // Decrease item quantity
+  decreaseQuantity(item: any): void {
+    if (item.quantity > 1) {
+      this.cartService.updateQuantity(item, item.quantity - 1);
+      this.loadCart();
+    } else {
+      this.removeFromCart(item);
+    }
+  }
+
+  // Calculate total price
+  calculateTotalPrice(): void {
+    this.totalPrice = this.cartItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+  }
+
 }

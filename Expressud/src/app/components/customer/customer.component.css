@@ -1,0 +1,25 @@
+/* src/app/components/customer/customer.component.css */
+.categories, .establishments, .menus {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .category-card, .establishment-card, .menu-item {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .category-card:hover, .establishment-card:hover, .menu-item:hover {
+    background-color: #f7f7f7;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  

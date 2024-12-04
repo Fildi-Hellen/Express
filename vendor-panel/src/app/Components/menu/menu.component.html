@@ -1,57 +1,130 @@
-<!-- add-item.component.html -->
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Add New Menu</h1>
 
-<h1 class="form-title">Add New Item</h1>
+  <div *ngIf="message" class="alert alert-info text-center">{{ message }}</div>
 
-<div *ngIf="message" class="alert alert-info">{{ message }}</div>
-
-<form [formGroup]="menuForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="item-form">
+  <!-- Category Selection -->
   <div class="form-group">
-    <label for="name">Name:</label>
-    <input id="name" type="text" formControlName="name" required />
+    <label for="category" class="form-label">Select Category:</label>
+    <select
+      id="category"
+      [(ngModel)]="selectedCategory"
+      class="form-select"
+      (change)="onCategoryChange()"
+      required
+    >
+      <option value="">--Select Category--</option>
+      <option value="restaurant">Restaurant</option>
+      <option value="retail">Retail Store</option>
+      <option value="pharmacy">Pharmacy</option>
+      <option value="florist">Florist</option>
+      <option value="grocery">Grocery</option>
+      <option value="realEstate">Real Estate</option>
+    </select>
   </div>
 
-  <div class="form-group">
-    <label for="description">Description:</label>
-    <textarea id="description" formControlName="description"></textarea>
+  <!-- Establishment Name -->
+  <div class="form-group mt-3" *ngIf="selectedCategory">
+    <label for="establishmentName" class="form-label">Establishment Name:</label>
+    <input
+      id="establishmentName"
+      type="text"
+      class="form-control"
+      [(ngModel)]="establishmentName"
+      placeholder="Enter your establishment name"
+      required
+    />
   </div>
 
-  <div class="form-group" *ngIf="establishmentType !== 'realEstate'">
-    <label for="price">Price:</label>
-    <input id="price" type="number" formControlName="price" step="0.01" />
-  </div>
-
-  <div class="form-group">
-    <label for="category">Category:</label>
-    <input id="category" type="text" formControlName="category" />
-  </div>
-
-  <div class="form-group">
-    <label for="image">Image:</label>
-    <input id="image" type="file" (change)="onFileChange($event)" />
-  </div>
-
-  <!-- Additional fields based on establishment type -->
-  <div *ngIf="establishmentType === 'realEstate'">
+  <!-- Dynamic Form -->
+  <form [formGroup]="menuForm" (ngSubmit)="onSubmit()" *ngIf="selectedCategory && establishmentName" enctype="multipart/form-data" class="mt-4 card p-3 shadow">
     <div class="form-group">
-      <label for="location">Location:</label>
-      <input id="location" type="text" formControlName="location" required />
+      <label for="name" class="form-label">Menu Name:</label>
+      <input id="name" type="text" class="form-control" formControlName="name" required />
     </div>
-    <div class="form-group">
-      <label for="size">Size (sq ft):</label>
-      <input id="size" type="number" formControlName="size" />
+
+    <div class="form-group mt-3">
+      <label for="description" class="form-label">Description:</label>
+      <textarea id="description" class="form-control" formControlName="description"></textarea>
     </div>
-    <!-- Add more fields as needed -->
+
+    <div class="form-group mt-3">
+      <label for="price" class="form-label">Price:</label>
+      <input id="price" type="number" class="form-control" formControlName="price" step="0.01" required />
+    </div>
+
+    <div class="form-group mt-3">
+      <label for="availability" class="form-label">Availability:</label>
+      <input id="availability" type="text" class="form-control" formControlName="availability" required />
+    </div>
+
+    <!-- Restaurant Fields -->
+    <div *ngIf="selectedCategory === 'restaurant'" class="form-group mt-3">
+      <label for="cookTime" class="form-label">Cook Time:</label>
+      <input id="cookTime" type="text" class="form-control" formControlName="cookTime" required />
+    </div>
+
+    <!-- Pharmacy Fields -->
+    <div *ngIf="selectedCategory === 'pharmacy'" class="form-group mt-3">
+      <label for="expirationDate" class="form-label">Expiration Date:</label>
+      <input id="expirationDate" type="date" class="form-control" formControlName="expirationDate" required />
+    </div>
+    <div *ngIf="selectedCategory === 'pharmacy'" class="form-group mt-3">
+      <label for="manufacturingDate" class="form-label">Manufacturing Date:</label>
+      <input id="manufacturingDate" type="date" class="form-control" formControlName="manufacturingDate" required />
+    </div>
+
+    <!-- Real Estate Fields -->
+    <div *ngIf="selectedCategory === 'realEstate'" class="form-group mt-3">
+      <label for="location" class="form-label">Location:</label>
+      <input id="location" type="text" class="form-control" formControlName="location" required />
+    </div>
+    <div *ngIf="selectedCategory === 'realEstate'" class="form-group mt-3">
+      <label for="size" class="form-label">Size (sq ft):</label>
+      <input id="size" type="number" class="form-control" formControlName="size" required />
+    </div>
+    <div *ngIf="selectedCategory === 'realEstate'" class="form-group mt-3">
+      <label for="acres" class="form-label">Acres:</label>
+      <input id="acres" type="number" class="form-control" formControlName="acres" required />
+    </div>
+
+    <div class="form-group mt-3">
+      <label for="image" class="form-label">Image:</label>
+      <input id="image" type="file" class="form-control" (change)="onFileChange($event)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4 w-100" [disabled]="menuForm.invalid">Add Menu</button>
+  </form>
+
+
+
+  <!-- Display added menus -->
+  <div class="table-responsive mt-4">
+    <h2>Added Menus</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Establishment</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let menu of menus; let i = index">
+          <td>{{ menu.name }}</td>
+          <td>{{ menu.category }}</td>
+          <td>{{ menu.establishmentName }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm" (click)="editMenu(i)">Edit</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteMenu(i, menu.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <div *ngIf="establishmentType === 'pharmacy'">
-    <div class="form-group">
-      <label for="expirationDate">Expiration Date:</label>
-      <input id="expirationDate" type="date" formControlName="expirationDate" required />
-    </div>
-    <!-- Add more fields as needed -->
+  <div *ngIf="menus.length > 0" class="mt-4 text-center">
+    <button class="btn btn-success w-100" (click)="submitToAdmin()">Submit Menus to Admin</button>
   </div>
-
-  <!-- Add conditions for other establishment types -->
-
-  <button type="submit" [disabled]="menuForm.invalid" id="btn">Submit</button>
-</form>
+</div>

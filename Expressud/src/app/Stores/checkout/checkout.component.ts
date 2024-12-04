@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FoodService } from 'src/app/Services/food.service';
+import { Component,  OnInit } from '@angular/core';
+import { CartService } from 'src/app/Services/cart.service';
+
 
 @Component({
   selector: 'app-checkout',
@@ -9,88 +9,55 @@ import { FoodService } from 'src/app/Services/food.service';
 })
 export class CheckoutComponent implements OnInit {
 
-  @Input() totalAmount: number = 0;
-  @Input() cartItems: any[] = [];
-  deliveryAddress: string = '';
-  phoneNumber: string = '';
-  selectedPaymentMethod: string = '';
-  currency: string = 'SSP'; // Default currency
+  cartItems: any[] = [];
+  totalPrice: number = 0;
 
-  constructor(private foodService: FoodService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.cartItems = JSON.parse(params['cartItems']);
-      this.totalAmount = params['totalAmount'];
-      this.calculateTotalAmountAndCurrency();
-    });
+    this.loadCart();
   }
 
-  calculateTotalAmountAndCurrency(): void {
-    this.totalAmount = 0;
-    this.currency = this.cartItems.length > 0 ? this.cartItems[0].currency : 'SSP'; // Set currency to the first item's currency
-
-    this.totalAmount = this.cartItems.reduce((total, item) => {
-      if (item.currency !== this.currency) {
-        this.currency = 'Multiple';
-      }
-      return total + item.price * item.quantity;
-    }, 0);
+  // Load cart items
+  loadCart(): void {
+    this.cartItems = this.cartService.getCart();
+    this.calculateTotalPrice();
   }
 
-  updateAddress(address: string): void {
-    this.deliveryAddress = address;
-  }
-
-  updatePaymentMethod(event: any): void {
-    this.selectedPaymentMethod = event;
-  }
-
-  onOrder(): void {
-    if (!this.cartItems.length) {
-      alert('Your cart is empty');
-      return;
-    }
-
-    if (!this.deliveryAddress) {
-      alert('Please enter your delivery address');
-      return;
-    }
-
-    if (!this.phoneNumber) {
-      alert('Please enter your phone number');
-      return;
-    }
-
-    if (!this.selectedPaymentMethod) {
-      alert('Please select a payment method');
-      return;
-    }
-
-    const orderData = {
-      totalAmount: this.totalAmount,
-      deliveryAddress: this.deliveryAddress,
-      phoneNumber: this.phoneNumber,
-      cartItems: this.cartItems,
-      paymentMethod: this.selectedPaymentMethod,
-      currency: this.currency
-    };
-
-    this.foodService.placeOrder(orderData).subscribe(
-      (res: any) => {
-        if (res.result) {
-          alert('Order Placed Successfully');
-          localStorage.removeItem('cart');
-          this.cartItems = [];
-          this.totalAmount = 0;
-          this.router.navigate(['/thank-you']);
-        } else {
-          alert(res.message);
-        }
-      },
-      (err: any) => {
-        console.error('Error placing order:', err);
-      }
+  // Calculate total price
+  calculateTotalPrice(): void {
+    this.totalPrice = this.cartItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
     );
   }
+
+  // Mock place order
+  placeOrder(): void {
+    alert('Order placed successfully!');
+    this.cartService.clearCart();
+  }
+// Increase item quantity
+increaseQuantity(item: any): void {
+  this.cartService.updateQuantity(item, item.quantity + 1);
+  this.loadCart();
+}
+
+// Decrease item quantity
+decreaseQuantity(item: any): void {
+  if (item.quantity > 1) {
+    this.cartService.updateQuantity(item, item.quantity - 1);
+    this.loadCart();
+  } else {
+    this.removeFromCart(item);
+  }
+}
+removeFromCart(item: any): void {
+  this.cartService.removeFromCart(item);
+  this.loadCart();
+}
+
+
+
+  
 }

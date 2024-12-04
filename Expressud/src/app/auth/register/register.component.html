@@ -1,22 +1,61 @@
-<form (ngSubmit)="register()">
- 
-  <div>
-      <label>Full Name:</label>
-      <input type="text" [(ngModel)]="registrationData.fullName" name="fullName" required>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h3 class="text-center mb-4">Register</h3>
+        <form (ngSubmit)="register()">
+          <div class="form-group mb-3">
+            <label for="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              [(ngModel)]="name"
+              name="name"
+              required
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              [(ngModel)]="email"
+              name="email"
+              required
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              [(ngModel)]="password"
+              name="password"
+              (input)="checkPasswordStrength()"
+              required
+            />
+            <small>Password Strength: {{ passwordStrength }}</small>
+          </div>
+          <div class="form-group mb-3">
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-control"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              required
+            />
+          </div>
+          <div class="text-danger mb-3" *ngIf="errorMessage">{{ errorMessage }}</div>
+          <button type="submit" class="btn btn-primary w-100">Register</button>
+          <div class="mt-3 text-center">
+            <a routerLink="/login">Already have an account? Login</a>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-  <div>
-      <label>Email:</label>
-      <input type="email" [(ngModel)]="registrationData.email" name="email" required>
-  </div>
-  <div>
-      <label>Password:</label>
-      <input type="password" [(ngModel)]="registrationData.password" name="password" required>
-  </div>
-  <div>
-      <label>Confirm Password:</label>
-      <input type="password" [(ngModel)]="registrationData.confirmPassword" name="confirmPassword" required>
-  </div>
-  <button type="submit">Register</button>
-  <p>Already registered? <a routerLink="/login">Login</a></p>
-</form>
-
+  

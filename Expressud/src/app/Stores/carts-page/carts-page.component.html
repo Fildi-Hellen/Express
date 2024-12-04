@@ -1,47 +1,63 @@
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h4>Your Order</h4>
-    </div>
+<div class="container mt-4">
+  <h2 class="text-center">Your Cart</h2>
+  <div *ngIf="cartItems.length === 0" class="text-center">
+    <p>Your cart is empty.</p>
   </div>
-  <div class="row">
-    <div class="col-12 pt-2" *ngFor="let cart of cartItems">
-      <div class="card mb-3">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-4">
-              <img class="img-small-height" [src]="cart.photoUrl" alt="Description of the image"/>
-            </div>
-            <div class="col-lg-8 col-md-8 col-sm-8 text-end">
-              {{ cart.name }}
-              <br/>
-              <span *ngIf="cart.currency === 'USD'">&#36;</span>
-              <span *ngIf="cart.currency === 'SSP'">SSP</span>
-              {{ cart.price }} * {{ cart.quantity }}
-            </div>
-            <div class="col-12 text-end">
-              <button id="btn" (click)="removeFromCart(cart)" >Remove</button>
-            </div>
-          </div>
-        </div>
-      </div>
+
+  <div *ngIf="cartItems.length > 0" class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        
+        <tr>
+          <th>Item</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of cartItems">
+          <td>{{ item.name }}</td>
+          <td>${{ item.price }}</td>
+          <td>
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              (click)="decreaseQuantity(item)"
+            >
+              -
+            </button>
+            <span class="mx-2">{{ item.quantity }}</span>
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              (click)="increaseQuantity(item)"
+            >
+              +
+            </button>
+          </td>
+          <td>${{ item.price * item.quantity }}</td>
+          <td>
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="removeFromCart(item)"
+            >
+              Remove
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="text-end">
+      <h4>Total: ${{ totalPrice }}</h4>
     </div>
-    <div class="col-12" *ngIf="cartItems.length == 0">
-      <p>Cart Is Empty</p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12 text-end total">
-      Total Amount -
-      <span *ngIf="currency === 'USD'">&#36;</span>
-      <span *ngIf="currency === 'SSP'">SSP</span>
-      <span *ngIf="currency === 'Multiple'">Multiple Currencies</span>
-      {{ totalAmount }}
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12 text-end">
-      <button id="btn" (click)="onProceedToCheckout()">Proceed to Checkout</button>
+    <div class="text-end mt-3">
+      <button
+        class="btn btn-primary"
+        routerLink="/checkout"
+        *ngIf="cartItems.length > 0"
+      >
+        Checkout
+      </button>
     </div>
   </div>
 </div>

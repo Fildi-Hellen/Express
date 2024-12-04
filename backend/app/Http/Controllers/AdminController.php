@@ -8,7 +8,8 @@ use App\Mail\VendorVerified;
 use App\Models\Menu;
 use App\Models\vendor;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+
 
 class AdminController extends Controller
 {
@@ -82,31 +83,70 @@ class AdminController extends Controller
         }
     }
 
-public function unapprovedMenus()
-{
-    try {
-        $menus = Menu::where('is_approved', false)->get();
-        return response()->json($menus, 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
+    // Retrieve all pending menus
+    public function getIncomingMenus()
+    {
+        try {
+            $menus = Menu::where('status', 'pending')->get();
+            return response()->json(['data' => $menus], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
+
+    public function approveMenu($id, Request $request)
+{
+    $menu = Menu::findOrFail($id);
+
+    // Use $request to validate
+    $validated = $request->validate([
+        'additionalPrice' => 'nullable|numeric',
+    ]);
+
+    $menu->price += $validated['additionalPrice'] ?? 0;
+    $menu->status = 'approved';
+    $menu->save();
+
+    return response()->json(['message' => 'Menu approved successfully.']);
 }
 
-
-
-public function approveMenu($id)
+public function disapproveMenu($id, Request $request)
 {
-    try {
-        $menu = Menu::findOrFail($id);
-        $menu->is_approved = true;
-        $menu->save();
+    $menu = Menu::findOrFail($id);
 
-        return response()->json(['message' => 'Menu item approved successfully.'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
+    // Use $request to validate
+    $validated = $request->validate([
+        'reason' => 'required|string|max:255',
+    ]);
+
+    $menu->status = 'disapproved';
+    $menu->save();
+
+    return response()->json(['message' => 'Menu disapproved successfully.']);
 }
 
+    
+
+    // Edit a menu
+    public function editMenu($id, Request $request)
+    {
+        try {
+            $menu = Menu::findOrFail($id);
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric',
+                'availability' => 'required|string|max:255',
+            ]);
+
+            $menu->update($validated);
+
+            return response()->json(['message' => 'Menu updated successfully.', 'data' => $menu], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 
 
 }

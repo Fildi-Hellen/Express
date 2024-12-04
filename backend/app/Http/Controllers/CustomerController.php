@@ -3,29 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    public function index(Request $request)
-    {
-        $establishmentType = $request->input('establishmentType', null);
+   // Retrieve menus by category
+   public function getMenusByCategory(Request $request)
+   {
+       $validated = $request->validate([
+           'category' => 'required|string',
+       ]);
 
-        $query = Menu::where('is_approved', true);
+       $menus = Menu::where('category', $validated['category'])
+           ->where('availability', 'available')
+           ->get();
 
-        if ($establishmentType) {
-            $query->where('establishment_type', $establishmentType);
-        }
+       return response()->json(['data' => $menus], 200);
+   }
 
-        $menus = $query->get();
+   // Place an order
+   public function placeOrder(Request $request)
+   {
+       $validated = $request->validate([
+           'customer_name' => 'required|string|max:255',
+           'customer_email' => 'required|email',
+           'items' => 'required|array',
+           'items.*.menu_id' => 'required|exists:menus,id',
+           'items.*.quantity' => 'required|integer|min:1',
+       ]);
 
-        return view('customer.menus.index', compact('menus', 'establishmentType'));
-    }
+       $order = Order::create([
+           'customer_name' => $validated['customer_name'],
+           'customer_email' => $validated['customer_email'],
+           'status' => 'pending',
+       ]);
 
-    public function show($id)
-    {
-        $menu = Menu::findOrFail($id);
+       foreach ($validated['items'] as $item) {
+           $menu = Menu::find($item['menu_id']);
+           $order->items()->create([
+               'menu_id' => $menu->id,
+               'quantity' => $item['quantity'],
+               'price' => $menu->price,
+           ]);
+       }
 
-        return view('customer.menus.show', compact('menu'));
-    }
+       return response()->json(['message' => 'Order placed successfully!', 'order' => $order], 201);
+   }
 }

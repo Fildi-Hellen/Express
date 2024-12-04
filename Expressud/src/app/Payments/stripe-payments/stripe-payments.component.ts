@@ -1,97 +1,73 @@
 import { Component } from '@angular/core';
 import { loadStripe } from '@stripe/stripe-js';
 import { StripeService } from '../Services/stripe.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-stripe-payments',
   templateUrl: './stripe-payments.component.html',
-  styleUrl: './stripe-payments.component.css'
+  styleUrls:[ './stripe-payments.component.css']
 })
 export class StripePaymentsComponent {
 
-  stripe: any;
-  elements: any;
-  cardElement: any;
+  selectedPaymentMethod: string = 'stripe'; // Default method
   accountNumber: string = '';
   amount: number = 0;
-  selectedPaymentMethod: string = 'stripe'; // Default payment method
-  
-  constructor(private stripeService: StripeService) {}
+
+  stripe: any;
+  cardElement: any;
+
+  constructor(private http: HttpClient) {}
 
   async ngOnInit() {
-    // Initialize Stripe.js
-    this.stripe = await loadStripe('your-stripe-public-key'); // Replace with your public key
-    const elements = this.stripe.elements();
-    this.cardElement = elements.create('card');
-    this.cardElement.mount('#card-element');
-  }
-
-  // General payment process handler
-  processPayment(amount: number, selectedPaymentMethod: string) {
-    switch (selectedPaymentMethod) {
-      case 'stripe':
-        this.processStripePayment(amount);
-        break;
-      case 'momo':
-        this.processMomoPayment(amount, this.accountNumber);
-        break;
-      case 'mpase':
-        this.processMpasePayment(amount, this.accountNumber);
-        break;
-      default:
-        console.error('Invalid payment method');
+    // Initialize Stripe if selected
+    if (this.selectedPaymentMethod === 'stripe') {
+      this.stripe = await loadStripe('your-stripe-public-key'); // Replace with your public key
+      const elements = this.stripe.elements();
+      this.cardElement = elements.create('card');
+      this.cardElement.mount('#card-element');
     }
   }
 
-  // Stripe Payment Processing
-  processStripePayment(amount: number) {
-    this.stripeService.createStripePayment(amount).subscribe(
-      (response) => {
-        const clientSecret = response.clientSecret;
-        this.stripe.confirmCardPayment(clientSecret, {
-          payment_method: {
-            card: this.cardElement,
-            billing_details: {
-              name: 'Customer Name',
-            },
+  async processPayment() {
+    const paymentData = {
+      method: this.selectedPaymentMethod,
+      accountNumber: this.accountNumber || null,
+      amount: this.amount || null,
+    };
+
+    if (this.selectedPaymentMethod === 'stripe') {
+      const clientSecret = await this.createStripePayment();
+      this.stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: this.cardElement,
+          billing_details: {
+            name: 'Customer Name',
           },
-        }).then((result: any) => {
-          if (result.error) {
-            console.error(result.error.message);
-          } else {
-            console.log('Stripe payment succeeded!');
-          }
-        });
-      },
-      (error) => {
-        console.error('Error processing Stripe payment:', error);
-      }
-    );
+        },
+      }).then((result: any) => {
+        if (result.error) {
+          console.error('Payment error:', result.error.message);
+        } else {
+          console.log('Stripe payment successful!');
+        }
+      });
+    } else {
+      this.http.post('/api/payment', paymentData).subscribe(
+        (response) => {
+          console.log('Payment successful', response);
+          alert('Payment confirmed!');
+        },
+        (error) => {
+          console.error('Payment error', error);
+          alert('Payment failed!');
+        }
+      );
+    }
   }
 
-  // MOMO Payment Processing
-  processMomoPayment(amount: number, accountNumber: string) {
-    this.stripeService.createMomoPayment(amount, accountNumber).subscribe(
-      (response) => {
-        console.log('MOMO payment succeeded:', response);
-      },
-      (error) => {
-        console.error('Error processing MOMO payment:', error);
-      }
-    );
+  private createStripePayment(): Promise<string> {
+    // Mock API call to get client secret
+    return new Promise((resolve) => resolve('client_secret_example'));
   }
-
-  // Mpase Payment Processing
-  processMpasePayment(amount: number, accountNumber: string) {
-    this.stripeService.createMpasePayment(amount, accountNumber).subscribe(
-      (response) => {
-        console.log('Mpase payment succeeded:', response);
-      },
-      (error) => {
-        console.error('Error processing Mpase payment:', error);
-      }
-    );
-  }
-
-
 }

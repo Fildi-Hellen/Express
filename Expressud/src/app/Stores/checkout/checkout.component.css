@@ -1,68 +1,69 @@
-
-
-.total{
-    font-size: 24px;
-    font-family: 'Times New Roman', Times, serif;
-    font-weight: 600;
-    padding: 20px;
-    border-radius: 5px;
-    border: 1px solid #ccc; /* Add border */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
-    transition: all 0.3s ease; /* Add transition for smooth effect */
-    margin-top: 10px;
-  }
-  /* Style for the container */
-.order-summary-container {
-  padding: 20px; /* Add padding to the container */
+/* General Shadow Effect */
+.shadow-sm {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Style for the heading */
-.order-summary-heading {
-  font-size: 2.3rem;
-  font-weight: 400; /* Add bold font weight */
-  margin-bottom: 10px; /* Add margin at the bottom */
-  font-family: 'Times New Roman', Times, serif;
-  padding:20px;
+.shadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Style for the list */
-.order-summary-list {
-
+/* Zigzag Border for Order Summary */
+.zigzag-border {
+  border: 2px solid #ccc;
   border-radius: 5px;
-  list-style-type: none; /* Remove default list style */
-  padding-left: 0; /* Remove default padding */
-  border: 1px solid #ccc; /* Add border */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
-  transition: all 0.3s ease; /* Add transition for smooth effect */
+  background-color: #f9f9f9;
+  position: relative;
+  overflow: hidden;
 }
 
-.order-summary-list:hover {
-  border-color: #666; /* Change border color on hover */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Change shadow on hover */
+.zigzag-border:before,
+.zigzag-border:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 15px;
+  background: linear-gradient(
+    135deg,
+    transparent 25%,
+    #ccc 25%,
+    #ccc 50%,
+    transparent 50%,
+    transparent 75%,
+    #ccc 75%
+  );
+  z-index: 1;
 }
 
-/* Style for list items */
-.order-summary-item {
-  font-size: 18px; /* Set font size */
-  margin-bottom: 5px; /* Add margin at the bottom */
-  padding: 5px;
-  font-family: 'Times New Roman', Times, serif;
-  font-weight: 400;
+.zigzag-border:before {
+  top: -15px;
+  left: 0;
+  transform: rotate(180deg);
 }
 
-#btn {
-  width: 80%; /* Adjust the width as needed */
+.zigzag-border:after {
+  bottom: -15px;
+  left: 0;
 }
 
-.phone{
-  padding: 40px;
+/* Smooth Transition Effects */
+.zigzag-border,
+.table {
+  transition: all 0.3s ease-in-out;
 }
-.address{
-  padding: 40px;
+
+.zigzag-border:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
 }
-h1{
-  font-size: 2.3rem;
-    padding: 10px;
-    font-weight: 400;
-    font-family: 'Times New Roman', Times, serif;
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .zigzag-border {
+    margin-top: 20px;
+  }
+
+  /* Hide Fixed Position for Small Screens */
+  .position-fixed {
+    position: static !important;
+  }
 }

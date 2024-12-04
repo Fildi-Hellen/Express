@@ -11,6 +11,7 @@ export class VendorService {
 
   constructor(private http: HttpClient) { }
 
+  
 /**
    * Register a new vendor.
    * @param vendorData Vendor registration data

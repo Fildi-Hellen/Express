@@ -1,36 +1,32 @@
-<div class="container">
-    <div class="row">
-      <div class="col-12">
-        <h4>Your Order Summary</h4>
-      </div>
+<div class="container mt-4">
+  <h2 class="text-center">Order Summary</h2>
+  <div *ngIf="cartItems.length > 0" class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of cartItems">
+          <td>{{ item.name }}</td>
+          <td>${{ item.price }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>${{ item.price * item.quantity }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="text-end">
+      <h4>Total: ${{ totalPrice }}</h4>
     </div>
-    <div class="row" *ngFor="let cartItem of cart">
-      <div class="col-12 pt-2">
-        <div class="card mb-3">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-lg-4 col-md-4 col-sm-4">
-                <img class="img-small-height" [src]="cartItem.photoUrl"/>
-              </div>
-              <div class="col-lg-8 col-md-8 col-sm-8">
-                <p>{{ cartItem.name }}</p>
-                <p>{{ cartItem.name }}</p>
-                <p><i class="fa fa-ssp name" aria-hidden="true"></i> SSP {{ cartItem.price }} * {{ cartItem.quantity }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-12 text-end">
-                <p>Total: SSP {{ cartItem.price * cartItem.quantity }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <p>Total Amount: SSP {{ totalAmount }}</p>
-      </div>
+    <div class="text-end mt-3">
+      <button class="btn btn-primary" (click)="confirmOrder()">Confirm Order</button>
     </div>
   </div>
-  
+  <div *ngIf="cartItems.length === 0" class="text-center">
+    <p>Your cart is empty.</p>
+  </div>
+</div>

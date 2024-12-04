@@ -19,6 +19,7 @@ export class HeaderComponent implements OnInit {
   isCollapsed = false;
   isMenuOpen = false;
   isResponsive = false;
+  isLoggedIn = false;
 
   constructor(
     private authService: AuthService,
@@ -27,13 +28,7 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkAuthenticationStatus();
-
-    this.authService.authStatus$.subscribe(isAuthenticated => {
-      this.isAuth = isAuthenticated;
-      this.user = this.authService.getUser();
-    });
-
+    this.isLoggedIn = this.authService.isAuthenticated();
     this.cartService.cartItemCount$.subscribe((count: number) => {
       this.cartItemCount = count;
     });
@@ -47,6 +42,10 @@ export class HeaderComponent implements OnInit {
       });
 
     this.checkResponsive();
+  }
+  logout(): void {
+    this.authService.logout();
+    this.isLoggedIn = false;
   }
 
   @HostListener('window:resize', ['$event'])
@@ -62,17 +61,9 @@ export class HeaderComponent implements OnInit {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  checkAuthenticationStatus(): void {
-    this.isAuth = this.authService.isAuthenticated();
-    this.user = this.authService.getUser();
-  }
+  
 
-  logout(): void {
-    this.authService.logout();
-    this.user = {};
-    this.isAuth = false;
-  }
-
+ 
   updateHeaderType(url: string): void {
     if (url.includes('/partner')) {
       this.headerType = 'vendor-header';

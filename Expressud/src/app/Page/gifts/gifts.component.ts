@@ -18,4 +18,5 @@ openDialog(): void {
   this.dialRef.open(RecipientComponent, dialogConfig);
 }
 
+
 }

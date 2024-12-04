@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MenuService } from '../../Services/menu.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -10,83 +9,120 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MenuComponent {
 
-
   menuForm!: FormGroup;
-  establishmentType!: string;
+  selectedCategory!: string;
+  establishmentName!: string;
   message!: string;
+  menus: any[] = [];
 
-  constructor(
-    private fb: FormBuilder,
-    private menuService: MenuService,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private fb: FormBuilder, private menuService: MenuService) {}
 
   ngOnInit(): void {
-    // Fetch the vendor's establishment type from the backend
-    this.menuService.getVendorProfile().subscribe(
-      (vendor: any) => {
-        this.establishmentType = vendor.establishmentType;
-        this.initializeForm();
-      },
-      (error) => {
-        this.message = 'Error fetching vendor profile.';
-      }
-    );
+    this.initializeForm();
   }
 
   initializeForm() {
     this.menuForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
-      price: [''],
-      category: [''],
+      price: ['', Validators.required],
+      availability: ['', Validators.required],
+      cookTime: [''], // Required for restaurant
+      expirationDate: [''], // Required for pharmacy
+      manufacturingDate: [''], // Required for pharmacy
+      location: [''], // Required for real estate
+      size: [''], // Required for real estate
+      acres: [''], // Required for real estate
       image: [null],
-      // Additional fields
-      location: [''],
-      size: [''],
-      expirationDate: ['']
     });
+  }
 
-    // Adjust validators based on establishment type
-    if (this.establishmentType === 'realEstate') {
-      this.menuForm.get('location')?.setValidators([Validators.required]);
-    } else if (this.establishmentType === 'pharmacy') {
-      this.menuForm.get('expirationDate')?.setValidators([Validators.required]);
-    }
-    // Add conditions for other types as needed
+  onCategoryChange() {
+    this.menuForm.reset(); // Reset form on category change
+    this.menuForm.patchValue({
+      category: this.selectedCategory,
+    });
   }
 
   onFileChange(event: any) {
-    if (event.target.files && event.target.files.length) {
-      this.menuForm.patchValue({
-        image: event.target.files[0]
-      });
-    }
+    const file = event.target.files[0];
+    this.menuForm.patchValue({
+      image: file || null,
+    });
   }
 
   onSubmit() {
-    if (this.menuForm.invalid) {
-      return;
-    }
+    if (this.menuForm.invalid || !this.establishmentName) return;
 
-    // Prepare form data
-    const formData = new FormData();
-    Object.keys(this.menuForm.controls).forEach((key) => {
-      const control = this.menuForm.get(key);
-      if (control && control.value) {
-        formData.append(key, control.value);
-      }
+    const menu = new FormData();
+    Object.keys(this.menuForm.controls).forEach(key => {
+      const value = this.menuForm.get(key)?.value;
+      if (value) menu.append(key, value);
     });
+    menu.append('category', this.selectedCategory);
+    menu.append('establishmentName', this.establishmentName);
 
-    this.menuService.addMenuItem(formData).subscribe(
-      (response: any) => {
-        this.message = 'Item added successfully.';
+    this.menuService.addMenuItem(menu).subscribe(
+      response => {
+        this.menus.push(response.data);
+        this.message = 'Menu item added successfully!';
         this.menuForm.reset();
       },
-      (error) => {
-        this.message = 'There was an error adding the item.';
+      error => {
+        this.message = 'Failed to add menu item.';
+        console.error(error);
       }
     );
   }
 
+  deleteMenu(index: number, id: string) {
+    this.menuService.deleteMenuItem(id).subscribe(
+      () => {
+        this.menus.splice(index, 1);
+        this.message = 'Menu item deleted successfully.';
+      },
+      (error: any) => {
+        this.message = 'Failed to delete menu item.';
+      }
+    );
+  }
+
+  submitToAdmin() {
+    if (this.menus.length === 0) {
+      this.message = 'No menus to submit.';
+      return;
+    }
+
+    this.menuService.submitToAdmin(this.menus).subscribe(
+      () => {
+        this.message = 'Menus submitted to admin successfully!';
+        this.menus = [];
+      },
+      (error: any) => {
+        this.message = 'Failed to submit menus to admin.';
+      }
+    );
+  }
+  editMenu(index: number): void {
+    const menuToEdit = this.menus[index];
+  
+    // Populate the form with the selected menu's details
+    this.selectedCategory = menuToEdit.category;
+    this.establishmentName = menuToEdit.establishmentName;
+    this.menuForm.patchValue({
+      name: menuToEdit.name,
+      description: menuToEdit.description,
+      price: menuToEdit.price,
+      location: menuToEdit.location,
+      size: menuToEdit.size,
+      expirationDate: menuToEdit.expirationDate,
+      cookTime: menuToEdit.cookTime,
+      availability: menuToEdit.availability,
+      image: null, // Image needs to be re-uploaded if edited
+    });
+  
+    // Optionally, remove the item from the list if you want to re-add after editing
+    // this.menus.splice(index, 1);
+  }
+  
 }

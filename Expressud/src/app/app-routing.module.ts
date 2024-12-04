@@ -73,7 +73,6 @@ import { RestaurantServingFoodComponent } from './shared/Components/restaurant-s
 import { AdminComponent } from './Admin/admin/admin.component';
 import { LoginComponent } from './auth/login/login.component';
 import { UnauthorizedComponent } from './auth/unauthorized/unauthorized.component';
-import { RoleGuard } from './auth/role.guard';
 import { RegisterComponent } from './auth/register/register.component';
 import { CategoryListComponent } from './Admin/category-list/category-list.component';
 import { CategoryFormComponent } from './Admin/category-form/category-form.component';
@@ -88,12 +87,13 @@ import { PharmacyComponent } from './shared/Pharm/pharmacy/pharmacy.component';
 import { PharmacyServingComponent } from './shared/Pharm/pharmacy-serving/pharmacy-serving.component';
 import { PharmacyItemsComponent } from './shared/Pharm/pharmacy-items/pharmacy-items.component';
 import { SearchComponent } from './shared/search/search.component';
-import { VLoginComponent } from './auth/v-login/v-login.component';
 import { StripePaymentsComponent } from './Payments/stripe-payments/stripe-payments.component';
 import { CustomerMenuComponent } from './shared/Components/customer-menu/customer-menu.component';
 import { CustomerMenuDetailsComponent } from './shared/Components/customer-menu-details/customer-menu-details.component';
 import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component';
 import { VendorForgotPasswordComponent } from './auth/vendor-forgot-password/vendor-forgot-password.component';
+import { CustomerComponent } from './components/customer/customer.component';
+import { CheckoutGuard } from './auth/guards/checkout.guard';
 
 
 
@@ -132,6 +132,7 @@ const routes: Routes = [
   {path:'blog-details', component:BlogDetailsComponent},
   {path:'create-blog',component:CreateBlogComponent},
   {path:'edit-blog',component:EditBlogComponent},
+  {path:'customer',component:CustomerComponent},
   {path:'google',component:GoogleComponent},
   {path:'registration',component:RegistrationComponent},
   {path:'deliver',component:DeliverComponent},
@@ -172,14 +173,14 @@ const routes: Routes = [
   {path:'recipient',component:RecipientComponent},
   {path:'gifts',component:GiftsComponent},
   {path:'store-item-page',component:StoreItemPageComponent},
-  {path:'checkout',component:CheckoutComponent, canActivate: [AuthGuard]},
+  {path:'checkout',component:CheckoutComponent, canActivate: [CheckoutGuard]},
   {path:'carts-page',component:CartsPageComponent},
   {path:'foods',component:FoodsComponent},
   {path:'restaurant-food-item/:restaurantId/:categoryId',component:RestaurantFoodItemComponent},
   {path:'restaurant-foods/:categoryId',component:RestaurantServingFoodComponent},
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard, RoleGuard], data: { expectedRole: 'admin' } },
+  // { path: 'admin', component: AdminComponent, canActivate:  [AuthGuard, RoleGuard], data: { expectedRole: 'admin' } },
   {path:'admin',component:AdminComponent},
   { path: 'unauthorized', component: UnauthorizedComponent },
   //  { path: '**', redirectTo: '/login' },
@@ -197,7 +198,6 @@ const routes: Routes = [
   {path:'pharmacy-items/:pharmacyId/:categoryId',component:PharmacyItemsComponent},
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
   {path:'search',component:SearchComponent},
-  {path:'v-login',component:VLoginComponent},
   {path:'vendor-login',component:VendorLoginComponent},
   {path:'vendor-forgot-password',component:VendorForgotPasswordComponent}
 

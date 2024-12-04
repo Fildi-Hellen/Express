@@ -1,0 +1,45 @@
+<!-- src/app/components/customer/customer.component.html -->
+<div *ngIf="!selectedCategory && !selectedEstablishment">
+    <h2>Categories</h2>
+    <div class="categories">
+      <div *ngFor="let category of categories" class="category-card" (click)="loadEstablishments(category.category)">
+        <h3>{{ category.category }}</h3>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="selectedCategory && !selectedEstablishment">
+    <button (click)="goBackToCategories()">Back to Categories</button>
+    <h2>Establishments in {{ selectedCategory }}</h2>
+    <div class="establishments">
+      <div *ngFor="let establishment of establishments" class="establishment-card" (click)="loadMenus(establishment.establishmentName)">
+        <h3>{{ establishment.establishmentName }}</h3>
+        <p>Available: {{ establishment.availability }}</p>
+        <img [src]="establishment.image" alt="{{ establishment.establishmentName }}" />
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="selectedEstablishment">
+    <button (click)="goBackToEstablishments()">Back to Establishments</button>
+    <h2>Menus in {{ selectedEstablishment }}</h2>
+    <div class="menus">
+      <div *ngFor="let menu of menus" class="menu-item">
+        <h3>{{ menu.name }}</h3>
+        <p>{{ menu.description }}</p>
+        <p *ngIf="menu.cookTime">Cook Time: {{ menu.cookTime }}</p>
+        <p *ngIf="menu.expirationDate">Expiration Date: {{ menu.expirationDate }}</p>
+        <p *ngIf="menu.size">Size: {{ menu.size }}</p>
+        <p *ngIf="menu.location">Location: {{ menu.location }}</p>
+        <p>Availability: {{ menu.availability }}</p>
+        <p *ngIf="menu.price">Price: ${{ menu.price }}</p>
+        <img *ngIf="menu.image" [src]="menu.image" alt="{{ menu.name }}" />
+        <p *ngIf="!menu.image">No image available</p>
+        <button (click)="addToCart(menu)">Add to Cart</button>
+      </div>
+    </div>
+ </div>
+  
+  
+  
+ 

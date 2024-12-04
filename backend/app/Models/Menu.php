@@ -9,15 +9,18 @@ class Menu extends Model
     use HasFactory;
 
     protected $fillable = [
-        'vendor_id',
-        'establishment_type',
         'name',
         'description',
         'price',
-        'image',
+        'location',
+        'size',
+        'expirationDate',
+        'cookTime',
+        'availability',
         'category',
-        'additional_attributes',
-        'is_approved',
+        'establishmentName',
+        'image',
+        'status', // For admin approval status
     ];
 
     protected $casts = [

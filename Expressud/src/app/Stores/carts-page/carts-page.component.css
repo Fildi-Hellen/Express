@@ -1,24 +1,11 @@
-.container{
-    width: 80%;
-}
-h4{
-    font-size: 28px;
-    font-family: 'Times New Roman', Times, serif;
-    font-weight: 600;
+.table {
+  margin-top: 20px;
 }
 
-.card {
-    transition: transform 0.3s ease;
-    padding: 20px;
-  }
-  
-  .card:hover {
-    transform: scale(1.05);
-  }
-  
-  .total{
-    font-size: 24px;
-    font-family: 'Times New Roman', Times, serif;
-    font-weight: 600;
-    padding: 20px;
-  }
+.table thead th {
+  background-color: #f8f9fa;
+}
+
+.text-end {
+  margin-top: 10px;
+}

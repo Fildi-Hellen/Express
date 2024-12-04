@@ -4,78 +4,143 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+
 
 class MenuController extends Controller
 {
-    public function index()
+    public function addMenuItem(Request $request)
     {
-        $menus = Auth::guard('vendor')->user()->menus;
-        return view('vendor.menus.index', compact('menus'));
-    }
-
-    public function create()
-    {
-        $establishmentType = Auth::guard('vendor')->user()->establishment_type;
-        return view('vendor.menus.create', compact('establishmentType'));
-    }
-
-    public function store(Request $request)
-    {
-        $vendor = Auth::guard('vendor')->user();
-        $establishmentType = $vendor->establishment_type;
-
-        // Validation rules based on establishment type
-        $rules = [
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'nullable|numeric',
-            'image' => 'nullable|image',
-            'category' => 'nullable|string|max:255',
-        ];
+            'price' => 'required|numeric',
+            'availability' => 'required|string|max:255', // Applies to all categories
+            'category' => 'required|string|max:255',
+            'establishmentName' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 
-        // Additional validation for specific establishment types
-        if ($establishmentType == 'realEstate') {
-            $rules['price'] = 'nullable|numeric';
-            $rules['location'] = 'required|string|max:255';
-            // Add more rules as needed
-        } elseif ($establishmentType == 'pharmacy') {
-            $rules['expiration_date'] = 'required|date';
-            // Add more rules as needed
-        }
-        // Add conditions for other types
+            // Fields for specific categories
+            'cookTime' => 'required_if:category,restaurant|string|max:255',
+            'expirationDate' => 'required_if:category,pharmacy|date',
+            'manufacturingDate' => 'required_if:category,pharmacy|date',
+            'location' => 'required_if:category,realEstate|string|max:255',
+            'size' => 'required_if:category,realEstate|numeric',
+            'acres' => 'required_if:category,realEstate|numeric',
+        ]);
 
-        $validatedData = $request->validate($rules);
-
-        $menu = new Menu();
-        $menu->vendor_id = $vendor->id;
-        $menu->establishment_type = $establishmentType;
-        $menu->name = $validatedData['name'];
-        $menu->description = $validatedData['description'] ?? null;
-        $menu->price = $validatedData['price'] ?? null;
-        $menu->category = $validatedData['category'] ?? null;
-
-        // Handle additional attributes
-        $additionalAttributes = [];
-
-        if ($establishmentType == 'realEstate') {
-            $additionalAttributes['location'] = $request->input('location');
-            $additionalAttributes['size'] = $request->input('size');
-            // Add more attributes as needed
-        } elseif ($establishmentType == 'pharmacy') {
-            $additionalAttributes['expiration_date'] = $request->input('expiration_date');
-            // Add more attributes as needed
-        }
-        // Add conditions for other types
-
-        $menu->additional_attributes = $additionalAttributes;
-
+        // Handle image upload
         if ($request->hasFile('image')) {
-            $menu->image = $request->file('image')->store('menus', 'public');
+            $path = $request->file('image')->store('menus', 'public');
+            $validated['image'] = asset('storage/' . $path); // Return the full URL
+        }
+        
+
+        $menu = Menu::create($validated);
+
+        return response()->json(['data' => $menu, 'message' => 'Menu item added successfully!'], 201);
+    }
+
+
+    // Delete a menu item
+    public function deleteMenuItem($id)
+    {
+        $menu = Menu::findOrFail($id);
+
+        // Delete associated image if exists
+        if ($menu->image) {
+            Storage::disk('public')->delete($menu->image);
         }
 
-        $menu->save();
+        $menu->delete();
 
-        return redirect()->route('vendor.menus.index')->with('message', 'Item added successfully.');
+        return response()->json(['message' => 'Menu item deleted successfully.'], 200);
     }
+
+    // Submit all menus to admin for approval
+    public function submitToAdmin(Request $request)
+    {
+        $menus = $request->input('menus');
+
+        foreach ($menus as $menu) {
+            Menu::create([
+                'name' => $menu['name'],
+                'description' => $menu['description'] ?? null,
+                'price' => $menu['price'],
+                'location' => $menu['location'] ?? null,
+                'size' => $menu['size'] ?? null,
+                'expirationDate' => $menu['expirationDate'] ?? null,
+                'cookTime' => $menu['cookTime'] ?? null,
+                'availability' => $menu['availability'] ?? null,
+                'category' => $menu['category'],
+                'establishmentName' => $menu['establishmentName'],
+                'image' => $menu['image'] ?? null,
+                'status' => 'pending', // Mark as pending for admin approval
+            ]);
+        }
+
+        return response()->json(['message' => 'Menus submitted to admin successfully!'], 200);
+    }
+  
+
+    public function getCategories()
+    {
+        $categories = Menu::select('category')
+            ->distinct()
+            ->get();
+
+        return response()->json(['data' => $categories], 200);
+    }
+
+    public function getEstablishmentsByCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'category' => 'required|string',
+        ]);
+    
+        $establishments = Menu::where('category', $validated['category'])
+            ->select('establishmentName', 'availability', 'image')
+            ->distinct()
+            ->get();
+    
+        // Log the query results for debugging
+        Log::info('Establishments found:', $establishments->toArray());
+    
+        // Return the raw data for debugging
+        return response()->json(['data' => $establishments], 200);
+    }
+    
+
+    public function getMenusByEstablishment(Request $request)
+    {
+        $validated = $request->validate([
+            'establishmentName' => 'required|string',
+        ]);
+    
+        $menus = Menu::where('establishmentName', $validated['establishmentName'])
+            ->get()
+            ->map(function ($menu) {
+                return [
+                    'name' => $menu->name,
+                    'description' => $menu->description,
+                    'price' => $menu->price,
+                    'availability' => $menu->availability ?? 'Not Available',
+                    'cookTime' => $menu->cookTime, // For restaurants
+                    'expirationDate' => $menu->expirationDate, // For pharmacies
+                    'size' => $menu->size, // For real estate
+                    'location' => $menu->location, // For real estate
+                    'image' => $menu->image ? asset('storage/' . $menu->image) : null,
+                ];
+            });
+    
+        return response()->json(['data' => $menus], 200);
+    }
+    
+
+
+
+
 }
+

@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+/* Sidebar and logo adjustments */
+.sidebar {
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  
+  .sidebar img {
+    margin-bottom: 10px;
+    max-width: 100%;
+  }
+  
+  /* Hide scrollbar for the sidebar */
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
+  

@@ -1,27 +1,137 @@
-<!-- approved.component.html -->
+<!-- approved.component.html: UI -->
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Manage Menus</h1>
 
-<h1 class="page-title">Unapproved Menus</h1>
+  <div *ngIf="message" class="alert alert-info text-center">{{ message }}</div>
 
-<div *ngIf="message" class="alert alert-info">{{ message }}</div>
+  <div class="table-responsive mt-3">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let menu of menus">
+          <td>{{ menu.name }}</td>
+          <td>{{ menu.price }}</td>
+          <td>{{ menu.category }}</td>
+          <td>
+            <button class="btn btn-success btn-sm me-2" (click)="approveMenu(menu.id)">Approve</button>
+            <button
+              class="btn btn-danger btn-sm me-2"
+              (click)="setSelectedMenu(menu)"
+              data-bs-toggle="modal"
+              data-bs-target="#disapproveModal"
+            >
+              Disapprove
+            </button>
+            <button
+              class="btn btn-warning btn-sm"
+              (click)="setSelectedMenu(menu)"
+              data-bs-toggle="modal"
+              data-bs-target="#editModal"
+            >
+              Edit
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<div *ngFor="let menu of menus" class="menu-card">
-  <h2 class="menu-title">
-    {{ menu.name }} ({{ (menu.establishmentType || '') | titlecase }})
-  </h2>
-  <p class="menu-description">{{ menu.description }}</p>
-  <p *ngIf="menu.price" class="menu-price">
-    Price: ${{ menu.price | number: '1.2-2' }}
-  </p>
-
-  <!-- Display additional attributes -->
-  <div *ngIf="menu.additionalAttributes" class="menu-attributes">
-    <div *ngFor="let attr of menu.additionalAttributes | keyvalue" class="menu-attribute">
-      <p>
-        <span class="attribute-key">{{ (attr.key || '') | titlecase }}:</span>
-        <span class="attribute-value">{{ attr.value }}</span>
-      </p>
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Edit Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="menuName">Name:</label>
+            <input
+              type="text"
+              id="menuName"
+              class="form-control"
+              [(ngModel)]="selectedMenu.name"
+            />
+          </div>
+          <div class="form-group mt-2">
+            <label for="menuDescription">Description:</label>
+            <textarea
+              id="menuDescription"
+              class="form-control"
+              [(ngModel)]="selectedMenu.description"
+            ></textarea>
+          </div>
+          <div class="form-group mt-2">
+            <label for="menuPrice">Price:</label>
+            <input
+              type="number"
+              id="menuPrice"
+              class="form-control"
+              [(ngModel)]="selectedMenu.price"
+            />
+          </div>
+          <div class="form-group mt-2">
+            <label for="menuAvailability">Availability:</label>
+            <input
+              type="text"
+              id="menuAvailability"
+              class="form-control"
+              [(ngModel)]="selectedMenu.availability"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="editMenu(selectedMenu.id)"
+            data-bs-dismiss="modal"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <button (click)="approveMenu(menu.id)" class="approve-button">Approve</button>
+  <!-- Disapprove Modal -->
+  <div class="modal fade" id="disapproveModal" tabindex="-1" aria-labelledby="disapproveModalLabel">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="disapproveModalLabel">Disapprove Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="disapproveReason">Reason for Disapproval:</label>
+            <textarea
+              id="disapproveReason"
+              class="form-control"
+              [(ngModel)]="reason"
+              placeholder="Provide a reason for disapproval"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="disapproveMenu(selectedMenu.id)"
+            data-bs-dismiss="modal"
+          >
+            Submit Disapproval
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

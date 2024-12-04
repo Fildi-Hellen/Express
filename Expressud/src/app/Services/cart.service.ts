@@ -7,52 +7,55 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class CartService {
 
-   private cartItemsSubject = new BehaviorSubject<any[]>([]);
-  cartItems$ = this.cartItemsSubject.asObservable();
+  private cart: any[] = [];
+  private cartItemCount = new BehaviorSubject<number>(0);
 
-  private cartItemCountSubject = new BehaviorSubject<number>(0);
-  cartItemCount$ = this.cartItemCountSubject.asObservable();
+  cartItemCount$ = this.cartItemCount.asObservable();
 
-  constructor() {
-    const cart = localStorage.getItem('cart');
-    if (cart) {
-      const cartItems = JSON.parse(cart);
-      this.cartItemsSubject.next(cartItems);
-      this.cartItemCountSubject.next(this.calculateItemCount(cartItems));
-    }
-  }
+  constructor() {}
 
+  // Add item to the cart
   addToCart(item: any): void {
-    const currentItems = this.cartItemsSubject.value;
-    const existingItemIndex = currentItems.findIndex((cartItem: any) => cartItem.id === item.id);
-    if (existingItemIndex > -1) {
-      currentItems[existingItemIndex].quantity += 1;
+    const existingItem = this.cart.find((cartItem) => cartItem.name === item.name);
+    if (existingItem) {
+      existingItem.quantity++;
     } else {
-      item.quantity = 1;
-      currentItems.push(item);
+      this.cart.push({ ...item, quantity: 1 });
     }
-
-    this.updateCart(currentItems);
+    this.updateCartItemCount();
   }
 
+  // Remove item from the cart
   removeFromCart(item: any): void {
-    let currentItems = this.cartItemsSubject.value;
-    currentItems = currentItems.filter(cartItem => cartItem.id !== item.id);
-    this.updateCart(currentItems);
+    this.cart = this.cart.filter((cartItem) => cartItem.name !== item.name);
+    this.updateCartItemCount();
   }
 
-  getCartItems(): any[] {
-    return this.cartItemsSubject.value;
+  // Update item quantity
+  updateQuantity(item: any, quantity: number): void {
+    const cartItem = this.cart.find((cartItem) => cartItem.name === item.name);
+    if (cartItem) {
+      cartItem.quantity = quantity;
+    }
+    this.updateCartItemCount();
   }
 
-  private updateCart(cartItems: any[]): void {
-    this.cartItemsSubject.next(cartItems);
-    this.cartItemCountSubject.next(this.calculateItemCount(cartItems));
-    localStorage.setItem('cart', JSON.stringify(cartItems));
+  // Get all items in the cart
+  getCart(): any[] {
+    return this.cart;
   }
 
-  private calculateItemCount(cartItems: any[]): number {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
+  // Clear the cart
+  clearCart(): void {
+    this.cart = [];
+    this.updateCartItemCount();
   }
+
+  // Update the cart item count
+  private updateCartItemCount(): void {
+    const totalCount = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+    this.cartItemCount.next(totalCount);
+  }
+  
 }
 

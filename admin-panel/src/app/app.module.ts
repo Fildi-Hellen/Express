@@ -8,9 +8,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { VendorManagementComponent } from './Components/vendor-management/vendor-management.component';
 import { DashboardComponent } from './Components/dashboard/dashboard.component';
 import { FooterComponent } from './Components/footer/footer.component';
-import { HeaderComponent } from './Components/header/header.component';
-import { SideNavComponent } from './Components/Components/side-nav/side-nav.component';
-import { HeroHeadingComponent } from './Components/hero-heading/hero-heading.component';
+import { FormsModule } from '@angular/forms';
+import { MainContentComponent } from './Components/main-content/main-content.component';
+import { NavbarComponent } from './Components/navbar/navbar.component';
+import { SidebarComponent } from './Components/sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
@@ -19,14 +20,15 @@ import { HeroHeadingComponent } from './Components/hero-heading/hero-heading.com
     VendorManagementComponent,
     DashboardComponent,
     FooterComponent,
-    HeaderComponent,
-    SideNavComponent,
-    HeroHeadingComponent
+    MainContentComponent,
+    NavbarComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule 
   ],
   providers: [],
   bootstrap: [AppComponent]

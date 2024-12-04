@@ -8,36 +8,34 @@ import { AuthService } from 'src/app/Services/auth.service';
   styleUrls: ['./register.component.css'] 
 })
 export class RegisterComponent {
-  
-  registrationData = {
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  };
+  name = '';
+  email = '';
+  password = '';
+  confirmPassword = '';
+  errorMessage = '';
+  passwordStrength = '';
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
-  register() {
-    if (this.registrationData.password !== this.registrationData.confirmPassword) {
-      // Handle password mismatch error (e.g., show error message)
+  register(): void {
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match';
       return;
     }
 
-    const payload = {
-      fullName: this.registrationData.fullName,
-      email: this.registrationData.email,
-      password: this.registrationData.password,
-      password_confirmation: this.registrationData.confirmPassword
-    };
-
-    this.authService.register(payload).subscribe(
-      (res: any) => {
-        // Redirect to login page after successful registration
+    this.authService.register(this.name, this.email, this.password, this.confirmPassword).subscribe(
+      () => {
+        alert('Registration successful!');
         this.router.navigate(['/login']);
       },
-      (err: any) => console.error(err)
+      (error) => {
+        this.errorMessage = error.error || 'Registration failed';
+      }
     );
   }
-  
+
+  checkPasswordStrength(): void {
+    const strength = this.password.length >= 8 ? 'Strong' : 'Weak';
+    this.passwordStrength = strength;
+  }
 }

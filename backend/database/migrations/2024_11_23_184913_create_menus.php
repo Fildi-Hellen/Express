@@ -13,18 +13,23 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('vendor_id');
-            $table->string('establishment_type');
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('price', 12, 2)->nullable();
+            $table->decimal('price', 10, 2);
+            $table->string('availability');
+            $table->string('category');
+            $table->string('establishmentName');
             $table->string('image')->nullable();
-            $table->string('category')->nullable();
-            $table->json('additional_attributes')->nullable();
-            $table->boolean('is_approved')->default(false);
-            $table->timestamps();
 
-            $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
+            // Fields for specific categories
+            $table->string('cookTime')->nullable(); // For restaurant
+            $table->date('expirationDate')->nullable(); // For pharmacy
+            $table->date('manufacturingDate')->nullable(); // For pharmacy
+            $table->string('location')->nullable(); // For real estate
+            $table->decimal('size', 10, 2)->nullable(); // For real estate
+            $table->decimal('acres', 10, 2)->nullable(); // For real estate
+
+            $table->timestamps();
         });
     }
 

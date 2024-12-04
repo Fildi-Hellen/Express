@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+// import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenuItemService {
 
-  private apiUrl = `${environment.apiUrl}/menu-items`;
+  private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
 
@@ -31,4 +31,25 @@ export class MenuItemService {
   approveMenuItem(id: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}/approve`, {});
   }
+  
+  getCategories(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/categories`);
+  }
+
+  getMenusByCategory(category: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/menus`, { params: { category } });
+  }
+
+  getEstablishmentsByCategory(category: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/establishments`, { params: { category } });
+  }
+  
+  getMenusByEstablishment(establishmentName: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/menus-by-establishment`, {
+      params: { establishmentName },
+    });
+  }
+  
+
+
 }

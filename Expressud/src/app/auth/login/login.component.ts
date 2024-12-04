@@ -8,26 +8,22 @@ import { AuthService } from 'src/app/Services/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+  email = '';
+  password = '';
+  errorMessage = '';
 
-  credentials = { email: '', password: '' };
-  returnUrl: string = '';
+  constructor(private authService: AuthService, private router: Router) {}
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-  }
-
-  login() {
-    this.authService.login(this.credentials).subscribe(
-      (res: any) => {
-        localStorage.setItem('token', res.token);
-        this.authService.setUser(res.user);
-        this.router.navigateByUrl(this.returnUrl);
+  login(): void {
+    this.authService.login(this.email, this.password).subscribe(
+      (response) => {
+        this.authService.setToken(response.token);
+        this.router.navigate(['/checkout']);
       },
-      err => console.error('Login error:', err)
+      (error) => {
+        this.errorMessage = error.error.error || 'Invalid credentials';
+      }
     );
   }
+
 }

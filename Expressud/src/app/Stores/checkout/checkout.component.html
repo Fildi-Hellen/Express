@@ -1,47 +1,77 @@
-<div class="container">
-  <div class="row flex-wrap">
-    <div class="col-md-8 m-4">
-      <div class="order-summary-container">
-        <h5 class="order-summary-heading">Order Summary</h5>
-        <ul class="order-summary-list">
-          <li class="order-summary-item" *ngFor="let cartItem of cartItems">
-            {{ cartItem.name }} - 
-            <span *ngIf="cartItem.currency === 'USD'">&#36;</span>
-            <span *ngIf="cartItem.currency === 'SSP'">SSP</span>
-            {{ cartItem.price }} * {{ cartItem.quantity }}
-          </li>
-        </ul>
-        <div class="total">
-          Total Amount - 
-          <span *ngIf="currency === 'USD'">&#36;</span>
-          <span *ngIf="currency === 'SSP'">SSP</span>
-          <span *ngIf="currency === 'Multiple'">Multiple Currencies</span>
-          {{ totalAmount }}
-        </div>
+<div class="container mt-4">
+  <div class="row">
+    <!-- Main Content -->
+    <div class="col-md-8">
+      <h2 class="text-center">Checkout</h2>
+
+      <!-- Empty Cart Message -->
+      <div *ngIf="cartItems.length === 0" class="text-center">
+        <p>Your cart is empty.</p>
       </div>
 
+      <!-- Cart Items Table -->
+      <div *ngIf="cartItems.length > 0" class="table-responsive">
+        <table class="table table-bordered shadow-sm">
+          <thead>
+        
+            <tr>
+              <th>Item</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Subtotal</th>
+             
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of cartItems">
+              <td>{{ item.name }}</td>
+              <td>${{ item.price }}</td>
+              <td>
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  (click)="decreaseQuantity(item)"
+                >
+                  -
+                </button>
+                <span class="mx-2">{{ item.quantity }}</span>
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  (click)="increaseQuantity(item)"
+                >
+                  +
+                </button>
+              </td>
+              <td>${{ item.price * item.quantity }}</td>
+             
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Other Components -->
       <div>
-        <app-payments (paymentMethodSelected)="updatePaymentMethod($event)"></app-payments>
-      </div>
+        <div class="component-container mx-auto my-4 p-3 shadow border rounded bg-light">
+          <app-gifts></app-gifts>
+        </div>
+        <div class="component-container mx-auto my-4 p-3 shadow border rounded bg-light">
+          <app-store-item-page></app-store-item-page>
+        </div>
+        <div class="component-container mx-auto my-4 p-3 shadow border rounded bg-light">
+          <app-stripe-payments></app-stripe-payments>
+        </div>
 
-      <div class="phone">
-        <h1>Phone Number</h1>
-        <input type="text" class="form-control" [(ngModel)]="phoneNumber" placeholder="Enter your phone number">
-      </div>
-
-      <div class="address">
-        <h1>Delivery Address</h1>
-        <textarea class="form-control" [(ngModel)]="deliveryAddress" placeholder="Can't find your address on the map? Enter it here" rows="4"></textarea>
-      </div>
-
-      <div class="text-center">
-        <button id="btn" [disabled]="cartItems.length == 0" (click)="onOrder()">Place Order</button>
+        <!-- Order Summary for Small Screens -->
+        <div class="d-md-none mt-4 p-3 bg-white shadow zigzag-border">
+          <app-order-summary></app-order-summary>
+        </div>
       </div>
     </div>
 
-    <div class="col-md-8 m-4">
-      <app-navigation (addressDetected)="updateAddress($event)"></app-navigation>
-      <app-feedback></app-feedback>
+    <!-- Fixed Order Summary for Larger Screens -->
+    <div class="col-md-4 d-none d-md-block">
+      <div class="sticky-summary p-3 bg-white shadow zigzag-border">
+        <app-order-summary></app-order-summary>
+      </div>
     </div>
   </div>
 </div>

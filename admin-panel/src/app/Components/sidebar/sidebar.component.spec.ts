@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VLoginComponent } from './v-login.component';
+import { SidebarComponent } from './sidebar.component';
 
-describe('VLoginComponent', () => {
-  let component: VLoginComponent;
-  let fixture: ComponentFixture<VLoginComponent>;
+describe('SidebarComponent', () => {
+  let component: SidebarComponent;
+  let fixture: ComponentFixture<SidebarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VLoginComponent]
+      declarations: [SidebarComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(VLoginComponent);
+
+    fixture = TestBed.createComponent(SidebarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,30 +1,86 @@
-<!-- Payment Form Template -->
-<form (submit)="processPayment(amount, selectedPaymentMethod)">
-    <div *ngIf="selectedPaymentMethod === 'stripe'">
-      <div id="card-element"></div> <!-- Stripe's Card Element -->
-      <button type="submit" id="btn">Pay with Stripe</button>
+<div class="container mt-4">
+  <h2 class="text-center">Select Payment Method</h2>
+  <form>
+    <!-- Payment Method Selection -->
+    <div class="form-group mb-4">
+      <label for="paymentMethod">Payment Method</label>
+      <select
+        id="paymentMethod"
+        class="form-control"
+        [(ngModel)]="selectedPaymentMethod"
+        name="paymentMethod"
+      >
+        <option value="stripe">Stripe</option>
+        <option value="momo">MOMO</option>
+        <option value="mpesa">Mpesa</option>
+        <option value="cod">Cash on Delivery</option>
+      </select>
     </div>
-    
-    <div *ngIf="selectedPaymentMethod === 'momo'">
-      <input type="text" [(ngModel)]="accountNumber" placeholder="Enter MOMO Account" required />
-      <input type="number" [(ngModel)]="amount" placeholder="Enter Amount" required />
-      <button type="submit" id="btn">Pay with MOMO</button>
+
+    <!-- Dynamic Payment UI -->
+    <div class="payment-ui">
+      <!-- Stripe Payment UI -->
+      <div *ngIf="selectedPaymentMethod === 'stripe'" class="stripe-ui mb-4">
+        <h4>Stripe Payment</h4>
+        <div id="card-element"></div>
+        <small class="text-muted">Enter your card details securely.</small>
+      </div>
+
+      <!-- MOMO Payment UI -->
+      <div *ngIf="selectedPaymentMethod === 'momo'" class="momo-ui mb-4">
+        <h4>MOMO Payment</h4>
+        <input
+          type="text"
+          class="form-control mb-3"
+          placeholder="Enter MOMO Account"
+          [(ngModel)]="accountNumber"
+          name="momoAccount"
+          required
+        />
+        <input
+          type="number"
+          class="form-control"
+          placeholder="Enter Amount"
+          [(ngModel)]="amount"
+          name="momoAmount"
+          required
+        />
+      </div>
+
+      <!-- Mpesa Payment UI -->
+      <div *ngIf="selectedPaymentMethod === 'mpesa'" class="mpesa-ui mb-4">
+        <h4>Mpesa Payment</h4>
+        <input
+          type="text"
+          class="form-control mb-3"
+          placeholder="Enter Mpesa Account"
+          [(ngModel)]="accountNumber"
+          name="mpesaAccount"
+          required
+        />
+        <input
+          type="number"
+          class="form-control"
+          placeholder="Enter Amount"
+          [(ngModel)]="amount"
+          name="mpesaAmount"
+          required
+        />
+      </div>
+
+      <!-- Cash on Delivery -->
+      <div *ngIf="selectedPaymentMethod === 'cod'" class="cod-ui mb-4">
+        <h4>Cash on Delivery</h4>
+        <p class="text-muted">You will pay upon delivery.</p>
+      </div>
     </div>
-  
-    <div *ngIf="selectedPaymentMethod === 'mpase'">
-      <input type="text" [(ngModel)]="accountNumber" placeholder="Enter Mpase Account" required />
-      <input type="number" [(ngModel)]="amount" placeholder="Enter Amount" required />
-      <button type="submit" id="btn">Pay with Mpase</button>
-    </div>
+
+    <button
+      type="button"
+      class="btn btn-success mt-3"
+      (click)="processPayment()"
+    >
+      Confirm Payment
+    </button>
   </form>
-  
-  <!-- Select payment method -->
-  <div>
-    <label>Select Payment Method:</label>
-    <select [(ngModel)]="selectedPaymentMethod">
-      <option value="stripe">Stripe</option>
-      <option value="momo">MOMO</option>
-      <option value="mpase">Mpase</option>
-    </select>
-  </div>
-  
+</div>

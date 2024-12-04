@@ -1,1 +1,49 @@
-
+<div class="container mt-4">
+  <h2 class="text-center">Delivery Address</h2>
+  <form>
+    <div class="mb-3">
+      <label for="fullName" class="form-label">Full Name</label>
+      <input
+        type="text"
+        id="fullName"
+        class="form-control"
+        [(ngModel)]="fullName"
+        name="fullName"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="locationAddress" class="form-label">Location Address</label>
+      <input
+        type="text"
+        id="locationAddress"
+        class="form-control"
+        [(ngModel)]="locationAddress"
+        name="locationAddress"
+        [disabled]="selectedMapAddress !== null"
+        required
+      />
+    </div>
+    <div class="mb-3 text-center">
+      <button type="button" class="btn btn-info" (click)="setAddressFromMap('')">
+        Choose Address from Map
+      </button>
+      <app-navigation (addressDetected)="setAddressFromMap($event)"></app-navigation>
+      <p *ngIf="selectedMapAddress">Selected Address: {{ selectedMapAddress }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="contact" class="form-label">Phone Number</label>
+      <input
+        type="tel"
+        id="contact"
+        class="form-control"
+        [(ngModel)]="contact"
+        name="contact"
+        [required]="!!selectedMapAddress"
+      />
+    </div>
+    <div class="text-end">
+      <button type="button" class="btn btn-primary" (click)="saveAddress()">Save Address</button>
+    </div>
+  </form>
+</div>

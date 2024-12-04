@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../../Services/admin.service';
-import { Menu } from '../../Models/menu.model';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
@@ -9,39 +9,88 @@ import { Menu } from '../../Models/menu.model';
   styleUrls: ['./approved.component.css']
 })
 export class ApprovedComponent implements OnInit {
-
-  menus: Menu[] = [];
-  message!: string;
+  menus: any[] = [];
+  message: string = '';
+  selectedMenu: any = {}; // Initialized to avoid null/undefined errors
+  reason: string = '';
+  additionalPrice: number = 0;
 
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
-    this.loadUnapprovedMenus();
+    this.fetchMenus();
+    console.log(this.selectedMenu, this.reason);
+  this.fetchMenus();
   }
 
-  loadUnapprovedMenus() {
-    this.adminService.getUnapprovedMenus().subscribe(
-      (menus: Menu[]) => {
-        this.menus = menus;
-      },
-      (error) => {
-        console.error('Error fetching unapproved menus:', error);
-      }
-    );
-  }
-
-  approveMenu(menuId: number) {
-    this.adminService.approveMenu(menuId).subscribe(
+  fetchMenus() {
+    this.adminService.getIncomingMenus().subscribe(
       (response: any) => {
-        this.message = 'Menu item approved.';
-        this.loadUnapprovedMenus();
+        this.menus = response.data;
       },
       (error) => {
-        console.error('Error approving menu:', error);
-        this.message = 'Error approving menu.';
+        console.error('Failed to fetch menus', error);
       }
     );
   }
+
+  approveMenu(menuId: string) {
+    this.adminService.approveMenu(menuId, this.additionalPrice).subscribe(
+      (response) => {
+        this.message = response.message;
+        this.fetchMenus(); // Refresh menu list
+      },
+      (error) => {
+        console.error('Failed to approve menu', error);
+      }
+    );
+  }
+
+  disapproveMenu(menuId: string) {
+    if (!this.reason || this.reason.trim() === '') {
+      console.error('Disapproval reason is required.');
+      this.message = 'Reason for disapproval is required.';
+      return;
+    }
+  
+    this.adminService.disapproveMenu(menuId, this.reason).subscribe(
+      (response) => {
+        this.message = response.message;
+        this.fetchMenus(); // Refresh menu list
+      },
+      (error) => {
+        console.error('Failed to disapprove menu', error);
+      }
+    );
+  }
+  
+
+  editMenu(menuId: string) {
+    const updatedData = {
+      name: this.selectedMenu.name,
+      description: this.selectedMenu.description,
+      price: this.selectedMenu.price,
+      availability: this.selectedMenu.availability,
+    };
+
+    this.adminService.editMenu(menuId, updatedData).subscribe(
+      (response) => {
+        this.message = response.message;
+        this.fetchMenus(); // Refresh menu list
+      },
+      (error) => {
+        console.error('Failed to edit menu', error);
+      }
+    );
+  }
+  
+
+  setSelectedMenu(menu: any): void {
+    this.selectedMenu = { ...menu }; // Create a copy to avoid binding issues
+    this.reason = ''; // Reset disapproval reason
+  }
+  
+  
 
 }
 

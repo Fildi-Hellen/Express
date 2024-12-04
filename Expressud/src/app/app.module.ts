@@ -107,12 +107,12 @@ import { PharmacyComponent } from './shared/Pharm/pharmacy/pharmacy.component';
 import { PharmacyItemsComponent } from './shared/Pharm/pharmacy-items/pharmacy-items.component';
 import { PharmacyServingComponent } from './shared/Pharm/pharmacy-serving/pharmacy-serving.component';
 import { SearchComponent } from './shared/search/search.component';
-import { VLoginComponent } from './auth/v-login/v-login.component';
 import { StripePaymentsComponent } from './Payments/stripe-payments/stripe-payments.component';
 import { CustomerMenuComponent } from './shared/Components/customer-menu/customer-menu.component';
 import { CustomerMenuDetailsComponent } from './shared/Components/customer-menu-details/customer-menu-details.component';
 import { VendorForgotPasswordComponent } from './auth/vendor-forgot-password/vendor-forgot-password.component';
 import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component';
+import { CustomerComponent } from './components/customer/customer.component';
 
 
 
@@ -124,6 +124,7 @@ import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component
   declarations: [
     AppComponent,
     HomeComponent,
+    CustomerComponent,
     StripePaymentsComponent,
     StoreComponent,
     GoogleComponent,
@@ -214,7 +215,6 @@ import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component
     PharmacyServingComponent,
     PharmacyComponent,
     SearchComponent,
-    VLoginComponent
   
 
     

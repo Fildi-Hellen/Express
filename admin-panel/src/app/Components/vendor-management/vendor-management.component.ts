@@ -5,7 +5,7 @@ import { Vendor } from '../../Models/vendor.model';
 @Component({
   selector: 'app-vendor-management',
   templateUrl: './vendor-management.component.html',
-  styleUrl: './vendor-management.component.css'
+  styleUrls: ['./vendor-management.component.css']
 })
 export class VendorManagementComponent {
 
