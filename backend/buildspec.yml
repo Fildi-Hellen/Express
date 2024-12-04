@@ -19,10 +19,10 @@ phases:
       - echo Environment variables loaded successfully.
       - echo Setting up Laravel environment...
       - cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s/DB_HOST=.*/DB_HOST=$DB_HOST/" $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_DATABASE/" $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USERNAME/" $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_HOST=.*|DB_HOST=$(printf '%s\n' "$DB_HOST" | sed 's|[&/]|\\&|g')|" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_DATABASE=.*|DB_DATABASE=$(printf '%s\n' "$DB_DATABASE" | sed 's|[&/]|\\&|g')|" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_USERNAME=.*|DB_USERNAME=$(printf '%s\n' "$DB_USERNAME" | sed 's|[&/]|\\&|g')|" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$(printf '%s\n' "$DB_PASSWORD" | sed 's|[&/]|\\&|g')|" $CODEBUILD_SRC_DIR/backend/.env
       - echo Installing PHP dependencies...
       - cd $CODEBUILD_SRC_DIR/backend
       - rm -rf vendor
