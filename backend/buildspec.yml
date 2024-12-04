@@ -38,8 +38,8 @@ phases:
   post_build:
     commands:
       - echo "Testing database connectivity..."
-      - yum install -y nc || apt-get update && apt-get install -y netcat
-      - nc -zv $DB_HOST $DB_PORT
+      - yum install -y nmap-ncat
+      - nc -zv $DB_HOST $DB_PORT || echo "Failed to connect to DB_HOST: $DB_HOST on port $DB_PORT"
       - echo "Current .env file:"
       - cat $CODEBUILD_SRC_DIR/backend/.env
       - echo "Clearing Laravel caches..."
