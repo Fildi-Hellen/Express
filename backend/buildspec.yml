@@ -6,7 +6,7 @@ phases:
       php: 8.3
     commands:
       - echo Installing system dependencies...
-      - yum install -y git unzip mysql
+      - yum install -y git unzip
       - curl -sS https://getcomposer.org/installer | php
       - mv composer.phar /usr/local/bin/composer
 
@@ -18,17 +18,14 @@ phases:
       - export DB_USERNAME=$(aws ssm get-parameter --name "/express/db/username" --query Parameter.Value --output text)
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/express/db/password" --with-decryption --query Parameter.Value --output text)
       - echo Environment variables loaded successfully.
-      - echo "DB_HOST: $DB_HOST"
-      - echo "DB_USERNAME: $DB_USERNAME"
       - echo Setting up Laravel environment...
-      - cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env
-      - printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env
-      - printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
-      - echo Testing database connectivity...
-      - mysql -h $DB_HOST -P 3306 -u $DB_USERNAME -p$DB_PASSWORD -e "SHOW DATABASES;"
+      - |
+        cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env &&
+        printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env &&
+        sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env &&
+        sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env &&
+        sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env &&
+        printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
       - echo Installing PHP dependencies...
       - cd $CODEBUILD_SRC_DIR/backend
       - rm -rf vendor
