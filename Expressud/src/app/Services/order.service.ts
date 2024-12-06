@@ -18,6 +18,7 @@ export class OrderService {
   }
   
 
+
   getNewOrderForCurrentUser(): Observable<Order> {
     return this.http.get<Order>(`${this.API_URL}/orders/newForCurrentUser`);
   }
@@ -44,6 +45,21 @@ export class OrderService {
   updateOrderStatus(Id: number, status: string): Observable<any> {
     return this.http.put(`${this.API_URL}/orders/${Id}/status`, { status });
   }
+
+  confirmOrder(orderData: any): Observable<any> {
+    return this.http.post(`${this.API_URL}/confirm-order`, orderData);
+  }
+
+  saveRecipient(recipientData: any): Observable<any> {
+    return this.http.post(`${this.API_URL}/save-recipient`, recipientData);
+  }
+
+  saveAddress(addressData: { fullName: string; locationAddress: string; contact: string }): Observable<any> {
+    return this.http.post(`${this.API_URL}/address`, addressData);
+  }
+  savePaymentMethod(paymentData: any): Observable<any> {
+    return this.http.post(`${this.API_URL}/save-payment`, paymentData);
+  }  
 
 }
 

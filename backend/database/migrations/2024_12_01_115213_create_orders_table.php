@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('customer_name');
-            $table->string('customer_email');
-            $table->string('status'); // pending, completed, etc.
-            $table->timestamps();
+        $table->string('full_name');
+        $table->string('location_address');
+        $table->string('contact');
+        $table->string('payment_method');
+        $table->decimal('total_price', 10, 2);
+        $table->timestamps();
         });
     }
+   
 
     /**
      * Reverse the migrations.

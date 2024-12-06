@@ -1,25 +1,148 @@
-/* src/app/components/customer/customer.component.css */
-.categories, .establishments, .menus {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
+.category-card {
+  width: 100%; /* Ensure consistent width within its Bootstrap column */
+  max-width: 200px; /* Set a max width for larger screens */
+  height: 200px; /* Fixed height for all cards */
+  border: 1px solid #ddd; /* Add border */
+  border-radius: 8px; /* Slightly rounded corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover effect */
+  cursor: pointer;
+}
+
+.category-card:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Shadow on hover */
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Full height for alignment */
+}
+
+.card-title {
+  font-size: 1.25rem;
+  color: black;
+}
+
+@media (max-width: 768px) {
+  .category-card {
+    max-width: 100%; /* Adjust to container width for smaller screens */
+    height: auto; /* Allow flexibility in height */
   }
-  
-  .category-card, .establishment-card, .menu-item {
-    border: 1px solid #ccc;
-    padding: 1rem;
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
+}
+.establishment-card {
+  width: 100%; /* Full width within its column */
+  max-width: 300px; /* Max width for larger screens */
+  height: 300px; /* Fixed height for consistency */
+  cursor: pointer;
+  overflow: hidden; /* Ensure content stays inside the card */
+  border-radius: 8px; /* Rounded corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+}
+
+.establishment-card:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+.card-img {
+  width: 100%; /* Ensure image covers the card */
+  height: 100%; /* Match card height */
+  object-fit: cover; /* Make sure image scales without distortion */
+  border-radius: 8px; /* Match card border radius */
+}
+
+.card-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end; /* Align items to the bottom */
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3); /* Optional: dark overlay for text visibility */
+}
+
+.card-title,
+.card-text {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+ 
+
+/* Card Container */
+.menu-card {
+  border: none;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+  height: auto;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Menu Image */
+.menu-card-image {
+  position: relative;
+}
+
+.menu-card-image img {
+  height: 200px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.no-image {
+  height: 200px;
+  background-color: #f8f9fa;
+  color: #6c757d;
+  text-align: center;
+  font-size: 14px;
+}
+
+
+
+/* Store Card Bottom */
+.store-card-bottom {
+  background-color: #ffffff;
+  text-align: center;
+}
+
+.store-card-bottom__title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.store-card-bottom__tags {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.store-card-bottom__tags p {
+  margin: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .menu-card {
+    margin-bottom: 20px;
   }
-  
-  .category-card:hover, .establishment-card:hover, .menu-item:hover {
-    background-color: #f7f7f7;
-  }
-  
-  img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 5px;
-  }
+}
+.store-card-bottom__title {
+  color: black;
+}
+
   

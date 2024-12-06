@@ -13,45 +13,47 @@ export class NavigationComponent {
   map!: google.maps.Map;
   geocoder!: google.maps.Geocoder;
   options: google.maps.MapOptions = {
-    mapId: "DEMO_MAP_ID",
     center: { lat: -31, lng: 147 },
     zoom: 4,
   };
 
-  constructor(private ngZone: NgZone) { }
+  constructor(private ngZone: NgZone) {}
 
   ngAfterViewInit(): void {
-    this.mapInitializer();
+    this.initializeMap();
   }
 
-  mapInitializer(): void {
+  initializeMap(): void {
     this.map = new google.maps.Map(this.gmap.nativeElement, this.options);
     this.geocoder = new google.maps.Geocoder();
   }
 
   detectLocation(): void {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const pos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        this.map.setCenter(pos);
-        new google.maps.Marker({
-          position: pos,
-          map: this.map,
-          title: 'Your Location'
-        });
-        this.getGeocode(pos);
-      }, () => {
-        this.emitManualAddress();
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          this.map.setCenter(pos);
+          new google.maps.Marker({
+            position: pos,
+            map: this.map,
+            title: 'Your Location'
+          });
+          this.fetchAddress(pos);
+        },
+        () => {
+          this.addressDetected.emit('');
+        }
+      );
     } else {
-      this.emitManualAddress();
+      this.addressDetected.emit('');
     }
   }
 
-  getGeocode(latLng: google.maps.LatLngLiteral): void {
+  fetchAddress(latLng: google.maps.LatLngLiteral): void {
     this.geocoder.geocode({ location: latLng }, (results, status) => {
       if (status === 'OK' && results && results[0]) {
         this.ngZone.run(() => {
@@ -59,12 +61,8 @@ export class NavigationComponent {
           this.addressDetected.emit(this.deliveryAddress);
         });
       } else {
-        this.emitManualAddress();
+        this.addressDetected.emit('');
       }
     });
-  }
-
-  emitManualAddress(): void {
-    this.addressDetected.emit('');
   }
 }

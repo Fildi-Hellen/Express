@@ -66,8 +66,8 @@ Route::get('/menus-by-establishment', [MenuController::class, 'getMenusByEstabli
 Route::post('/save-recipient', [OrderController::class, 'saveRecipient']);
 Route::post('/confirm-order', [OrderController::class, 'confirmOrder']);
 
-
-
+Route::post('/save-payment', [OrderController::class, 'savePayment']);
+Route::post('/address', [OrderController::class, 'store']);
 // Route::middleware('auth:vendor')->group(function () {
 //     Route::post('/vendor/menus', [MenuController::class, 'store']);
 //     Route::get('/vendor/profile', [VendorController::class, 'profile']);

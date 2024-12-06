@@ -1,44 +1,103 @@
 <!-- src/app/components/customer/customer.component.html -->
-<div *ngIf="!selectedCategory && !selectedEstablishment">
-    <h2>Categories</h2>
-    <div class="categories">
-      <div *ngFor="let category of categories" class="category-card" (click)="loadEstablishments(category.category)">
-        <h3>{{ category.category }}</h3>
+<div *ngIf="!selectedCategory && !selectedEstablishment" class="container my-5 text-center">
+  <!-- <h2 class="mb-4">Categories</h2> -->
+  <div class="row justify-content-center">
+    <div 
+      *ngFor="let category of categories" 
+      class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center"
+    >
+      <div 
+        class="card category-card shadow-sm" 
+        (click)="loadEstablishments(category.category)"
+      >
+        <div class="card-body d-flex align-items-center justify-content-center">
+          <h3 class="card-title text-center">{{ category.category | titlecase}}</h3>
+        </div>
       </div>
     </div>
   </div>
+</div>
+
   
-  <div *ngIf="selectedCategory && !selectedEstablishment">
-    <button (click)="goBackToCategories()">Back to Categories</button>
-    <h2>Establishments in {{ selectedCategory }}</h2>
-    <div class="establishments">
-      <div *ngFor="let establishment of establishments" class="establishment-card" (click)="loadMenus(establishment.establishmentName)">
-        <h3>{{ establishment.establishmentName }}</h3>
-        <p>Available: {{ establishment.availability }}</p>
-        <img [src]="establishment.image" alt="{{ establishment.establishmentName }}" />
+<div *ngIf="selectedCategory && !selectedEstablishment" class="container my-5">
+  <button 
+    class="btn btn-primary mb-3" 
+    (click)="goBackToCategories()">Back to Categories
+  </button>
+  <h2 class="mb-4 text-center"> {{ selectedCategory | titlecase }}</h2>
+  <div class="row justify-content-center">
+    <div 
+      *ngFor="let establishment of establishments" 
+      class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center"
+    >
+      <div 
+        class="card establishment-card shadow-sm position-relative" 
+        (click)="loadMenus(establishment.establishmentName)"
+      >
+        <img 
+          [src]="establishment.image" 
+          class="card-img" 
+          [alt]="establishment.establishmentName"
+        />
+        <div class="card-img-overlay d-flex flex-column justify-content-end text-white">
+          <h3 class="card-title bg-dark bg-opacity-75 p-2 rounded">{{ establishment.establishmentName | titlecase }}</h3>
+          <p class="card-text bg-dark bg-opacity-75 p-1 rounded">Available: {{ establishment.availability }}</p>
+        </div>
       </div>
     </div>
   </div>
-  
-  <div *ngIf="selectedEstablishment">
-    <button (click)="goBackToEstablishments()">Back to Establishments</button>
-    <h2>Menus in {{ selectedEstablishment }}</h2>
-    <div class="menus">
-      <div *ngFor="let menu of menus" class="menu-item">
-        <h3>{{ menu.name }}</h3>
-        <p>{{ menu.description }}</p>
-        <p *ngIf="menu.cookTime">Cook Time: {{ menu.cookTime }}</p>
-        <p *ngIf="menu.expirationDate">Expiration Date: {{ menu.expirationDate }}</p>
-        <p *ngIf="menu.size">Size: {{ menu.size }}</p>
-        <p *ngIf="menu.location">Location: {{ menu.location }}</p>
-        <p>Availability: {{ menu.availability }}</p>
-        <p *ngIf="menu.price">Price: ${{ menu.price }}</p>
-        <img *ngIf="menu.image" [src]="menu.image" alt="{{ menu.name }}" />
-        <p *ngIf="!menu.image">No image available</p>
-        <button (click)="addToCart(menu)">Add to Cart</button>
+</div>
+
+<div *ngIf="selectedEstablishment" class="container mt-4">
+  <div class="mb-3">
+    <button class="btn btn-secondary" (click)="goBackToEstablishments()">Back to Establishments</button>
+  </div>
+
+  <!-- Selected Establishment Heading -->
+  <h2 class="text-center text-primary mb-4">
+    {{ selectedEstablishment | titlecase }}
+  </h2>
+
+  <!-- Menu Items -->
+  <div class="row justify-content-center">
+    <div *ngFor="let menu of menus" class="col-10 col-sm-6 col-md-4 mb-4">
+      <div class="card h-100 shadow-sm menu-card">
+        <!-- Menu Image -->
+        <div class="menu-card-image position-relative">
+          <img
+            *ngIf="menu.image"
+            [src]="menu.image"
+            class="card-img-top img-fluid"
+            alt="{{ menu.name }}"
+          />
+          <div *ngIf="!menu.image" class="no-image d-flex align-items-center justify-content-center">
+            <span>No image available</span>
+          </div>
+
+        
+        <!-- Menu Content -->
+        <div class="store-card-bottom p-3">
+          <h3 class="store-card-bottom__title">{{ menu.name | titlecase }}</h3>
+          <p class="text-muted small mb-2">{{ menu.description }}</p>
+
+          <!-- Additional Details -->
+          <div class="store-card-bottom__tags">
+            <p *ngIf="menu.cookTime"><strong>Cook Time:</strong> {{ menu.cookTime }}</p>
+            <p *ngIf="menu.price" class="mb-0"><strong>Price:</strong> ${{ menu.price }}</p>
+          </div>
+
+          <!-- Add to Cart Button -->
+          <div class="d-flex justify-content-center mt-3">
+            <button class="btn btn-primary w-75" (click)="addToCart(menu)">Add to Cart</button>
+          </div>
+        </div>
       </div>
     </div>
- </div>
+  </div>
+</div>
+
+
+
   
   
   

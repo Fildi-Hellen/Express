@@ -1,6 +1,6 @@
 <div class="container mt-4">
   <h2 class="text-center">Order Summary</h2>
-  <div *ngIf="cartItems.length > 0" class="table-responsive">
+  <div *ngIf="cartItems.length > 0">
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -23,7 +23,9 @@
       <h4>Total: ${{ totalPrice }}</h4>
     </div>
     <div class="text-end mt-3">
-      <button class="btn btn-primary" (click)="confirmOrder()">Confirm Order</button>
+      <button class="btn btn-primary" [disabled]="!isOrderValid" (click)="confirmOrder()">
+        Confirm Order
+      </button>
     </div>
   </div>
   <div *ngIf="cartItems.length === 0" class="text-center">

@@ -1,5 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 
 @Injectable({
@@ -7,12 +8,17 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class CartService {
 
+  private apiUrl = 'http://127.0.0.1:8000/api';
   private cart: any[] = [];
   private cartItemCount = new BehaviorSubject<number>(0);
 
   cartItemCount$ = this.cartItemCount.asObservable();
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
+
+  confirmOrder(orderData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/confirm-order`, orderData);
+  }
 
   // Add item to the cart
   addToCart(item: any): void {
@@ -23,6 +29,11 @@ export class CartService {
       this.cart.push({ ...item, quantity: 1 });
     }
     this.updateCartItemCount();
+  }
+  // Update the cart items
+  updateCart(cart: any[]): void {
+    this.cart = cart;
+    localStorage.setItem('cart', JSON.stringify(this.cart)); // Save to localStorage for persistence
   }
 
   // Remove item from the cart
@@ -57,5 +68,6 @@ export class CartService {
     this.cartItemCount.next(totalCount);
   }
   
+
 }
 

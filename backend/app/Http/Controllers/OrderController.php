@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -34,35 +37,73 @@ class OrderController extends Controller
 
     public function confirmOrder(Request $request)
     {
-        // Validate order details
-        $validator = Validator::make($request->all(), [
-            'recipient_name' => 'required|string|max:255',
-            'recipient_phone' => 'required|string|max:15',
-            'recipient_address' => 'required|string',
-            'payment_method' => 'required|string|in:stripe,momo,mpesa,cod',
-            'amount' => 'required_if:payment_method,stripe,momo,mpesa|numeric|min:0.1',
+        try {
+            $validatedData = $request->validate([
+                'address.fullName' => 'required|string|max:255',
+                'address.locationAddress' => 'required|string|max:255',
+                'address.contact' => 'required|string|max:15',
+                'paymentMethod' => 'required|string',
+                'cartItems' => 'required|array',
+                'total' => 'required|numeric',
+                'recipient.name' => 'nullable|string|max:255',
+                'recipient.phone' => 'nullable|string|max:15',
+            ]);
+    
+            // Create the order
+            $order = Order::create([
+                'full_name' => $validatedData['address']['fullName'],
+                'location_address' => $validatedData['address']['locationAddress'], // Add location address
+                'payment_method' => $validatedData['paymentMethod'],
+                'contact' => $validatedData['address']['contact'],
+                'recipient' => json_encode($validatedData['recipient'] ?? null),
+                'total_price' => $validatedData['total'],
+            
+            ]);
+    
+            // Save cart items
+            foreach ($validatedData['cartItems'] as $item) {
+                $order->items()->create($item);
+            }
+    
+            return response()->json(['message' => 'Order confirmed successfully!', 'order' => $order], 201);
+        } catch (\Exception $e) {
+            Log::error('Error confirming order:', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Error confirming order', 'error' => $e->getMessage()], 500);
+        }
+    }
+    
+
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'fullName' => 'required|string|max:255',
+            'locationAddress' => 'required|string|max:255',
+            'contact' => 'required|string|max:15',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        // Email the order confirmation to the admin (or the user)
-        Mail::send('emails.order_confirmation', $request->all(), function ($message) use ($request) {
-            $message->to('intysilva1@gmail.com') // Replace with your admin email
-                ->subject('New Order Confirmation')
-                ->from($request->get('recipient_phone'), 'Order System');
-        });
-
-        // Save the order to the database (optional)
-        // Order::create($request->all());
+        // Optionally save the address to the database
+        // Address::create($validatedData);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Order confirmed successfully!',
-        ], 200);
+            'message' => 'Address saved successfully!',
+            'data' => $validatedData,
+        ]);
     }
+
+    public function savePayment(Request $request)
+    {
+        $validatedData = $request->validate([
+            'method' => 'required|string',
+            'accountNumber' => 'nullable|string',
+            'amount' => 'nullable|numeric',
+        ]);
+
+        // Save payment logic or processing
+        return response()->json([
+            'message' => 'Payment saved successfully!',
+            'data' => $validatedData,
+        ]);
+    }
+
 }

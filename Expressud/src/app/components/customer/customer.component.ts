@@ -55,6 +55,7 @@ export class CustomerComponent {
         console.error('Error loading menus:', error);
       },
     });
+    
   }
   
   
@@ -77,5 +78,6 @@ export class CustomerComponent {
   }
 
   
+
 
 }

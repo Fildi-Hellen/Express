@@ -112,6 +112,7 @@ class MenuController extends Controller
         return response()->json(['data' => $establishments], 200);
     }
     
+    
 
     public function getMenusByEstablishment(Request $request)
     {

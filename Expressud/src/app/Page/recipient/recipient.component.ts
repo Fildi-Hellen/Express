@@ -1,19 +1,21 @@
 import { Component } from '@angular/core';
-import { RecipientService } from 'src/app/Services/recipient.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-recipient',
   templateUrl: './recipient.component.html',
-  styleUrl: './recipient.component.css'
+  styleUrls:[ './recipient.component.css']
 })
 export class RecipientComponent {
   recipient = { name: '', phone: '' };
 
-  constructor(private recipientService: RecipientService) {}
+  constructor(public dialogRef: MatDialogRef<RecipientComponent>) {}
 
-  saveRecipient() {
-    // Save recipient information
-    this.recipientService.shareRecipientInfo(this.recipient);
+  saveRecipient(): void {
+    if (this.recipient.name && this.recipient.phone) {
+      this.dialogRef.close(this.recipient); // Pass recipient data to GiftsComponent
+    } else {
+      alert('Please fill in all fields.');
+    }
   }
-
 }
