@@ -5,6 +5,7 @@ phases:
     runtime-versions:
       php: 8.3
     commands:
+      - set -x
       - echo Installing system dependencies...
       - yum install -y git unzip
       - curl -sS https://getcomposer.org/installer | php
@@ -12,6 +13,7 @@ phases:
 
   pre_build:
     commands:
+      - set -x
       - echo Fetching environment variables from AWS Parameter Store...
       - export DB_HOST=$(aws ssm get-parameter --name "/express/db/host" --query Parameter.Value --output text)
       - export DB_DATABASE=$(aws ssm get-parameter --name "/express/db/name" --query Parameter.Value --output text)
@@ -34,10 +36,12 @@ phases:
 
   build:
     commands:
+      - set -x
       - echo Build phase complete. Nothing to build for Laravel.
 
   post_build:
     commands:
+      - set -x
       - echo "Testing database connectivity..."
       - yum install -y nmap-ncat
       - |
