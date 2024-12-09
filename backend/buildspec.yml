@@ -27,11 +27,11 @@ phases:
       - echo "Environment variables loaded successfully."
       - echo "Setting up Laravel environment..."
       - |
-        cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env &&
-        printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env &&
-        sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env &&
-        sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env &&
-        sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env &&
+        cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env && \
+        printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env && \
+        sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env && \
+        sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env && \
+        sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env && \
         printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
       - echo "Installing PHP dependencies..."
       - cd $CODEBUILD_SRC_DIR/backend
@@ -76,4 +76,3 @@ artifacts:
     - '**/*'
   base-directory: backend # Adjust this to your Laravel backend directory
   discard-paths: no
-
