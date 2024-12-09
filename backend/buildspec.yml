@@ -20,18 +20,15 @@ phases:
       - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
       - export DB_PORT=3306
-      - echo "DB_HOST: $DB_HOST"
-      - echo "DB_DATABASE: $DB_DATABASE"
-      - echo "DB_USERNAME: $DB_USERNAME"
-      - echo "DB_PORT: $DB_PORT"
       - echo "Environment variables loaded successfully."
       - echo "Setting up Laravel environment..."
-      - cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env
-      - printf "DB_CONNECTION=mysql\n" >> $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env
-      - sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env
-      - printf "DB_PASSWORD=\"$DB_PASSWORD\"\n" >> $CODEBUILD_SRC_DIR/backend/.env
+      - |
+        cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env &&
+        printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env &&
+        sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env &&
+        sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env &&
+        sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env &&
+        printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
       - echo "Installing PHP dependencies..."
       - cd $CODEBUILD_SRC_DIR/backend
       - rm -rf vendor
@@ -47,11 +44,6 @@ phases:
       - set -x
       - echo "Testing database connectivity..."
       - yum install -y nmap-ncat
-      - echo "Pinging database host..."
-      - ping -c 4 $DB_HOST || echo "Ping failed for DB_HOST: $DB_HOST"
-      - echo "Performing DNS resolution test..."
-      - nslookup $DB_HOST || echo "DNS resolution failed for DB_HOST: $DB_HOST"
-      - echo "Attempting connection to database..."
       - |
         if nc -zv $DB_HOST $DB_PORT; then
           echo "Successfully connected to the database."
@@ -59,7 +51,7 @@ phases:
           echo "Failed to connect to DB_HOST: $DB_HOST on port $DB_PORT"
           exit 1
         fi
-      - echo "Current .env file contents:"
+      - echo "Current .env file:"
       - cat $CODEBUILD_SRC_DIR/backend/.env
       - echo "Clearing Laravel caches..."
       - php artisan cache:clear
@@ -73,5 +65,3 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: backend
-  discard-paths: no
