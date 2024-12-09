@@ -26,13 +26,12 @@ phases:
       - echo "DB_PORT: $DB_PORT"
       - echo "Environment variables loaded successfully."
       - echo "Setting up Laravel environment..."
-      - |
-        cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env && \
-        printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env && \
-        sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env && \
-        sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env && \
-        sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env && \
-        printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
+      - cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env
+      - printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env
+      - printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
       - echo "Installing PHP dependencies..."
       - cd $CODEBUILD_SRC_DIR/backend
       - rm -rf vendor
@@ -53,12 +52,11 @@ phases:
       - echo "Performing DNS resolution test..."
       - nslookup $DB_HOST || echo "DNS resolution failed for DB_HOST: $DB_HOST"
       - echo "Attempting connection to database..."
-      - |
-        if nc -zv $DB_HOST $DB_PORT; then
-          echo "Successfully connected to the database."
+      - if nc -zv $DB_HOST $DB_PORT; then
+          echo "Successfully connected to the database.";
         else
-          echo "Failed to connect to DB_HOST: $DB_HOST on port $DB_PORT"
-          exit 1
+          echo "Failed to connect to DB_HOST: $DB_HOST on port $DB_PORT";
+          exit 1;
         fi
       - echo "Current .env file contents:"
       - cat $CODEBUILD_SRC_DIR/backend/.env
