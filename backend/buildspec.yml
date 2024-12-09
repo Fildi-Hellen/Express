@@ -15,10 +15,10 @@ phases:
     commands:
       - set -x
       - echo Fetching environment variables from AWS Parameter Store...
-      - export DB_HOST=$(aws ssm get-parameter --name "/express/db/host" --query Parameter.Value --output text)
-      - export DB_DATABASE=$(aws ssm get-parameter --name "/express/db/name" --query Parameter.Value --output text)
-      - export DB_USERNAME=$(aws ssm get-parameter --name "/express/db/username" --query Parameter.Value --output text)
-      - export DB_PASSWORD=$(aws ssm get-parameter --name "/express/db/password" --with-decryption --query Parameter.Value --output text)
+      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db/host" --query Parameter.Value --output text)
+      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db/name" --query Parameter.Value --output text)
+      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db/username" --query Parameter.Value --output text)
+      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db/password" --with-decryption --query Parameter.Value --output text)
       - export DB_PORT=3306  # Added line
       - echo Environment variables loaded successfully.
       - echo Setting up Laravel environment...
