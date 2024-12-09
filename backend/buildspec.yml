@@ -76,3 +76,4 @@ artifacts:
     - '**/*'
   base-directory: backend # Adjust this to your Laravel backend directory
   discard-paths: no
+
