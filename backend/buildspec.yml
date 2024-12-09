@@ -6,7 +6,7 @@ phases:
       php: 8.3
     commands:
       - set -x
-      - echo Installing system dependencies...
+      - echo "Installing system dependencies..."
       - yum install -y git unzip
       - curl -sS https://getcomposer.org/installer | php
       - mv composer.phar /usr/local/bin/composer
@@ -14,14 +14,14 @@ phases:
   pre_build:
     commands:
       - set -x
-      - echo Fetching environment variables from AWS Parameter Store...
-      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db/host" --query Parameter.Value --output text)
-      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db/name" --query Parameter.Value --output text)
-      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db/username" --query Parameter.Value --output text)
-      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db/password" --with-decryption --query Parameter.Value --output text)
-      - export DB_PORT=3306  # Added line
-      - echo Environment variables loaded successfully.
-      - echo Setting up Laravel environment...
+      - echo "Fetching environment variables from AWS Parameter Store..."
+      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text)
+      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text)
+      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
+      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
+      - export DB_PORT=3306
+      - echo "Environment variables loaded successfully."
+      - echo "Setting up Laravel environment..."
       - |
         cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env &&
         printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env &&
@@ -29,7 +29,7 @@ phases:
         sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env &&
         sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env &&
         printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
-      - echo Installing PHP dependencies...
+      - echo "Installing PHP dependencies..."
       - cd $CODEBUILD_SRC_DIR/backend
       - rm -rf vendor
       - composer install --no-dev --optimize-autoloader
@@ -37,7 +37,7 @@ phases:
   build:
     commands:
       - set -x
-      - echo Build phase complete. Nothing to build for Laravel.
+      - echo "Build phase complete. Nothing to build for Laravel."
 
   post_build:
     commands:
