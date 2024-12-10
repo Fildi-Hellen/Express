@@ -5,12 +5,58 @@ phases:
     runtime-versions:
       php: 8.3
     commands:
-      - echo "Installing dependencies"
+      - echo "Installing system dependencies..."
       - yum install -y git unzip
+      - curl -sS https://getcomposer.org/installer | php
+      - mv composer.phar /usr/local/bin/composer
+
+  pre_build:
+    commands:
+      - echo "Fetching environment variables from AWS Parameter Store..."
+      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text)
+      - echo "DB_HOST: $DB_HOST"
+      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text)
+      - echo "DB_DATABASE: $DB_DATABASE"
+      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
+      - echo "DB_USERNAME: $DB_USERNAME"
+      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
+      - echo "DB_PASSWORD retrieved successfully"
+      - export DB_PORT=3306
+      - echo "DB_PORT: $DB_PORT"
+      - echo "Loaded environment variables:"
+      - env | grep DB_
+      - echo "Setting up Laravel environment..."
+      - cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env
+      - printf '%s\n' "DB_CONNECTION=mysql" >> $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_DATABASE=.*|DB_DATABASE=\"$DB_DATABASE\"|" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_USERNAME=.*|DB_USERNAME=\"$DB_USERNAME\"|" $CODEBUILD_SRC_DIR/backend/.env
+      - printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
+      - echo "Laravel environment file configured."
+      - echo "Installing PHP dependencies..."
+      - cd $CODEBUILD_SRC_DIR/backend
+      - rm -rf vendor
+      - composer install --no-dev --optimize-autoloader
 
   build:
     commands:
-      - echo "Build phase"
+      - echo "Build phase complete. Nothing to build for Laravel."
+
+  post_build:
+    commands:
+      - echo "Testing database connectivity..."
+      - yum install -y nmap-ncat
+      - if nc -zv $DB_HOST $DB_PORT; then echo "Successfully connected to the database at $DB_HOST:$DB_PORT."; else echo "Failed to connect to the database at $DB_HOST:$DB_PORT."; exit 1; fi
+      - echo "Current .env file:"
+      - cat $CODEBUILD_SRC_DIR/backend/.env
+      - echo "Clearing Laravel caches..."
+      - php artisan cache:clear
+      - php artisan config:clear
+      - php artisan config:cache
+      - php artisan route:clear
+      - php artisan route:cache
+      - echo "Running database migrations..."
+      - php artisan migrate --force
 
 artifacts:
   files:
