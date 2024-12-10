@@ -15,7 +15,6 @@ phases:
     commands:
       - set -x
       - echo "Fetching environment variables from AWS Parameter Store..."
-      # Ensure all required environment variables are fetched and logged
       - |
         export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text 2>&1)
         echo "DB_HOST: $DB_HOST"
@@ -31,11 +30,9 @@ phases:
       - export DB_PORT=3306
       - echo "DB_PORT: $DB_PORT"
 
-      # Debugging output for environment variable status
       - echo "Loaded environment variables:"
       - env | grep DB_
 
-      # Setup Laravel environment file
       - echo "Setting up Laravel environment..."
       - |
         cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env &&
@@ -46,7 +43,6 @@ phases:
         printf '%s\n' "DB_PASSWORD=\"$DB_PASSWORD\"" >> $CODEBUILD_SRC_DIR/backend/.env
       - echo "Laravel environment file configured."
 
-      # Install PHP dependencies
       - echo "Installing PHP dependencies..."
       - cd $CODEBUILD_SRC_DIR/backend
       - rm -rf vendor
@@ -63,7 +59,6 @@ phases:
       - echo "Testing database connectivity..."
       - yum install -y nmap-ncat
 
-      # Validate database connectivity
       - |
         if nc -zv $DB_HOST $DB_PORT; then
           echo "Successfully connected to the database at $DB_HOST:$DB_PORT."
@@ -72,11 +67,9 @@ phases:
           exit 1
         fi
 
-      # Display .env file contents for verification
       - echo "Current .env file:"
       - cat $CODEBUILD_SRC_DIR/backend/.env
 
-      # Laravel post-build steps
       - echo "Clearing Laravel caches..."
       - php artisan cache:clear
       - php artisan config:clear
@@ -91,5 +84,3 @@ artifacts:
     - '**/*'
   base-directory: backend
   discard-paths: no
-
-  
