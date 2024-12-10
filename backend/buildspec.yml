@@ -12,8 +12,9 @@ phases:
 
   pre_build:
     commands:
+      - echo "Setting execute permissions for pre-build script..."
+      - chmod +x ./scripts/pre_build.sh
       - echo "Running pre-build script..."
-      - chmod +x ./scripts/pre_build.sh  # Ensure the script is executable
       - ./scripts/pre_build.sh
 
   build:
@@ -22,8 +23,9 @@ phases:
 
   post_build:
     commands:
+      - echo "Setting execute permissions for post-build script..."
+      - chmod +x ./scripts/post_build.sh
       - echo "Running post-build script..."
-      - chmod +x ./scripts/post_build.sh  # Ensure the script is executable
       - ./scripts/post_build.sh
 
 artifacts:
