@@ -14,7 +14,7 @@ phases:
     commands:
       - echo "Checking and setting execute permissions for pre-build script..."
       - chmod +x ./scripts/Pre_build.sh
-      - ./scripts/Pre_build.sh
+      - ./scripts/pre_build.sh
 
   build:
     commands:
