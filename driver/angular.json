@@ -44,7 +44,11 @@
                 ],
 
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/css/jsvectormap.min.css",
+              "src/assets/css/bootstrap.min.css",
+              "src/assets/css/icons.min.css",
+              "src/assets/css/app.min.css"
             ],
             "scripts": []
           },
@@ -53,13 +57,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "5mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "110kb",
+                  "maximumError": "120kb"
                 }
               ],
               "outputHashing": "all"

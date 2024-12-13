@@ -24,4 +24,4 @@ phases:
 artifacts:
   files:
     - '**/*'                          # Include all files within the base directory
-  base-directory: 'driver/dist/driver'  # Specify the correct base directory for artifacts
+  base-directory: 'dist/driver'  # Specify the correct base directory for artifacts
