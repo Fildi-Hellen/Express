@@ -25,7 +25,7 @@
           "options": {
             "outputPath": "dist/driver",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -58,10 +58,12 @@
           },
           "configurations": {
             "production": {
-              "optimization": true,
+              "optimization": {
+                "styles": true,
+                "fonts": true
+              },
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -78,8 +80,7 @@
             "development": {
               "optimization": false,
               "outputHashing": "none",
-              "sourceMap": true,
-              "extractCss": false
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
