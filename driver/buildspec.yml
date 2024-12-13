@@ -14,8 +14,9 @@ phases:
   build:
     commands:
       - echo Build started
-      - cd $CODEBUILD_SRC_DIR/driver  # Use absolute path to ensure it is accessible
+      - cd $CODEBUILD_SRC_DIR/driver
       - ng build --configuration production --output-path=dist/driver
+      - if [ -d dist/driver ]; then echo "Build directory exists"; else echo "Build directory not found"; exit 1; fi
 
   post_build:
     commands:
@@ -23,5 +24,5 @@ phases:
 
 artifacts:
   files:
-    - '**/*'                          # Include all files within the base directory
-  base-directory: 'dist/driver'  # Specify the correct base directory for artifacts
+    - '**/*'
+  base-directory: 'driver/dist/driver'

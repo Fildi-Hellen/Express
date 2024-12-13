@@ -25,24 +25,28 @@
           "options": {
             "outputPath": "dist/driver",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-           "assets": [
-                  {
-                    "glob": "**/*",
-                    "input": "src/assets",
-                    "output": "/assets"
-                  },
-                  {
-                    "glob": "favicon.ico",
-                    "input": "src",
-                    "output": "/"
-                  }
-                ],
-
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/images",
+                "output": "/images"
+              },
+              {
+                "glob": "favicon.ico",
+                "input": "src",
+                "output": "/"
+              }
+            ],
             "styles": [
               "src/styles.css",
               "src/assets/css/jsvectormap.min.css",
@@ -54,24 +58,28 @@
           },
           "configurations": {
             "production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "5mb",
-                  "maximumError": "5mb"
+                  "maximumError": "10mb"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "110kb",
                   "maximumError": "120kb"
                 }
-              ],
-              "outputHashing": "all"
+              ]
             },
             "development": {
               "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true
+              "outputHashing": "none",
+              "sourceMap": true,
+              "extractCss": false
             }
           },
           "defaultConfiguration": "production"
@@ -80,10 +88,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "driver:build:production"
+              "browserTarget": "driver:build:production"
             },
             "development": {
-              "buildTarget": "driver:build:development"
+              "browserTarget": "driver:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -100,25 +108,23 @@
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
-                  {
-                    "glob": "**/*",
-                    "input": "src/assets",
-                    "output": "/assets"
-                  },
-                  {
-                    "glob": "favicon.ico",
-                    "input": "src",
-                    "output": "/"
-                  }
-                ],
-
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "favicon.ico",
+                "input": "src",
+                "output": "/"
+              }
+            ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-               "src/styles.css"
+              "src/styles.css"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-
             ]
           }
         }
