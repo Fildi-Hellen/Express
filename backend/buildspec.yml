@@ -13,9 +13,8 @@ phases:
   pre_build:
     commands:
       - echo "Checking and setting execute permissions for pre-build script..."
-      - if [ -f ./scripts/Pre_build.sh ]; then chmod +x ./scripts/Pre_build.sh; else echo "Pre-build script not found. Skipping..."; fi
-      - echo "Running Pre-build script..."
-      - if [ -f ./scripts/Pre_build.sh ]; then ./scripts/Pre_build.sh; else echo "Pre-build script not found. Skipping..."; fi
+      - chmod +x ./scripts/Pre_build.sh
+      - ./scripts/Pre_build.sh
 
   build:
     commands:
@@ -24,9 +23,8 @@ phases:
   post_build:
     commands:
       - echo "Checking and setting execute permissions for post-build script..."
-      - if [ -f ./scripts/post_build.sh ]; then chmod +x ./scripts/post_build.sh; else echo "Post-build script not found. Skipping..."; fi
-      - echo "Running post-build script..."
-      - if [ -f ./scripts/post_build.sh ]; then ./scripts/post_build.sh; else echo "Post-build script not found. Skipping..."; fi
+      - chmod +x ./scripts/post_build.sh
+      - ./scripts/post_build.sh
 
 artifacts:
   files:
