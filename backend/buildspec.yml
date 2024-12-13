@@ -6,15 +6,35 @@ phases:
       php: 8.3
     commands:
       - echo "Installing system dependencies..."
-      - yum install -y git unzip
+      - yum install -y git unzip nmap-ncat
       - curl -sS https://getcomposer.org/installer | php
       - mv composer.phar /usr/local/bin/composer
 
   pre_build:
     commands:
-      - echo "Checking and setting execute permissions for pre-build script..."
-      - chmod +x ./scripts/Pre_build.sh
-      - ./scripts/pre_build.sh
+      - echo "Fetching environment variables from AWS Parameter Store..."
+      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text)
+      - export DB_PORT=$(aws ssm get-parameter --name "/expressuddb/db_port" --query Parameter.Value --output text)
+      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text)
+      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
+      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
+      - echo "Environment variables loaded successfully."
+      
+      - echo "Testing database connectivity..."
+      - if nc -zv "$DB_HOST" "$DB_PORT"; then echo "Successfully connected to the database."; else echo "Failed to connect to the database."; exit 1; fi
+
+      - echo "Setting up Laravel environment..."
+      - cp $CODEBUILD_SRC_DIR/backend/.env.example $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_HOST=.*|DB_HOST=$DB_HOST|g" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_PORT=.*|DB_PORT=$DB_PORT|g" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_DATABASE=.*|DB_DATABASE=$DB_DATABASE|g" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_USERNAME=.*|DB_USERNAME=$DB_USERNAME|g" $CODEBUILD_SRC_DIR/backend/.env
+      - sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|g" $CODEBUILD_SRC_DIR/backend/.env
+      - echo ".env file configured successfully."
+
+      - echo "Installing PHP dependencies..."
+      - cd $CODEBUILD_SRC_DIR/backend
+      - composer install --no-dev --optimize-autoloader
 
   build:
     commands:
@@ -22,9 +42,17 @@ phases:
 
   post_build:
     commands:
-      - echo "Checking and setting execute permissions for post-build script..."
-      - chmod +x ./scripts/post_build.sh
-      - ./scripts/post_build.sh
+      - echo "Clearing Laravel caches..."
+      - php artisan cache:clear
+      - php artisan config:clear
+      - php artisan config:cache
+      - php artisan route:clear
+      - php artisan route:cache
+      - echo "Laravel caches cleared successfully."
+
+      - echo "Running database migrations..."
+      - php artisan migrate --force
+      - echo "Database migrations completed successfully."
 
 artifacts:
   files:
