@@ -30,56 +30,47 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "src/assets",
-                "output": "/assets"
-              },
-              {
-                "glob": "**/*",
-                "input": "src/images",
-                "output": "/images"
-              },
-              {
-                "glob": "favicon.ico",
-                "input": "src",
-                "output": "/"
-              }
-            ],
+           "assets": [
+                  {
+                    "glob": "**/*",
+                    "input": "src/assets",
+                    "output": "/assets"
+                  },
+                  {
+                    "glob": "favicon.ico",
+                    "input": "src",
+                    "output": "/"
+                  }
+                ],
+
             "styles": [
               "src/styles.css",
-              "src/assets/css/jsvectormap.min.css",
-              "src/assets/css/bootstrap.min.css",
-              "src/assets/css/icons.min.css",
-              "src/assets/css/app.min.css"
+            "src/assets/css/jsvectormap.min.css",
+            "src/assets/css/bootstrap.min.css",
+            "src/assets/css/icons.min.css",
+            "src/assets/css/app.min.css"
             ],
             "scripts": []
           },
           "configurations": {
             "production": {
-              "optimization": {
-                "styles": true,
-                "fonts": true
-              },
-              "outputHashing": "all",
-              "sourceMap": false,
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "5mb",
-                  "maximumError": "10mb"
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "110kb",
                   "maximumError": "120kb"
                 }
-              ]
+              ],
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
-              "outputHashing": "none",
+              "extractLicenses": false,
               "sourceMap": true
             }
           },
@@ -89,10 +80,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "driver:build:production"
+              "buildTarget": "driver:build:production"
             },
             "development": {
-              "browserTarget": "driver:build:development"
+              "buildTarget": "driver:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -109,23 +100,25 @@
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "src/assets",
-                "output": "/assets"
-              },
-              {
-                "glob": "favicon.ico",
-                "input": "src",
-                "output": "/"
-              }
-            ],
+                  {
+                    "glob": "**/*",
+                    "input": "src/assets",
+                    "output": "/assets"
+                  },
+                  {
+                    "glob": "favicon.ico",
+                    "input": "src",
+                    "output": "/"
+                  }
+                ],
+
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.css"
+               "src/styles.css"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+
             ]
           }
         }
@@ -133,3 +126,4 @@
     }
   }
 }
+
