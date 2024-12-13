@@ -27,6 +27,10 @@ import { PaymentsComponent } from './Components/payments/payments.component';
 import { ProfileComponent } from './Components/profile/profile.component';
 import { SupportComponent } from './Components/support/support.component';
 import { AnalyticsComponent } from './Components/analytics/analytics.component';
+import { HeroComponent } from './Components/hero/hero.component';
+import { DriversComponent } from './Components/drivers/drivers.component';
+import { FeedbackComponent } from './Components/feedback/feedback.component';
+import { LanguageComponent } from './Components/language/language.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +46,11 @@ import { AnalyticsComponent } from './Components/analytics/analytics.component';
     PaymentsComponent,
     ProfileComponent,
     SupportComponent,
-    AnalyticsComponent
+    AnalyticsComponent,
+    HeroComponent,
+    DriversComponent,
+    FeedbackComponent,
+    LanguageComponent
   ],
   imports: [
     BrowserModule,

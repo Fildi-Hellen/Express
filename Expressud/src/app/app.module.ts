@@ -113,6 +113,7 @@ import { CustomerMenuDetailsComponent } from './shared/Components/customer-menu-
 import { VendorForgotPasswordComponent } from './auth/vendor-forgot-password/vendor-forgot-password.component';
 import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component';
 import { CustomerComponent } from './components/customer/customer.component';
+import { RidesudComponent } from './components/ridesud/ridesud.component';
 
 
 
@@ -215,6 +216,7 @@ import { CustomerComponent } from './components/customer/customer.component';
     PharmacyServingComponent,
     PharmacyComponent,
     SearchComponent,
+    RidesudComponent
   
 
     

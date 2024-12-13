@@ -7,10 +7,5 @@ import { Component } from '@angular/core';
 })
 export class FooterComponent {
 
-  instagramUrl: string = "https://www.instagram.com/expressudd/";
-  facebookUrl: string = "https://www.facebook.com/profile.php?id=100093505271355";
-
-  linkedinUrl: string = "https://www.linkedin.com/expressud/";
-
-
+  
 }

@@ -1,0 +1,51 @@
+/* Import the fonts (optional if already imported in index.html) */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@400;700&display=swap');
+
+/* Apply global font family to the navbar */
+.navbar-header {
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* Customize the navbar brand */
+.navbar-brand-box {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #000000; /* Black color */
+    text-decoration: none; /* Remove underline */
+    display: flex;
+    align-items: center;
+}
+
+/* Style for the logo image */
+.logo-img {
+    width: auto; /* Allow width to adjust based on height */
+    height: 60px; /* Default height for large screens */
+    object-fit: contain; /* Ensure the image scales properly */
+    transition: height 0.3s ease; /* Smooth transition on resize */
+}
+
+/* Responsive adjustments */
+
+/* On small screens, adjust the logo size */
+@media (max-width: 991.98px) {
+    .logo-img {
+        height: 50px; /* Increased size for better visibility */
+    }
+
+    /* Adjust navbar-brand-box if needed */
+    .navbar-brand-box {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Further adjustments for extra small screens */
+@media (max-width: 576px) {
+    .logo-img {
+        height: 45px; /* Slightly smaller on very small screens */
+    }
+
+    .navbar-brand-box {
+        margin-bottom: 0.5rem;
+    }
+}

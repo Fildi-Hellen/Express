@@ -12,6 +12,9 @@ import { FormsModule } from '@angular/forms';
 import { MainContentComponent } from './Components/main-content/main-content.component';
 import { NavbarComponent } from './Components/navbar/navbar.component';
 import { SidebarComponent } from './Components/sidebar/sidebar.component';
+import { HeroComponent } from './Components/hero/hero.component';
+import { NotificationsComponent } from './Components/notifications/notifications.component';
+import { LanguageComponent } from './Components/language/language.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,10 @@ import { SidebarComponent } from './Components/sidebar/sidebar.component';
     FooterComponent,
     MainContentComponent,
     NavbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    HeroComponent,
+    NotificationsComponent,
+    LanguageComponent
   ],
   imports: [
     BrowserModule,

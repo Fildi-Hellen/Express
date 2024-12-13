@@ -20,7 +20,6 @@ import { AboutUsDescriptionComponent } from './about/about-us-description/about-
 import { ServiceSectionComponent } from './shared/courier/service-section/service-section.component';
 import { FormComponent } from './shared/courier/form/form.component';
 import { HeroCourierComponent } from './shared/courier/hero-courier/hero-courier.component';
-import { AuthGuard } from './auth/guards/auth.guard';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { AddressComponent } from './components/address/address.component';
 import { BlogDetailsComponent } from './Blog/blog-details/blog-details.component';
@@ -94,6 +93,7 @@ import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component
 import { VendorForgotPasswordComponent } from './auth/vendor-forgot-password/vendor-forgot-password.component';
 import { CustomerComponent } from './components/customer/customer.component';
 import { CheckoutGuard } from './auth/guards/checkout.guard';
+import { RidesudComponent } from './components/ridesud/ridesud.component';
 
 
 
@@ -105,6 +105,7 @@ const routes: Routes = [
   {path:'home',component:HomeComponent},
    {path:'auth',component:AuthComponent},
   {path:'contact',component:ContactComponent},
+  {path:'ridesud',component:RidesudComponent},
   {path:'navbar',component:NavbarComponent},
   {path:'footer',component:FooterComponent},
   {path:'blog',component:BlogComponent},

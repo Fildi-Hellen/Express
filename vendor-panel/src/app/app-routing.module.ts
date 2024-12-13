@@ -12,6 +12,10 @@ import { SettingsComponent } from './Components/settings/settings.component';
 import { SupportComponent } from './Components/support/support.component';
 import { MenuComponent } from './Components/menu/menu.component';
 import { AnalyticsComponent } from './Components/analytics/analytics.component';
+import { HeroComponent } from './Components/hero/hero.component';
+import { DriversComponent } from './Components/drivers/drivers.component';
+import { FeedbackComponent } from './Components/feedback/feedback.component';
+import { LanguageComponent } from './Components/language/language.component';
 
 const routes: Routes = [
 
@@ -27,7 +31,11 @@ const routes: Routes = [
   {path:'settings',component:SettingsComponent},
   {path:'support',component:SupportComponent},
   {path:'menu',component:MenuComponent},
-  {path:'analytics',component:AnalyticsComponent}
+  {path:'analytics',component:AnalyticsComponent},
+  {path:'hero',component:HeroComponent},
+  {path:'driver',component:DriversComponent},
+  {path:'feedback',component:FeedbackComponent},
+  {path:'language',component:LanguageComponent}
 
 
 

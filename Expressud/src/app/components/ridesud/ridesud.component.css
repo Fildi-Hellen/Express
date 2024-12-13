@@ -1,0 +1,16 @@
+/* download-section.component.css */
+
+.download-section {
+    background-image: url('/assets/img/blog/taxy.webp'); /* Ensure this is the correct path */
+    background-size: cover; /* Ensures the image covers the entire area */
+    background-position: center; /* Centers the image in the container */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    padding: 100px 0; /* Adjust padding if necessary */
+    color: #fff; /* White text for better contrast */
+    min-height: 800px; /* Ensures there's enough vertical space for the image */
+    width: 100%; /* Ensures the section stretches to full width */
+}
+
+.download-section .lead {
+    font-size: 1.25rem; /* Adjust font size as needed */
+}

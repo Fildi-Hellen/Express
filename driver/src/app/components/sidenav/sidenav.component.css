@@ -1,0 +1,21 @@
+.sidebar {
+    width: 250px;
+    transition: all 0.3s;
+    /* Add shadow or other styles as needed */
+  }
+  
+  @media (max-width: 992px) {
+    .sidebar {
+      position: fixed;
+      z-index: 1000;
+      height: 100%;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+      transform: translateX(-100%);
+    }
+    .sidebar.d-block {
+      transform: translateX(0);
+    }
+  }
+  
