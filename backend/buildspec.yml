@@ -13,13 +13,14 @@ phases:
   pre_build:
     commands:
       - echo "Fetching environment variables from AWS Parameter Store..."
-      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text)
-      - export DB_PORT=$(aws ssm get-parameter --name "/expressuddb/db_port" --query Parameter.Value --output text)
-      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text)
-      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
-      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
+      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text || { echo "DB_HOST not found"; exit 1; })
+      - export DB_PORT=$(aws ssm get-parameter --name "/expressuddb/db_port" --query Parameter.Value --output text || { echo "DB_PORT not found"; exit 1; })
+      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text || { echo "DB_DATABASE not found"; exit 1; })
+      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text || { echo "DB_USERNAME not found"; exit 1; })
+      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text || { echo "DB_PASSWORD not found"; exit 1; })
+
       - echo "Environment variables loaded successfully."
-      
+
       - echo "Testing database connectivity..."
       - if nc -zv "$DB_HOST" "$DB_PORT"; then echo "Successfully connected to the database."; else echo "Failed to connect to the database."; exit 1; fi
 
@@ -30,6 +31,7 @@ phases:
       - sed -i "s|DB_DATABASE=.*|DB_DATABASE=$DB_DATABASE|g" $CODEBUILD_SRC_DIR/backend/.env
       - sed -i "s|DB_USERNAME=.*|DB_USERNAME=$DB_USERNAME|g" $CODEBUILD_SRC_DIR/backend/.env
       - sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|g" $CODEBUILD_SRC_DIR/backend/.env
+
       - echo ".env file configured successfully."
 
       - echo "Installing PHP dependencies..."
