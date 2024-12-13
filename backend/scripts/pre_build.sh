@@ -13,8 +13,12 @@ else
 fi
 
 # Step 2: Display the current .env file
-echo "Current .env file:"
-cat "$CODEBUILD_SRC_DIR/backend/.env"
+if [ -f "$CODEBUILD_SRC_DIR/backend/.env" ]; then
+  echo "Current .env file:"
+  cat "$CODEBUILD_SRC_DIR/backend/.env"
+else
+  echo ".env file not found!"
+fi
 
 # Step 3: Clear and Cache Laravel settings
 echo "Clearing Laravel caches..."
@@ -29,26 +33,3 @@ echo "Laravel caches cleared."
 echo "Running database migrations..."
 php artisan migrate --force
 echo "Database migrations completed successfully."
-
-# Step 5: Fetch environment variables from AWS Parameter Store
-echo "Fetching environment variables from AWS Parameter Store..."
-export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text)
-echo "DB_HOST: $DB_HOST"
-
-export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text)
-echo "DB_DATABASE: $DB_DATABASE"
-
-export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
-echo "DB_USERNAME: $DB_USERNAME"
-
-export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
-echo "DB_PASSWORD retrieved successfully"
-
-export DB_PORT=3306
-echo "DB_PORT: $DB_PORT"
-
-# Step 6: Set up Laravel environment
-echo "Setting up Laravel environment..."
-cp "$CODEBUILD_SRC_DIR/backend/.env.example" "$CODEBUILD_SRC_DIR/backend/.env"
-printf '%s\n' "DB_CONNECTION=mysql" >> "$CODEBUILD_SRC_DIR/backend/.env"
-sed -i "s|DB_HOST=.*|DB_HOST=\"$DB_HOST\"|" "$CODEBUILD_SRC_DIR/backend/.
