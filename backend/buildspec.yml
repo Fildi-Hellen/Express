@@ -6,16 +6,15 @@ phases:
       php: 8.3
     commands:
       - echo "Updating system dependencies..."
-      - sudo yum update -y
+      - sudo dnf update -y
       - echo "Installing required tools..."
-      - sudo yum install -y unzip git nmap
-      - echo "Installing OpenSSL 1.0 compatibility libraries..."
-      - sudo amazon-linux-extras enable epel
-      - sudo yum install -y compat-openssl10
+      - sudo dnf install -y unzip git nmap
+      - echo "Installing OpenSSL compatibility libraries..."
+      - sudo dnf install -y openssl-devel compat-openssl10
       - echo "Adding MySQL repository..."
-      - sudo yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
+      - sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
       - echo "Installing MySQL client..."
-      - sudo yum install -y mysql-community-client
+      - sudo dnf install -y mysql-community-client
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - sudo mv composer.phar /usr/local/bin/composer
