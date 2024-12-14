@@ -9,6 +9,9 @@ phases:
       - sudo yum update -y
       - echo "Installing required tools..."
       - sudo yum install -y unzip git nmap
+      - echo "Installing OpenSSL 1.0 compatibility libraries..."
+      - sudo amazon-linux-extras enable epel
+      - sudo yum install -y compat-openssl10
       - echo "Adding MySQL repository..."
       - sudo yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
       - echo "Installing MySQL client..."
