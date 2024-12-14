@@ -46,4 +46,10 @@ phases:
 
   post_build:
     commands:
-      - ech
+      - echo "Build completed on $(date)"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: /var/www/html
+  discard-paths: no
