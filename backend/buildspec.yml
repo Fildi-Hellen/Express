@@ -6,8 +6,8 @@ phases:
       php: 8.3
     commands:
       - echo "Installing system dependencies..."
-      - sudo apt update -y
-      - sudo apt install -y unzip git nmap mysql-client
+      - sudo yum update -y
+      - sudo yum install -y unzip git nmap mariadb
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - sudo mv composer.phar /usr/local/bin/composer
@@ -22,11 +22,9 @@ phases:
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
       - echo "Environment variables loaded successfully."
 
-      # Test MySQL database connection
       - echo "Testing database connectivity..."
       - if nc -zv "$DB_HOST" "$DB_PORT"; then echo "Successfully connected to the database."; else echo "Failed to connect to the database."; exit 1; fi
 
-      # Set up Laravel environment
       - echo "Setting up Laravel environment..."
       - cp .env.example .env
       - sed -i "s|DB_HOST=.*|DB_HOST=$DB_HOST|g" .env
