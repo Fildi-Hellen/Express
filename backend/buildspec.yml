@@ -7,13 +7,17 @@ phases:
     commands:
       - echo "Updating system dependencies..."
       - sudo dnf update -y
+
       - echo "Installing required tools..."
-      - sudo dnf install -y unzip git nmap
-      - echo "Enabling MariaDB 10.6 module..."
-      - sudo dnf module reset mariadb -y
-      - sudo dnf module enable mariadb:10.6 -y
-      - echo "Installing MariaDB client..."
-      - sudo dnf module install mariadb:10.6/client -y
+      - sudo dnf install -y unzip git nmap dnf-plugins-core
+
+      # Add official MySQL repository and install MySQL client
+      - echo "Installing MySQL Community client..."
+      - sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+      - sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+      - sudo dnf config-manager --enable mysql80-community
+      - sudo dnf install -y mysql-community-client
+
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - sudo mv composer.phar /usr/local/bin/composer
@@ -29,8 +33,7 @@ phases:
       - echo "Environment variables loaded successfully."
 
       - echo "Testing database connectivity..."
-      # Use the 'mariadb' command installed by the module
-      - if mariadb -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "USE $DB_DATABASE"; then echo "Successfully connected to the database."; else echo "Failed to connect to the database."; exit 1; fi
+      - if mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "USE $DB_DATABASE"; then echo "Successfully connected to the database."; else echo "Failed to connect to the database."; exit 1; fi
 
       - echo "Setting up Laravel environment..."
       - cp .env.example .env
