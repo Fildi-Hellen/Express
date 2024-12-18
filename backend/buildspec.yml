@@ -65,4 +65,3 @@ artifacts:
     - '**/*'
   base-directory: /var/www/html
   discard-paths: no
-
