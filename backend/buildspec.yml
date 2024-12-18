@@ -9,8 +9,8 @@ phases:
       - sudo dnf update -y
       - echo "Installing required tools..."
       - sudo dnf install -y unzip git nmap
-      - echo "Installing MariaDB client (compatible with MySQL)..."
-      - sudo dnf install -y mariadb
+      - echo "Installing MySQL client (compatible with MariaDB)..."
+      - sudo dnf install -y mysql
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - sudo mv composer.phar /usr/local/bin/composer

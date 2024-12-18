@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Driver;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Notifications\DriverAssignedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -57,6 +60,8 @@ class OrderController extends Controller
                 'contact' => $validatedData['address']['contact'],
                 'recipient' => json_encode($validatedData['recipient'] ?? null),
                 'total_price' => $validatedData['total'],
+                'tracking_id' => uniqid('track_'), // Generate tracking ID
+                 'status' => 'pending', // Default status
             
             ]);
     
@@ -71,6 +76,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'Error confirming order', 'error' => $e->getMessage()], 500);
         }
     }
+
     
 
 
@@ -105,5 +111,48 @@ class OrderController extends Controller
             'data' => $validatedData,
         ]);
     }
+
+    public function getVendorOrders()
+    {
+        $orders = Order::with('items')->where('status', 'pending')->get();
+        return response()->json($orders);
+    }
+
+    public function updateOrderStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $order->status = $request->status;
+        $order->save();
+
+        return response()->json(['message' => 'Order status updated successfully!']);
+    }
+
+    public function assignDriver(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'driverId' => 'required|exists:drivers,id',
+        ]);
+    
+        $order = Order::findOrFail($id);
+        $driver = Driver::findOrFail($validated['driverId']);
+    
+        $order->driver_id = $driver->id;
+        $order->status = 'assigned';
+        $order->save();
+    
+        // Optionally send notification to the driver
+        Notification::send($driver, new DriverAssignedNotification($order));
+    
+        return response()->json(['message' => 'Driver assigned successfully!', 'order' => $order]);
+    }
+    
+
+    public function getDriverOrders($driverId)
+    {
+        $orders = Order::where('driver_id', $driverId)->where('status', 'assigned')->get();
+        return response()->json($orders);
+    }
+
+    
 
 }

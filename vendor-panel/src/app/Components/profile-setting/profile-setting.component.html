@@ -1,0 +1,38 @@
+<div class="container">
+    <h2>Edit Your Profile and Business Information</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Personal Information</div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Name:</label>
+              <input type="text" class="form-control" [(ngModel)]="personalInfo.name">
+            </div>
+            <div class="form-group">
+              <label>Email:</label>
+              <input type="email" class="form-control" [(ngModel)]="personalInfo.email">
+            </div>
+            <button class="btn btn-primary" (click)="updatePersonalInfo()">Update Personal Info</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Business Information</div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Business Name:</label>
+              <input type="text" class="form-control" [(ngModel)]="businessInfo.name">
+            </div>
+            <div class="form-group">
+              <label>Tax ID:</label>
+              <input type="text" class="form-control" [(ngModel)]="businessInfo.taxId">
+            </div>
+            <button class="btn btn-primary" (click)="updateBusinessInfo()">Update Business Info</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

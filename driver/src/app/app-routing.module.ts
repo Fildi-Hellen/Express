@@ -18,6 +18,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { SupportComponent } from './components/support/support.component';
 import { TripHistoryComponent } from './components/trip-history/trip-history.component';
 import { TripRequestsComponent } from './components/trip-requests/trip-requests.component';
+import { DriverAuthComponent } from './components/driver-auth/driver-auth.component';
 
 const routes: Routes = [
   {path:'', component:DashboardComponent},
@@ -38,7 +39,8 @@ const routes: Routes = [
   {path:'settings',component:SettingsComponent},
   {path:'support',component:SupportComponent},
   {path:'trip-history',component:TripHistoryComponent},
-  {path:'trip-requests',component:TripRequestsComponent}
+  {path:'trip-requests',component:TripRequestsComponent},
+  {path:'driver-auth',component:DriverAuthComponent}
 
 ];
 

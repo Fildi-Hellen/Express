@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -7,39 +7,50 @@ import { Observable } from 'rxjs';
 })
 export class OrderService {
 
-  private API_URL = 'http://127.0.0.1:8000/api';
+  private apiUrl =  'http://127.0.0.1:8000/api';
 
   constructor(private http: HttpClient) { }
+   // Add a method to get the auth token
+   private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken'); // Or wherever you store the token
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+  }
+  getVendorOrders(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/vendor-orders`);
+  }
 
-  // create(order: Order): Observable<Order> {
-  //   return this.http.post<Order>(`${this.API_URL}/orders/create`, order);
-  // }
+  updateOrderStatus(orderId: number, status: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/update-status/${orderId}`, { status });
+  }
+
+  getAllDrivers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/drivers`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  
   
 
-  // getNewOrderForCurrentUser(): Observable<Order> {
-  //   return this.http.get<Order>(`${this.API_URL}/orders/newForCurrentUser`);
-  // }
-
+  assignDriver(orderId: number, driverId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/orders/${orderId}/assign-driver`, { driverId });
+  }
   
-  // pay(order: Order): Observable<string> {
-  //   return this.http.post<string>(`${this.API_URL}/orders/pay`, order);
-  // }
+  getAvailableDrivers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/drivers/available`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  
+  
 
-  // trackOrderById(id: number): Observable<Order> {
-  //   return this.http.get<Order>(`${this.API_URL}/orders/track/${id}`);
-  // }
-  // getOrderDetails(orderId: number): Observable<Order> {
-  //   return this.http.get<Order>(`${this.API_URL}}/${orderId}`);
-  // }
-  getOrders(): Observable<any> {
-    return this.http.get(`${this.API_URL}/orders`);
+
+
+  getDriverOrders(driverId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/driver-orders/${driverId}`);
   }
 
-  getOrderDetails(id: number): Observable<any> {
-    return this.http.get(`${this.API_URL}/orders/${id}`);
-  }
-
-  updateOrderStatus(Id: number, status: string): Observable<any> {
-    return this.http.put(`${this.API_URL}/orders/${Id}/status`, { status });
-  }
+ 
+  
 }

@@ -1,4 +1,72 @@
-<!-- Support and Help
-Help Center: Access FAQs, troubleshooting guides, and instructional videos.
-Contact Support: Direct channels to reach customer support via chat, email, or phone.
-Report Issues: Ability to report technical issues, trip-related problems, or safety concerns. -->
+<div class="container mt-4">
+    <h2 class="mb-4 text-center custom-heading">Support & Help</h2>
+  
+    <div class="card shadow-sm custom-card mb-4">
+      <div class="card-body">
+        <h4 class="mb-3">Help Center</h4>
+        <h5>FAQs</h5>
+        <ul class="list-group mb-3">
+          <li class="list-group-item" *ngFor="let faq of helpData.faqs">
+            <strong>{{ faq.question }}</strong>
+            <div class="text-muted">{{ faq.answer }}</div>
+          </li>
+        </ul>
+  
+        <h5>Troubleshooting Guides</h5>
+        <ul class="list-group mb-3">
+          <li class="list-group-item" *ngFor="let guide of helpData.troubleshooting">
+            <strong>{{ guide.title }}</strong>
+            <ul class="mt-2 ms-4">
+              <li *ngFor="let step of guide.steps">{{ step }}</li>
+            </ul>
+          </li>
+        </ul>
+  
+        <h5>Instructional Videos</h5>
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let video of helpData.videos">
+            <strong>{{ video.title }}</strong>
+            <div><a [href]="video.url" target="_blank" class="link-primary">Watch Video</a></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  
+    <div class="card shadow-sm custom-card mb-4">
+      <div class="card-body">
+        <h4 class="mb-3">Contact Support</h4>
+        <p>We are here to help! Choose your preferred channel:</p>
+        <ul class="list-inline">
+          <li class="list-inline-item me-3">
+            <button class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i> Live Chat</button>
+          </li>
+          <li class="list-inline-item me-3">
+            <a href="mailto:support@example.com" class="btn btn-success"><i class="bi bi-envelope-fill"></i> Email Us</a>
+          </li>
+          <li class="list-inline-item">
+            <a href="tel:+1234567890" class="btn btn-info text-white"><i class="bi bi-telephone-fill"></i> Call Us</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  
+    <div class="card shadow-sm custom-card">
+      <div class="card-body">
+        <h4 class="mb-3">Report an Issue</h4>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Category</label>
+          <select class="form-select" [(ngModel)]="issue.category">
+            <option>Technical</option>
+            <option>Trip-related</option>
+            <option>Safety</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Description</label>
+          <textarea class="form-control" rows="4" [(ngModel)]="issue.description" placeholder="Describe the issue here..."></textarea>
+        </div>
+        <button class="btn btn-danger custom-btn" (click)="submitIssue()">Submit Issue</button>
+      </div>
+    </div>
+  </div>
+  

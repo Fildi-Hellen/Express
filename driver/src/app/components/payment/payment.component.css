@@ -1,0 +1,98 @@
+/* Container adjustments */
+.container {
+    max-width: 900px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  /* Heading styles */
+  .custom-heading {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 2rem;
+    color: #333;
+    font-weight: 700;
+  }
+  
+  /* Card styles */
+  .custom-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .custom-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  }
+  
+  /* Earnings titles and amounts */
+  .earnings-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .earnings-amount {
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  /* Table styling */
+  .custom-table thead {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .custom-table tbody tr:hover {
+    background-color: #f0f8ff;
+  }
+  
+  /* Button styling */
+  .custom-btn {
+    transition: background-color 0.3s, transform 0.3s;
+    font-weight: 600;
+  }
+  
+  .custom-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.02);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .custom-heading {
+      font-size: 1.5rem;
+    }
+  
+    .card-body {
+      padding: 15px;
+    }
+  
+    .earnings-title {
+      font-size: 1rem;
+    }
+  
+    .custom-table {
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* Additional spacing and form styling */
+  .form-label {
+    color: #333;
+    font-size: 1rem;
+  }
+  
+  .form-control {
+    font-size: 1rem;
+  }
+  
+  .input-group input {
+    border-right: none;
+  }
+  
+  .input-group .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  

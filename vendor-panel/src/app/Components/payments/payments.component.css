@@ -1,0 +1,27 @@
+/* Container styling for padding and overall layout */
+.container {
+    padding: 20px;
+  }
+  
+  /* Styling for cards for better visual separation and padding */
+  .card {
+    margin-top: 20px; /* Space between cards */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  }
+  
+  /* Button styling for better visibility and aesthetics */
+  button.btn {
+    width: 100%; /* Makes button width consistent */
+    margin-top: 10px; /* Space above the button */
+  }
+  
+  /* Responsive text alignment and padding */
+  @media (max-width: 768px) {
+    h2, h3 {
+      text-align: center; /* Center-align headings on smaller screens */
+    }
+    .btn {
+      width: auto; /* Auto width for buttons on smaller devices for better fit */
+    }
+  }
+  

@@ -1,0 +1,59 @@
+.container {
+    max-width: 900px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .custom-heading {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 2rem;
+    color: #333;
+    font-weight: 700;
+  }
+  
+  .custom-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: #fff;
+  }
+  
+  .custom-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  }
+  
+  .text-warning i {
+    color: #ffc107; /* Bootstrap warning color for stars */
+  }
+  .text-muted i {
+    color: #ccc;
+  }
+  
+  .feedback-item {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+  }
+  
+  .custom-btn {
+    transition: background-color 0.3s, transform 0.3s;
+    font-weight: 600;
+  }
+  
+  .custom-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.02);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .custom-heading {
+      font-size: 1.5rem;
+    }
+  
+    .card-body {
+      padding: 15px;
+    }
+  }
+  

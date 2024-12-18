@@ -69,8 +69,8 @@ export class CheckoutComponent implements OnInit {
 
     this.orderService.confirmOrder(orderData).subscribe(
       (response) => {
-        console.log('Order confirmed successfully:', response);
-        alert('Order confirmed successfully!');
+        console.log('Raw response from backend:', response);
+        alert('Order confirmed successfully! Tracking ID: ' + response.order.tracking_id);
         this.cartService.clearCart();
         this.resetCheckout();
       },

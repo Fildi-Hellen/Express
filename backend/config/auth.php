@@ -51,6 +51,14 @@ return [
         'driver' => 'session',
         'provider' => 'vendors',
     ],
+
+
+        'driver' => [ // Custom guard for drivers
+        'driver' => 'session',
+        'provider' => 'drivers',
+    ],
+
+
     ],
 
     /*
@@ -79,6 +87,11 @@ return [
         'vendors' => [
         'driver' => 'eloquent',
         'model' => App\Models\Vendor::class,
+    ],
+
+    'drivers' => [ // Custom provider for drivers
+        'driver' => 'eloquent',
+        'model' => App\Models\Driver::class,
     ],
 
         // 'users' => [

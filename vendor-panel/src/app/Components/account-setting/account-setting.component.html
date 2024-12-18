@@ -1,0 +1,36 @@
+<div class="container">
+    <div class="card">
+      <div class="card-header">Login Credentials</div>
+      <div class="card-body">
+        <form>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" [(ngModel)]="credentials.email" placeholder="Enter new email">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" [(ngModel)]="credentials.password" placeholder="Enter new password">
+          </div>
+          <button type="button" class="btn btn-primary" (click)="updateCredentials()">Update Credentials</button>
+        </form>
+      </div>
+    </div>
+  
+    <div class="card mt-3">
+      <div class="card-header">Notification Preferences</div>
+      <div class="card-body">
+        <form>
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="emailNotifications" [(ngModel)]="notifications.emailEnabled">
+            <label class="form-check-label" for="emailNotifications">Enable Email Notifications</label>
+          </div>
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="smsNotifications" [(ngModel)]="notifications.smsEnabled">
+            <label class="form-check-label" for="smsNotifications">Enable SMS Notifications</label>
+          </div>
+          <button type="button" class="btn btn-primary" (click)="updateNotifications()">Update Notifications</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  

@@ -1,4 +1,77 @@
-<!-- 3. Trip Management
-Current Trips: Real-time tracking of ongoing trips with details like passenger location, destination, and navigation.
-Trip Requests: Accept or decline new trip requests with relevant information such as fare estimate and trip distance.
-Trip History: Access past trip details, including dates, earnings, and passenger ratings. -->
+<div class="container mt-4">
+    <h2 class="mb-4 text-center custom-heading">Trip Management</h2>
+  
+    <!-- Current Trips Section -->
+    <div class="card shadow-sm custom-card mb-4">
+      <div class="card-body">
+        <h4 class="mb-3">Current Trips</h4>
+        <div *ngIf="currentTrips.length > 0; else noCurrentTrips">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover custom-table">
+              <thead>
+                <tr>
+                  <th>Passenger</th>
+                  <th>Pickup Location</th>
+                  <th>Destination</th>
+                  <th>ETA</th>
+                  <th>Fare</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let trip of currentTrips">
+                  <td>{{ trip.passengerName }}</td>
+                  <td>{{ trip.pickupLocation }}</td>
+                  <td>{{ trip.destination }}</td>
+                  <td>{{ trip.eta }}</td>
+                  <td>${{ trip.fare }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <ng-template #noCurrentTrips>
+          <p class="text-muted">No current trips at the moment.</p>
+        </ng-template>
+      </div>
+    </div>
+  
+    <!-- Trip Requests Section -->
+    <div class="card shadow-sm custom-card">
+      <div class="card-body">
+        <h4 class="mb-3">New Trip Requests</h4>
+        <div *ngIf="tripRequests.length > 0; else noRequests">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover custom-table">
+              <thead>
+                <tr>
+                  <th>Passenger</th>
+                  <th>Pickup Location</th>
+                  <th>Destination</th>
+                  <th>Distance</th>
+                  <th>Fare Estimate</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let request of tripRequests">
+                  <td>{{ request.passengerName }}</td>
+                  <td>{{ request.pickupLocation }}</td>
+                  <td>{{ request.destination }}</td>
+                  <td>{{ request.distance }}</td>
+                  <td>${{ request.fareEstimate }}</td>
+                  <td>
+                    <button class="btn btn-success btn-sm me-2" (click)="accept(request)">Accept</button>
+                    <button class="btn btn-danger btn-sm" (click)="decline(request)">Decline</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <ng-template #noRequests>
+          <p class="text-muted">No new trip requests at the moment.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  

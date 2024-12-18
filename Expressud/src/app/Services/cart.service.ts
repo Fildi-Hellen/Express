@@ -20,6 +20,7 @@ export class CartService {
     return this.http.post(`${this.apiUrl}/confirm-order`, orderData);
   }
 
+  
   // Add item to the cart
   addToCart(item: any): void {
     const existingItem = this.cart.find((cartItem) => cartItem.name === item.name);

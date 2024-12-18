@@ -21,6 +21,7 @@ export class OrderSummaryComponent implements OnInit {
     this.loadCart();
   }
 
+
   loadCart(): void {
     this.cartItems = this.cartService.getCart();
     this.calculateTotalPrice();
@@ -36,6 +37,8 @@ export class OrderSummaryComponent implements OnInit {
       alert('Please provide all required details.');
       return;
     }
+
+    
 
     // Emit order confirmation event
     this.confirmOrderEvent.emit();

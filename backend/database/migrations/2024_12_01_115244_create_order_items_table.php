@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_items', function (Blueprint $table) {
-            $table->id();
+         $table->id();
         $table->foreignId('order_id')->constrained()->onDelete('cascade');
         $table->string('name');
         $table->decimal('price', 10, 2);
@@ -29,3 +29,4 @@ return new class extends Migration
         Schema::dropIfExists('order_items');
     }
 };
+

@@ -1,167 +1,86 @@
-
-        <!-- Begin page -->
-        <div id="layout-wrapper">
-            <div class="pace-progress"></div>
-            <header id="page-topbar">
-                <div class="navbar-header">
-                    <div class="d-flex">
-                        <!-- LOGO -->
-                        <div class="navbar-brand-box">
-                            <a href="#" class="logo logo-dark">
-                                <span class="logo-sm">
-                                    <img src="assets/images/logo.png" alt="logo-sm-dark" height="24">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="assets/images/logo.png" alt="logo-dark" height="25">
-                                </span>
-                            </a>
-
-                            <a href="#" class="logo logo-light">
-                                <span class="logo-sm">
-                                    <img src="assets/images/logo.png" alt="logo-sm-light" height="84">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="assets/images/logo.png" alt="logo-light" height="95">
-                                </span>
-                            </a>
-                        </div>
-
-                        <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
-                            <i class="ri-menu-2-line align-middle"></i>
-                        </button>
-
-                        <!-- App Search-->
-                        <form class="app-search d-none d-lg-block">
-                            <div class="position-relative">
-                                <input type="text" class="form-control" placeholder="Search...">
-                                <span class="ri-search-line"></span>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="d-flex">
-
-                        <div class="dropdown d-inline-block d-lg-none ms-2">
-                            <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="ri-search-line"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
-                                aria-labelledby="page-header-search-dropdown">
-                    
-                                <form class="p-3">
-                                    <div class="mb-3 m-0">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Search ...">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-primary" type="submit"><i class="ri-search-line"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="dropdown d-none d-sm-inline-block" routerLink="/payments">
-                            <button type="button" class="btn header-item waves-effect"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                                <img class="" src="assets/images/flags/wallet.png" alt="Header Language" height="20">
-                            </button>
-                          
-                        </div>
-
-                       
-
-                        <div class="dropdown d-none d-lg-inline-block ms-1" routerLink="/language">
-                            <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
-                                <i class="ri-global-line"></i>
-                            </button>
-                        </div>
-
-                        <div class="dropdown d-inline-block">
-                           <app-notifications></app-notifications>
-                        </div>
-
-                        <div class="dropdown d-inline-block" routerLink="/settings">
-                            <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
-                                <i class="ri-settings-2-line"></i>
-                            </button>
-                        </div>
-            
-                    </div>
-                </div>
-            </header>
-
-            <!-- ========== Left Sidebar Start ========== -->
-            <div class="vertical-menu">
-
-                <div data-simplebar class="h-100">
-
-                    <!--- Sidemenu -->
-                  <app-sidenav></app-sidenav>
-                    <!-- Sidebar -->
-                </div>
-            </div>
-            
-            <div class="main-content">
-
-                
-               
-               <app-footer></app-footer>
-                
-            </div>
-
+<!-- SIDEBAR -->
+<section id="sidebar" [ngClass]="status ? 'hide' : ''">
+    <a href="#" class="brand">
+      <i class='bx bxs-smile'></i>
+      <span class="text">Expressud</span>
+    </a>
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="#">
+          <i class='bx bxs-dashboard' ></i>
+          <span class="text" routerLink="/dashboard">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/order-managements">
+            <i class='bx bxs-shopping-bag-alt'></i>
+          <span class="text">Order Management</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/menu">
+            <i class='bx bxs-bookmarks'></i>
+            <span class="text">Menu Management</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/payments">
+            <i class='bx bxs-credit-card'></i>
+            <span class="text">Wallet</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/driver">
+            <i class='bx bxs-car'></i>
+            <span class="text">Drivers</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a routerLink="/settings">
+            <i class='bx bxs-cog'></i>
+            <span class="text">Settings</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/support" class="logout">
+            <i class='bx bxs-help-circle'></i>
+            <span class="text">Support</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+  <!-- SIDEBAR -->
+  
+  
+  
+  <!-- CONTENT -->
+  <section id="content">
+    <!-- NAVBAR -->
+    <nav>
+      <i (click)="addToggle()" class='bx bx-menu' ></i>
+      <a href="#" class="nav-link">Categories</a>
+      <form action="#">
+        <div class="form-input">
+          <input type="search" placeholder="Search...">
+          <button type="button" class="search-btn"><i class='bx bx-search' ></i></button>
         </div>
-        <!-- END layout-wrapper -->
-
-        <!-- Right Sidebar -->
-        <div class="right-bar">
-            <div data-simplebar class="h-100">
-                <div class="rightbar-title d-flex align-items-center px-3 py-4">
-            
-                    <h5 class="m-0 me-2">Settings</h5>
-
-                    <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
-                        <i class="mdi mdi-close noti-icon"></i>
-                    </a>
-                </div>
-
-                <!-- Settings -->
-                <hr class="mt-0" />
-                <h6 class="text-center mb-0">Choose Layouts</h6>
-
-                <div class="p-4">
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-1.jpg" class="img-fluid img-thumbnail" alt="layout-1">
-                    </div>
-
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch" checked>
-                        <label class="form-check-label" for="light-mode-switch">Light Mode</label>
-                    </div>
-    
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-2.jpg" class="img-fluid img-thumbnail" alt="layout-2">
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css">
-                        <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
-                    </div>
-    
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-3.jpg" class="img-fluid img-thumbnail" alt="layout-3">
-                    </div>
-                    <div class="form-check form-switch mb-5">
-                        <input class="form-check-input theme-choice" type="checkbox" id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css">
-                        <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
-                    </div>
-
-            
-                </div>
-
-            </div> <!-- end slimscroll-menu-->
+      </form>
+      <a routerLink="/notifications" class="notification">
+        <i class='bx bxs-bell' ></i>
+        <span class="num">8</span>
+      </a>
+      <a routerLink="/profile" class="profile">
+        <img src="https://secure.gravatar.com/avatar/d09eaad01aea86c51b4f892b4f8abf6f?s=100&d=wavatar&r=g">
+      </a>
+    </nav>
+    <!-- NAVBAR -->
+    <div id="main-content">
+        <div class="center-content">
+            <router-outlet></router-outlet>
         </div>
-        <!-- /Right-bar -->
-
-        <!-- Right bar overlay-->
-        <div class="rightbar-overlay"></div>
+    </div>
+    
+  </section>
+  <!-- CONTENT -->

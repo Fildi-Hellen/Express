@@ -31,6 +31,8 @@ import { HeroComponent } from './Components/hero/hero.component';
 import { DriversComponent } from './Components/drivers/drivers.component';
 import { FeedbackComponent } from './Components/feedback/feedback.component';
 import { LanguageComponent } from './Components/language/language.component';
+import { ProfileSettingComponent } from './Components/profile-setting/profile-setting.component';
+import { AccountSettingComponent } from './Components/account-setting/account-setting.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +52,9 @@ import { LanguageComponent } from './Components/language/language.component';
     HeroComponent,
     DriversComponent,
     FeedbackComponent,
-    LanguageComponent
+    LanguageComponent,
+    ProfileSettingComponent,
+    AccountSettingComponent
   ],
   imports: [
     BrowserModule,

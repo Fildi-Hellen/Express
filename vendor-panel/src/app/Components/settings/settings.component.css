@@ -1,22 +1,20 @@
-.container {
-    max-width: 600px;
+.sidebar {
+  min-height: 100vh; /* Full height sidebar */
+  border-right: 1px solid #dee2e6; /* Add a border to the right of the sidebar */
+}
+
+.sidebar .nav-link {
+  color: #333; /* Darker font for better readability */
+}
+
+.sidebar .nav-link.active {
+  background-color: #007bff; /* Highlight color for active tab */
+  color: #fff;
+}
+
+/* Additional responsiveness and padding as needed */
+@media (max-width: 768px) {
+  .sidebar {
+    min-height: auto; /* Adjust sidebar height for mobile */
   }
-  
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  label {
-    font-weight: bold;
-  }
-  
-  input.form-control {
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-  }
-  
-  button.btn {
-    width: 100%;
-    background: #201658;
-  }
-  
+}

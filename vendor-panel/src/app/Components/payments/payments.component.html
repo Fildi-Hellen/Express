@@ -1,1 +1,51 @@
-<p>payments works!</p>
+<div class="container mt-3">
+    <div class="row">
+      <div class="col-12 mb-3">
+        <h2 class="text-primary">My Wallet</h2>
+      </div>
+      <!-- Invoice Creation -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Create Invoice</h3>
+            <input type="number" class="form-control mb-2" placeholder="Enter amount" [(ngModel)]="invoiceAmount">
+            <button class="btn btn-success" (click)="createInvoice(invoiceAmount)">Create Invoice</button>
+          </div>
+        </div>
+      </div>
+      <!-- Payment Request -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Request Payment</h3>
+            <input type="number" class="form-control mb-2" placeholder="Enter amount" [(ngModel)]="paymentAmount">
+            <button class="btn btn-info" (click)="requestPayment(paymentAmount)">Request Payment</button>
+          </div>
+        </div>
+      </div>
+      <!-- Subscription Management -->
+      <div class="col-md-6 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Manage Subscriptions</h3>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item" *ngFor="let sub of subscriptions">
+                {{ sub.name }} - {{ sub.status }}
+                <button class="btn btn-primary float-right" (click)="updateSubscription(sub.id, 'premium')">Upgrade to Premium</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Payout Details -->
+      <div class="col-md-6 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Payout Details</h3>
+            <p>Bank: {{ payoutDetails.bankName }}</p>
+            <button class="btn btn-warning" (click)="requestPayout()">Request Payout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

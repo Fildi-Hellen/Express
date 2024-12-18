@@ -19,8 +19,11 @@ import { LanguageComponent } from './components/language/language.component';
 import { CommunicationsComponent } from './components/communications/communications.component';
 import { NavigationsComponent } from './components/navigations/navigations.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
-import { ProfileComponent } from './components/profile/profile.component';
 import { OrderComponent } from './components/order/order.component';
+import { DriverAuthComponent } from './components/driver-auth/driver-auth.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+// import { ProfileComponent } from './components/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -41,12 +44,15 @@ import { OrderComponent } from './components/order/order.component';
     CommunicationsComponent,
     NavigationsComponent,
     FeedbackComponent,
-    ProfileComponent,
-    OrderComponent
+    // ProfileComponent,
+    OrderComponent,
+    DriverAuthComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule, 
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,4 +1,24 @@
-<!-- Profile Management
-Personal Information: View and edit personal details like name, contact information, and profile picture.
-Vehicle Information: Manage vehicle details including make, model, license plate, and vehicle photos.
-Document Uploads: Upload and update necessary documents such as driver's license, insurance, and registration. -->
+<!-- <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <h2>Upload Profile Picture</h2>
+        <img 
+          [src]="uploadedPicture || 'https://via.placeholder.com/150'" 
+          alt="Profile Picture" 
+          class="img-thumbnail mb-3"
+          width="150"
+          height="150"
+        />
+        <form (submit)="onUpload()">
+          <input 
+            type="file" 
+            (change)="onFileSelect($event)" 
+            class="form-control mb-3" 
+            accept="image/*"
+          />
+          <button class="btn btn-primary w-100" type="submit">Upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
+   -->

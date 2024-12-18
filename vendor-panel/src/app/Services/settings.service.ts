@@ -7,15 +7,41 @@ import { Observable } from 'rxjs';
 })
 export class SettingsService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api/settings';
+  private apiUrl = 'http://your-api-url/api/vendor';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  getSettings(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+  updatePersonalInfo(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/personal-info`, data);
   }
 
-  updateSettings(settings: any): Observable<any> {
-    return this.http.put<any>(this.apiUrl, settings);
+  updateBusinessInfo(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/business-info`, data);
   }
+
+  changeLoginCredentials(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/login-credentials`, data);
+  }
+
+  updateNotificationPreferences(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/notification-preferences`, data);
+  }
+
+  updatePaymentMethods(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/payment-methods`, data);
+  }
+
+  updateTaxSettings(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/tax-settings`, data);
+  }
+
+  manageSubscriptions(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/subscriptions`, data);
+  }
+
+  updateSecuritySettings(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/security-settings`, data);
+  }
+
+  
 }

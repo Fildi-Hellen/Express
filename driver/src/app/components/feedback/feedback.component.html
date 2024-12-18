@@ -1,3 +1,43 @@
-<!-- Ratings and Feedback
-Driver Ratings: View average ratings and detailed feedback from passengers.
-Feedback Submission: Allow drivers to provide feedback about the app, trips, or passenger interactions. -->
+<div class="container mt-4">
+    <h2 class="mb-4 text-center custom-heading">Ratings & Feedback</h2>
+    
+    <!-- Driver Ratings Overview -->
+    <div class="card shadow-sm custom-card mb-4">
+      <div class="card-body">
+        <h4 class="mb-3">Your Average Rating</h4>
+        <div class="d-flex align-items-center mb-3">
+          <h1 class="display-4 me-3">{{ averageRating }}</h1>
+          <div>
+            <span *ngFor="let star of [1,2,3,4,5]" class="me-1" [class.text-warning]="star <= averageRating" [class.text-muted]="star > averageRating">
+              <i class="bi bi-star-fill"></i>
+            </span>
+          </div>
+        </div>
+        <hr>
+        <h5 class="mb-3">Passenger Feedback</h5>
+        <div class="feedback-list">
+          <div class="feedback-item mb-3 p-3" *ngFor="let fb of feedbackList">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <strong>{{ fb.passenger }}</strong>
+              <div>
+                <span *ngFor="let star of [1,2,3,4,5]" [class.text-warning]="star <= fb.rating" [class.text-muted]="star > fb.rating">
+                  <i class="bi bi-star-fill"></i>
+                </span>
+              </div>
+            </div>
+            <p class="mb-0">{{ fb.comment }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Driver Feedback Submission -->
+    <div class="card shadow-sm custom-card">
+      <div class="card-body">
+        <h4 class="mb-3">Submit Your Feedback</h4>
+        <textarea class="form-control mb-3" rows="4" [(ngModel)]="driverFeedback" placeholder="Share your thoughts about the app, your trips, or passenger interactions..."></textarea>
+        <button class="btn btn-primary custom-btn" (click)="submitFeedback()">Submit Feedback</button>
+      </div>
+    </div>
+  </div>
+  

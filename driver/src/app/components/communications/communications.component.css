@@ -1,0 +1,75 @@
+.message-area {
+    background: #f0f0f0;
+    border: 2px solid #dedede;
+}
+
+.messages {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 10px;
+}
+
+.bubble {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 2px;
+    max-width: 90%;
+    border: 1px solid transparent; /* Adds a subtle border */
+}
+
+.mine {
+    text-align: right;
+}
+
+.mine .bubble {
+    background-color: #007bff; /* iMessage blue */
+    color: white;
+    border-color: #0056b3; /* Slightly darker blue border */
+}
+
+.theirs .bubble {
+    background-color: #e5e5ea; /* Light gray typical of iMessage */
+    color: black;
+    border-color: #c4c4c4; /* Matching gray border */
+}
+
+.message-content {
+    word-wrap: break-word;
+}
+
+.message-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+}
+
+.input-group .form-control {
+    box-shadow: none; /* Remove Bootstrap shadows for a flatter design */
+    font-size: 20px; /* Larger font size for better readability */
+}
+
+
+
+.send-button:active {
+    transform: scale(0.95); /* Slightly scale down when pressed */
+}
+
+.call-button {
+    border-radius: 15px;
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.call-button:hover {
+    background-color: #218838;
+}
+
+.call-button:active {
+    background-color: #1e7e34;
+}

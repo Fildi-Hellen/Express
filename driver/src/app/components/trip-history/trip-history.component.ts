@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TripService } from '../../Services/trip.service';
 
 @Component({
     selector: 'app-trip-history',
@@ -7,5 +8,18 @@ import { Component } from '@angular/core';
     standalone: false
 })
 export class TripHistoryComponent {
+    trips: any[] = [];
+
+    constructor(private tripService: TripService) {}
+  
+    ngOnInit(): void {
+      this.loadTripHistory();
+    }
+  
+    loadTripHistory(): void {
+      this.tripService.getTripHistory().subscribe(data => {
+        this.trips = data;
+      });
+    }
 
 }

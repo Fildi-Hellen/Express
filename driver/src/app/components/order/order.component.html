@@ -1,1 +1,47 @@
-<p>order works!</p>
+<div class="container mt-4">
+    <h2 class="text-center mb-3">Assigned Orders</h2>
+    <div *ngIf="assignedOrders.length > 0">
+      <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Address</th>
+            <th>Contact</th>
+            <th>Status</th>
+            <th>Details</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of assignedOrders">
+            <td>{{ order.id }}</td>
+            <td>{{ order.full_name }}</td>
+            <td>${{ order.total_price }}</td>
+            <td>{{ order.payment_method }}</td>
+            <td>{{ order.location_address }}</td>
+            <td>{{ order.contact}}</td>
+            <td>{{ order.status }}</td>
+            <td>
+              <ul>
+                <li *ngFor="let item of order.items">
+                  {{ item.name }} (x{{ item.quantity }}) - ${{ item.price }}
+                </li>
+              </ul>
+            </td>
+            <td>
+              <button class="btn btn-primary btn-sm" (click)="updateOrderStatus(order.id, 'on the way')">On the Way</button>
+              <button class="btn btn-success btn-sm" (click)="updateOrderStatus(order.id, 'delivered')">Delivered</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div *ngIf="assignedOrders.length === 0" class="text-center">
+      <p>No assigned orders available.</p>
+    </div>
+  </div>
+  
