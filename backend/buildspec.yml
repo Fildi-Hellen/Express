@@ -9,8 +9,8 @@ phases:
       - sudo dnf update -y
       - echo "Installing required tools..."
       - sudo dnf install -y unzip git nmap
-      - echo "Installing MySQL client (compatible with MariaDB)..."
-      - sudo dnf install -y mysql
+      - echo "Installing MariaDB (which includes client tools)..."
+      - sudo dnf install -y mariadb106
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - sudo mv composer.phar /usr/local/bin/composer
@@ -26,7 +26,8 @@ phases:
       - echo "Environment variables loaded successfully."
 
       - echo "Testing database connectivity..."
-      - if mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "USE $DB_DATABASE"; then echo "Successfully connected to the database."; else echo "Failed to connect to the database."; exit 1; fi
+      # Use 'mariadb' command instead of 'mysql'
+      - if mariadb -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "USE $DB_DATABASE"; then echo "Successfully connected to the database."; else echo "Failed to connect to the database."; exit 1; fi
 
       - echo "Setting up Laravel environment..."
       - cp .env.example .env
