@@ -12,12 +12,9 @@ phases:
       - sudo dnf install -y unzip git nmap dnf-plugins-core
 
       - echo "Installing MySQL Community client..."
-      # Import MySQL GPG key
       - sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
-      # Enable the MySQL 8.0 Community repository for EL9 (Amazon Linux 2023 is similar to RHEL9)
       - sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
       - sudo dnf config-manager --enable mysql80-community
-      # Install MySQL client with --nogpgcheck if GPG check fails
       - sudo dnf install -y mysql-community-client --nogpgcheck
 
       - echo "Installing Composer..."
