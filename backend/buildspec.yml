@@ -1,25 +1,21 @@
 version: 0.2
 
+env:
+  variables:
+    PHP_83_VERSION: "8.3.8" # Define PHP version
+
 phases:
   install:
-    runtime-versions:
-      php: 8.3
     commands:
       - echo "Updating system dependencies..."
       - sudo dnf update -y
-
       - echo "Installing required tools..."
       - sudo dnf install -y unzip git nmap dnf-plugins-core
-
       - echo "Installing MySQL Community client..."
-      # Import MySQL GPG key
       - sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
-      # Enable the MySQL 8.0 Community repository for EL9 (Amazon Linux 2023 is similar to RHEL9)
       - sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
       - sudo dnf config-manager --enable mysql80-community
-      # Install MySQL client with --nogpgcheck if GPG check fails
       - sudo dnf install -y mysql-community-client --nogpgcheck
-
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - sudo mv composer.phar /usr/local/bin/composer
@@ -33,35 +29,30 @@ phases:
       - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
       - echo "Environment variables loaded successfully."
-
       - echo "Testing database connectivity..."
-      - if mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "USE $DB_DATABASE"; then echo "Successfully connected to the database."; else echo "Failed to connect to the database."; exit 1; fi
-
-      - echo "Setting up Laravel environment..."
-      - cp .env.example .env
-      - sed -i "s|DB_HOST=.*|DB_HOST=$DB_HOST|g" .env
-      - sed -i "s|DB_PORT=.*|DB_PORT=$DB_PORT|g" .env
-      - sed -i "s|DB_DATABASE=.*|DB_DATABASE=$DB_DATABASE|g" .env
-      - sed -i "s|DB_USERNAME=.*|DB_USERNAME=$DB_USERNAME|g" .env
-      - sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|g" .env
+      - |
+        if mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "SHOW DATABASES;"; then
+          echo "Successfully connected to the database."
+        else
+          echo "Failed to connect to the database. Debugging connection..."
+          echo "Host: $DB_HOST"
+          echo "Port: $DB_PORT"
+          echo "Database: $DB_DATABASE"
+          echo "Username: $DB_USERNAME"
+          exit 1
+        fi
 
   build:
     commands:
-      - echo "Running Laravel deployment steps..."
+      - echo "Building the application..."
       - composer install --no-dev --optimize-autoloader
-      - php artisan config:clear
-      - php artisan cache:clear
-      - php artisan config:cache
-      - php artisan route:cache
-      - php artisan migrate --force
-      - echo "Laravel deployment completed successfully."
 
   post_build:
     commands:
-      - echo "Build completed on $(date)"
+      - echo "Build completed successfully."
 
 artifacts:
   files:
     - '**/*'
-  base-directory: /var/www/html
-  discard-paths: no
+    - '!node_modules/**/*'
+  base-directory: /codebuild/output/src
