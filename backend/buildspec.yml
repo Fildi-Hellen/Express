@@ -1,39 +1,59 @@
 version: 0.2
 
+env:
+  variables:
+    PHP_83_VERSION: "8.3.8" # Define PHP version
+
 phases:
   install:
-    runtime-versions:
-      php: 8.3
     commands:
-      - echo Installing system dependencies...
-      - yum install -y git unzip
+      - echo "Updating system dependencies..."
+      - sudo dnf update -y
+      - echo "Installing required tools..."
+      - sudo dnf install -y unzip git nmap dnf-plugins-core
+      - echo "Installing MySQL Community client..."
+      - sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+      - sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+      - sudo dnf config-manager --enable mysql80-community
+      - sudo dnf install -y mysql-community-client --nogpgcheck
+      - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
-      - mv composer.phar /usr/local/bin/composer
+      - sudo mv composer.phar /usr/local/bin/composer
+
   pre_build:
     commands:
-      - echo Fetching environment variables from AWS Parameter Store...
-      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db/host" --query Parameter.Value --output text)
-      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db/name" --query Parameter.Value --output text)
-      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db/username" --query Parameter.Value --output text)
-      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db/password" --with-decryption --query Parameter.Value --output text)
-      - echo Environment variables loaded successfully.
-      - echo Installing PHP dependencies...
-      - cd $CODEBUILD_SRC_DIR/backend
-      - rm -rf vendor
-      - composer install --no-dev --optimize-autoloader
+      - echo "Fetching environment variables from Parameter Store..."
+      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text)
+      - export DB_PORT=$(aws ssm get-parameter --name "/expressuddb/db_port" --query Parameter.Value --output text)
+      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text)
+      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
+      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
+      - echo "Environment variables loaded successfully."
+      - echo "Testing database connectivity..."
+      - |
+        if mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "SHOW DATABASES;"; then
+          echo "Successfully connected to the database."
+        else
+          echo "Failed to connect to the database. Debugging connection..."
+          echo "Host: $DB_HOST"
+          echo "Port: $DB_PORT"
+          echo "Database: $DB_DATABASE"
+          echo "Username: $DB_USERNAME"
+          exit 1
+        fi
+
   build:
     commands:
-      - echo Build phase complete. Nothing to build for Laravel.
+      - echo "Building the application..."
+      - composer install --no-dev --optimize-autoloader
+
   post_build:
     commands:
-      - echo Clearing Laravel caches...
-      - php artisan cache:clear
-      - php artisan config:clear
-      - php artisan config:cache
-      - php artisan route:clear
-      - php artisan route:cache
-      - echo Running database migrations...
-      - php artisan migrate --force
+      - echo "Build completed successfully."
+
 artifacts:
   files:
     - '**/*'
+    - '!node_modules/**/*'
+  base-directory: /codebuild/output/src
+
