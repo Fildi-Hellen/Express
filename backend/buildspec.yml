@@ -29,15 +29,7 @@ phases:
       - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
       - echo "Environment variables loaded successfully."
-      
-      # Debugging the variables
-      - echo "DB_HOST: $DB_HOST"
-      - echo "DB_PORT: $DB_PORT"
-      - echo "DB_DATABASE: $DB_DATABASE"
-      - echo "DB_USERNAME: $DB_USERNAME"
       - echo "Testing database connectivity..."
-      
-      # Test MySQL connectivity
       - |
         if mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "SHOW DATABASES;"; then
           echo "Successfully connected to the database."
