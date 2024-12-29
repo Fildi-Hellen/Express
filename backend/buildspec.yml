@@ -56,3 +56,4 @@ artifacts:
     - '**/*'
     - '!node_modules/**/*'
   base-directory: /codebuild/output/src
+
