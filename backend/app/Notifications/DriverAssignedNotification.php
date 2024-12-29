@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\DatabaseMessage;
 
 class DriverAssignedNotification extends Notification implements ShouldQueue
 {
@@ -79,8 +78,7 @@ class DriverAssignedNotification extends Notification implements ShouldQueue
     {
         return [
             'order_id' => $this->order->id,
-            'customer_name' => $this->order->full_name,
-            'delivery_address' => $this->order->location_address,
+            'message' => "You have been assigned to order #{$this->order->id}.",
         ];
     }
 }

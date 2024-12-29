@@ -75,4 +75,14 @@ export class HeaderComponent implements OnInit {
       this.headerType = 'default-header';
     }
   }
+   closeMenu() {
+    // If you want the menu to close after clicking a link, just uncomment:
+    this.isMenuOpen = false;
+
+    // However, the user requested that after routing, the links should display automatically.
+    // So we can leave this commented out if we want to keep the menu open after navigation.
+    // If you do want to close the menu on click and then re-open automatically after navigation:
+    // Uncomment below line:
+    this.isMenuOpen = false;
+  }
 }

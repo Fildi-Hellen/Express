@@ -1,17 +1,18 @@
-<!-- approved.component.html: UI -->
 <div class="container mt-4">
   <h1 class="text-center mb-4">Manage Menus</h1>
 
-  <div *ngIf="message" class="alert alert-info text-center">{{ message }}</div>
+  <div *ngIf="message" class="alert alert-info text-center">
+    {{ message }}
+  </div>
 
   <div class="table-responsive mt-3">
-    <table class="table table-striped">
+    <table class="table table-striped table-hover align-middle">
       <thead>
         <tr>
           <th>Name</th>
           <th>Price</th>
           <th>Category</th>
-          <th>Actions</th>
+          <th class="text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -19,8 +20,13 @@
           <td>{{ menu.name }}</td>
           <td>{{ menu.price }}</td>
           <td>{{ menu.category }}</td>
-          <td>
-            <button class="btn btn-success btn-sm me-2" (click)="approveMenu(menu.id)">Approve</button>
+          <td class="text-center">
+            <button 
+              class="btn btn-success btn-sm me-2" 
+              (click)="approveMenu(menu.id)"
+            >
+              Approve
+            </button>
             <button
               class="btn btn-danger btn-sm me-2"
               (click)="setSelectedMenu(menu)"
@@ -44,16 +50,26 @@
   </div>
 
   <!-- Edit Modal -->
-  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel">
+  <div
+    class="modal fade"
+    id="editModal"
+    tabindex="-1"
+    aria-labelledby="editModalLabel"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="editModalLabel">Edit Menu</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button 
+            type="button" 
+            class="btn-close" 
+            data-bs-dismiss="modal" 
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="menuName">Name:</label>
+          <div class="form-group mb-3">
+            <label for="menuName" class="form-label">Name:</label>
             <input
               type="text"
               id="menuName"
@@ -61,16 +77,16 @@
               [(ngModel)]="selectedMenu.name"
             />
           </div>
-          <div class="form-group mt-2">
-            <label for="menuDescription">Description:</label>
+          <div class="form-group mb-3">
+            <label for="menuDescription" class="form-label">Description:</label>
             <textarea
               id="menuDescription"
               class="form-control"
               [(ngModel)]="selectedMenu.description"
             ></textarea>
           </div>
-          <div class="form-group mt-2">
-            <label for="menuPrice">Price:</label>
+          <div class="form-group mb-3">
+            <label for="menuPrice" class="form-label">Price:</label>
             <input
               type="number"
               id="menuPrice"
@@ -78,8 +94,8 @@
               [(ngModel)]="selectedMenu.price"
             />
           </div>
-          <div class="form-group mt-2">
-            <label for="menuAvailability">Availability:</label>
+          <div class="form-group mb-3">
+            <label for="menuAvailability" class="form-label">Availability:</label>
             <input
               type="text"
               id="menuAvailability"
@@ -103,16 +119,28 @@
   </div>
 
   <!-- Disapprove Modal -->
-  <div class="modal fade" id="disapproveModal" tabindex="-1" aria-labelledby="disapproveModalLabel">
+  <div
+    class="modal fade"
+    id="disapproveModal"
+    tabindex="-1"
+    aria-labelledby="disapproveModalLabel"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="disapproveModalLabel">Disapprove Menu</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button 
+            type="button" 
+            class="btn-close" 
+            data-bs-dismiss="modal" 
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="disapproveReason">Reason for Disapproval:</label>
+          <div class="form-group mb-3">
+            <label for="disapproveReason" class="form-label"
+              >Reason for Disapproval:</label
+            >
             <textarea
               id="disapproveReason"
               class="form-control"

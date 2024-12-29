@@ -4,7 +4,7 @@ import { DriverService } from '../../Services/driver.service';
 @Component({
     selector: 'app-sidenav',
     templateUrl: './sidenav.component.html',
-    styleUrl: './sidenav.component.css',
+    styleUrls: ['./sidenav.component.css'],
     standalone: false
 })
 export class SidenavComponent {

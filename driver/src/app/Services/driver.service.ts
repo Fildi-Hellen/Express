@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,56 +13,61 @@ export class DriverService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
+    if (!token) {
+      alert('You are not authenticated. Please log in again.');
+      window.location.href = '/login'; // Redirect to login page
+      throw new Error('No authentication token found');
+    }
+    console.log('Authorization Header:', `Bearer ${token}`);
     return new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
   }
-
+  
+  
   getDriverOrders(driverId: number): Observable<any[]> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<any[]>(`${this.baseUrl}/drivers/${driverId}/orders`, { headers });
+    // No headers are set for unauthenticated access
+    return this.http.get<any[]>(`${this.baseUrl}/drivers/${driverId}/orders`);
   }
-
+  
 
   // Register a new driver
   registerDriver(driverData: { name: string; email: string; password: string }): Observable<any> {
     return this.http.post(`${this.baseUrl}/drivers/register`, driverData);
   }
 
-  // Login a driver
   loginDriver(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/drivers/login`, credentials);
+    return this.http.post(`${this.baseUrl}/drivers/login`, credentials).pipe(
+      tap((response: any) => {
+        if (response.token && response.driver) {
+          localStorage.setItem('authToken', response.token);
+          localStorage.setItem('driverId', response.driver.id); // Save driver ID
+          console.log('Driver ID and token saved to localStorage');
+        }
+      }),
+      catchError((error) => {
+        console.error('Error during login:', error);
+        return throwError(() => new Error('Login failed'));
+      })
+    );
   }
+  
 
   // Logout a driver
   logoutDriver(): Observable<any> {
     return this.http.post(`${this.baseUrl}/drivers/logout`, {});
   }
   
-  // uploadProfilePicture(picture: string): void {
-  //   this.profilePicture = picture;
-  // }
-
-  // getProfilePicture(): string | null {
-  //   return this.profilePicture;
-  // }
-
-  // Fetch available drivers (optional)
-  getAvailableDrivers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/drivers/available`);
+  
+  getDriverProfile(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.baseUrl}/drivers/profile`, { headers });
   }
-
-  // Assign a driver to an order
-  assignDriver(orderId: number, driverId: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/orders/${orderId}/assign-driver`, { driverId });
-  }
-
- 
-
-  // Update the status of an order
+  
   updateOrderStatus(orderId: number, status: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/orders/${orderId}/status`, { status });
+    const headers = this.getAuthHeaders(); // Include the authorization headers
+    return this.http.put(`${this.baseUrl}/orders/${orderId}/status`, { status }, { headers });
   }
-
+  
   
 }

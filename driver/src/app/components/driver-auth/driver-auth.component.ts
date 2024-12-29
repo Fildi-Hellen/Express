@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DriverService } from '../../Services/driver.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-driver-auth',
@@ -16,7 +17,7 @@ export class DriverAuthComponent {
   password = '';
   
 
-  constructor(private driverService: DriverService) {}
+  constructor(private driverService: DriverService, private router: Router) {}
 
   toggleAuthMode() {
     this.isLogin = !this.isLogin;
@@ -34,6 +35,18 @@ export class DriverAuthComponent {
         (error) => console.error('Registration error', error)
       );
     }
+  }
+  login(): void {
+    this.driverService.loginDriver({ email: this.email, password: this.password }).subscribe({
+      next: () => {
+        alert('Login successful!');
+        this.router.navigate(['/orders']); // Redirect to orders after login
+      },
+      error: (error: any) => {
+        console.error('Login failed:', error);
+        alert('Login failed. Please check your credentials.');
+      },
+    });
   }
   
 

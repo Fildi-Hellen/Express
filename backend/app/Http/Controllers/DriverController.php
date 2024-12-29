@@ -119,24 +119,19 @@ class DriverController extends Controller
 
 
     public function getDriverOrders($driverId)
-{
-    $user = Auth::guard('sanctum')->user();
-
-    if (!$user) {
-        return response()->json(['message' => 'Unauthorized'], 401);
-    }
-
-    if ($user->id !== (int) $driverId) {
-        return response()->json(['message' => 'Forbidden'], 403);
-    }
-
-    $orders = Order::with('items')
+    {
+        $orders = Order::with('items')
         ->where('driver_id', $driverId)
         ->whereIn('status', ['assigned', 'on the way'])
         ->get();
 
+    if ($orders->isEmpty()) {
+        return response()->json(['message' => 'No orders found for this driver.'], 404);
+    }
+
     return response()->json($orders);
-}
+    }
+    
 
 
     public function updateOrderStatus(Request $request, $id)

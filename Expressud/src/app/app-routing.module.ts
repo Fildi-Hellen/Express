@@ -200,7 +200,10 @@ const routes: Routes = [
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
   {path:'search',component:SearchComponent},
   {path:'vendor-login',component:VendorLoginComponent},
-  {path:'vendor-forgot-password',component:VendorForgotPasswordComponent}
+  {path:'vendor-forgot-password',component:VendorForgotPasswordComponent},
+  {path:'tracking',component:TrackingComponent},
+  { path: 'track-order', component: TrackingComponent }
+
 
 
 

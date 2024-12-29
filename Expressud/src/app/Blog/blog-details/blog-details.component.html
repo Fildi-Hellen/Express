@@ -1,0 +1,18 @@
+
+
+
+<h2>Customer Panel</h2>
+<div *ngFor="let blog of blogs">
+  <h3>{{ blog.title }}</h3>
+  <p>{{ blog.content }}</p>
+  <p>Likes: {{ blog.likes }}</p>
+  <button (click)="likeBlog(blog.id)">Like</button>
+
+  <h4>Comments</h4>
+  <ul>
+    <li *ngFor="let comment of blog.comments">{{ comment.content }}</li>
+  </ul>
+
+  <input [(ngModel)]="newComment" placeholder="Add a comment" />
+  <button (click)="addComment(blog.id)">Add Comment</button>
+</div>

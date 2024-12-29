@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Notifications\DriverAssignedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
@@ -62,6 +60,7 @@ class OrderController extends Controller
                 'total_price' => $validatedData['total'],
                 'tracking_id' => uniqid('track_'), // Generate tracking ID
                  'status' => 'pending', // Default status
+                 'driver_id' => null,
             
             ]);
     
@@ -147,12 +146,35 @@ class OrderController extends Controller
     }
     
 
+
     public function getDriverOrders($driverId)
     {
         $orders = Order::where('driver_id', $driverId)->where('status', 'assigned')->get();
         return response()->json($orders);
     }
 
+    public function getAvailableDrivers()
+    {
+        try {
+            $drivers = Driver::where('is_available', true)->get();
+            return response()->json($drivers, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error fetching drivers', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function trackOrder($tracking_id)
+{
+    $order = Order::with('items')
+        ->where('tracking_id', $tracking_id)
+        ->first();
+
+    if (!$order) {
+        return response()->json(['message' => 'Order not found'], 404);
+    }
+
+    return response()->json($order);
+}
     
 
 }

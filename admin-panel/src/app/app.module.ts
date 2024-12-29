@@ -15,6 +15,15 @@ import { SidebarComponent } from './Components/sidebar/sidebar.component';
 import { HeroComponent } from './Components/hero/hero.component';
 import { NotificationsComponent } from './Components/notifications/notifications.component';
 import { LanguageComponent } from './Components/language/language.component';
+import { BlogWritingComponent } from './Components/blog-writing/blog-writing.component';
+import { ConfigurationComponent } from './Components/configuration/configuration.component';
+import { FeedbackComponent } from './Components/feedback/feedback.component';
+import { ReportingComponent } from './Components/reporting/reporting.component';
+import { DriverManagementComponent } from './Components/driver-management/driver-management.component';
+import { UserManagementComponent } from './Components/user-management/user-management.component';
+import { SettingsComponent } from './Components/settings/settings.component';
+import { SupportComponent } from './Components/support/support.component';
+import { AuthComponent } from './Components/auth/auth.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +37,16 @@ import { LanguageComponent } from './Components/language/language.component';
     SidebarComponent,
     HeroComponent,
     NotificationsComponent,
-    LanguageComponent
+    LanguageComponent,
+    BlogWritingComponent,
+    ConfigurationComponent,
+    FeedbackComponent,
+    ReportingComponent,
+    DriverManagementComponent,
+    UserManagementComponent,
+    SettingsComponent,
+    SupportComponent,
+    AuthComponent
   ],
   imports: [
     BrowserModule,

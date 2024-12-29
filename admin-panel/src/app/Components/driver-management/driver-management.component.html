@@ -1,0 +1,41 @@
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Drivers List</h2>
+  
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  
+    <div *ngIf="drivers.length > 0; else noDrivers">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let driver of drivers">
+              <td>{{ driver.id }}</td>
+              <td>{{ driver.name }}</td>
+              <td>{{ driver.email }}</td>
+              <td>
+                <span [class.text-success]="driver.is_available" [class.text-danger]="!driver.is_available">
+                  {{ driver.is_available ? 'Available' : 'Unavailable' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <ng-template #noDrivers>
+      <div class="text-center">
+        <p>No drivers available.</p>
+      </div>
+    </ng-template>
+  </div>
+  

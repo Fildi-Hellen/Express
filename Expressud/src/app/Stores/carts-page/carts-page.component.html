@@ -19,7 +19,7 @@
       <tbody>
         <tr *ngFor="let item of cartItems">
           <td>{{ item.name }}</td>
-          <td>${{ item.price }}</td>
+          <td>SSP {{ item.price }}</td>
           <td>
             <button
               class="btn btn-outline-secondary btn-sm"
@@ -35,7 +35,7 @@
               +
             </button>
           </td>
-          <td>${{ item.price * item.quantity }}</td>
+          <td>SSP {{ item.price * item.quantity }}</td>
           <td>
             <button
               class="btn btn-danger btn-sm"
@@ -48,7 +48,7 @@
       </tbody>
     </table>
     <div class="text-end">
-      <h4>Total: ${{ totalPrice }}</h4>
+      <h4>Total: SSP {{ totalPrice }}</h4>
     </div>
     <div class="text-end mt-3">
       <button
@@ -61,3 +61,4 @@
     </div>
   </div>
 </div>
+

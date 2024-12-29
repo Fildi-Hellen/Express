@@ -1,19 +1,38 @@
-<div class="container">
-    <div class="row">
-      <div class="col">
-        <h3>Tracking Status</h3>
-      </div>
-      <div class="col">
-        <h3>Action</h3>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <button type="button" class="btn btn-primary btn-lg">Order on the Way</button>
-      </div>
-      <div class="col">
-        <button type="button" class="btn btn-success btn-lg">Delivery Completed</button>
-      </div>
-    </div>
+<div class="container mt-4">
+  <h2 class="text-center mb-3">Track Your Order</h2>
+  <div class="mb-4 text-center">
+    <input
+      type="text"
+      class="form-control track-input"
+      [(ngModel)]="trackingId"
+      placeholder="Enter your Tracking ID"
+    />
+    <button class="btn btn-primary mt-2" (click)="trackOrder()">Track Order</button>
   </div>
-  
+
+  <div *ngIf="errorMessage" class="alert alert-danger text-center">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="order" class="order-details">
+    <h3 class="receipt-title text-center"> Receipt</h3>
+    <div class="receipt-info">
+      <p><strong>Order ID:</strong> {{ order.id }}</p>
+      <p><strong>Tracking ID:</strong> {{ order.tracking_id }}</p>
+      <p><strong>Status:</strong> {{ order.status }}</p>
+      <p><strong>Customer:</strong> {{ order.full_name }}</p>
+      <p><strong>Address:</strong> {{ order.location_address }}</p>
+      <p><strong>Contact:</strong> {{ order.contact }}</p>
+    </div>
+    <div class="receipt-line"></div>
+    <h4 class="items-title">Items</h4>
+    <ul class="items-list">
+      <li *ngFor="let item of order.items">
+        <span class="item-name">{{ item.name }} (x{{ item.quantity }})</span>
+        <span class="item-price">${{ item.price }}</span>
+      </li>
+    </ul>
+    <div class="receipt-line"></div>
+    <p class="total-price"><strong>Total:</strong> ${{ order.total_price }}</p>
+  </div>
+</div>

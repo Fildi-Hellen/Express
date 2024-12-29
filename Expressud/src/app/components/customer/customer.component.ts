@@ -77,7 +77,12 @@ export class CustomerComponent {
     alert(`${menu.name} has been added to your cart.`);
   }
 
-  
+proceedToCheckout(): void {
+  // Navigate to the checkout page or handle checkout logic
+  console.log('Proceeding to checkout...');
+  // this.router.navigate(['/checkout']);
+}
+
 
 
 }

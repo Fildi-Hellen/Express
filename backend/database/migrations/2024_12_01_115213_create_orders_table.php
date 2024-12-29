@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('total_price', 10, 2);
             $table->string('tracking_id')->unique(); // Unique tracking ID
             $table->string('status')->default('pending'); // Current order status
-            $table->unsignedBigInteger('driver_id')->nullable();
+            $table->unsignedBigInteger('driver_id')->nullable()->default(null); // Allow null for driver_id
             $table->foreign('driver_id')->references('id')->on('drivers')->onDelete('set null');
             $table->timestamps();
         });

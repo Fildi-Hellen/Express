@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Order } from '../Shared1/models/Order';
 
 
@@ -61,5 +61,16 @@ export class OrderService {
     return this.http.post(`${this.API_URL}/save-payment`, paymentData);
   }  
 
+
+  trackOrder(trackingId: string): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/track-order/${trackingId}`).pipe(
+      catchError((error) => {
+        console.error('Error tracking order:', error);
+        return throwError(() => new Error('Tracking failed'));
+      })
+    );
+  }
+
+  
 }
 

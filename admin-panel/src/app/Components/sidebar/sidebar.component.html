@@ -1,91 +1,119 @@
-<div id="sidebar-menu">
-
-    <div class="user-info text-center">
-        <div class="dropdown d-inline-block user-dropdown">
-            <a href="" class="btn header-item" id="page-header-user-dropdown"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-2.jpg"
-                    alt="Header Avatar">
-                <h6 class="text-uppercase mb-0 mt-2 pt-1">Jassa Rich</h6>
-                <p class="text-muted font-size-13">Founder</p>
-            </a>
-            
-        </div>
-  
+<!-- SIDEBAR -->
+<section id="sidebar" [ngClass]="status ? 'hide' : ''">
+    <a href="#" class="brand">
+      <i class='bx bxs-smile'></i>
+      <span class="text">Expressud</span>
+    </a>
+    <ul class="side-menu top">
+      <li class="active">
+        <a routerLink="/dashboard">
+          <i class='bx bxs-dashboard' ></i>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/user-management">
+            <i class="bx bxs-user-detail"></i>
+            <span class="text">User Management</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/approved">
+            <i class="bx bxs-cart"></i>
+            <span class="text">Order Management</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/vendor-management">
+            <i class="bx bxs-store-alt"></i>
+            <span class="text">Vendor Management</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/driver-management">
+            <i class="bx bxs-car"></i>
+            <span class="text">Driver Management</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/reporting">
+            <i class="bx bxs-bar-chart-alt-2"></i>
+            <span class="text">Reporting & Analytics</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/notifications">
+            <i class="bx bxs-bell"></i>
+            <span class="text">Notifications & Alerts</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/feedback">
+            <i class="bx bxs-star"></i>
+            <span class="text">Ratings & Feedback</span>
+        </a>
+      </li>
       
-    </div>
-  
-    <!-- Left Menu Start -->
-    <ul class="metismenu list-unstyled" id="side-menu">
-        <li class="menu-title">Menu</li>
-  
-        <li routerLink="/dashboard">
-            <a  class="waves-effect">
-                <i class="ri-dashboard-2-line"></i><span class="badge rounded-pill bg-success float-end"></span>
-                <span >Dashboard</span>
-            </a>
-        </li>
-  
-        <li routerLink="/order-managements">
-          <a  class="waves-effect">
-              <i class="ri-inbox-archive-line"></i><span class="badge rounded-pill bg-success float-end"></span>
-              <span > New Orders </span>
-          </a>
-      </li>
-  
-        <li routerLink="/menu">
-          <a  class="waves-effect">
-              <i class="ri-menu-line"></i><span class="badge rounded-pill bg-success float-end"></span>
-              <span > Menu Management </span>
-          </a>
-      </li>
-  
-  
-        <li class="menu-title">Pages</li>
-  
-        <li>
-            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-account-circle-line"></i>
-                <span>Profile Management</span>
-            </a>
-            <ul class="sub-menu" aria-expanded="false">
-                <li><a routerLink="/profile">Profile</a></li>
-                <li><a routerLink="/payments">My Wallet</a></li>
-                <li><a routerLink="/notifications">Notifications</a></li>
-               
-            </ul>
-        </li>
-  
-        <li>
-          <a href="javascript: void(0);" class="has-arrow waves-effect">
-              <i class="ri-roadster-line"></i>
-              <span>Delivery </span>
-          </a>
-          <ul class="sub-menu" aria-expanded="false">
-            <li><a routerLink="/driver">Drivers</a></li>
-             
-              
-             
-          </ul>
-      </li>
-  
-  
-        <li>
-            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-pages-line"></i>
-                <span>Support and Help</span>
-            </a>
-            <ul class="sub-menu" aria-expanded="false">
-                <li><a routerLink="/support">Support</a></li>
-                <li><a routerLink="/settings">Settings</a></li>
-                <li><a routerLink="/feedback">Ratings & Feedback</a></li>
-               
-            </ul>
-        </li>
-  
-  
-  
-       
-  
     </ul>
-  </div>
+    <ul class="side-menu">
+        <li>
+            <a routerLink="/blog-writing">
+                <i class="bx bxs-book-content"></i>
+                <span class="text"> Blogs</span>
+            </a>
+          </li>
+          
+      <li>
+        <a routerLink="/configuration">
+            <i class="bx bxs-cog"></i>
+            <span class="text"> Configuration</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/settings">
+          <i class='bx bxs-cog' ></i>
+          <span class="text">settings</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/support" class="logout">
+          <i class='bx bxs-log-out-circle' ></i>
+          <span class="text">Support</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+  <!-- SIDEBAR -->
+  
+   
+  
+  <!-- CONTENT -->
+  <section id="content">
+    <!-- NAVBAR -->
+    <nav>
+      <i (click)="addToggle()" class='bx bx-menu' ></i>
+      <a href="#" class="nav-link">Categories</a>
+      <form action="#">
+        <div class="form-input">
+          <input type="search" placeholder="Search...">
+          <button type="button" class="search-btn"><i class='bx bx-search' ></i></button>
+        </div>
+      </form>
+      <a routerLink="/notifications" class="notification">
+        <i class='bx bxs-bell' ></i>
+        <span class="num">8</span>
+      </a>
+      <a routerLink="/profile" class="profile">
+        <img src="https://secure.gravatar.com/avatar/d09eaad01aea86c51b4f892b4f8abf6f?s=100&d=wavatar&r=g">
+      </a>
+    </nav>
+    <!-- NAVBAR -->
+  
+    <div id="main-content">
+        <div class="center-content">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+  </section>
+  <!-- CONTENT -->

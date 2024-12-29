@@ -48,6 +48,7 @@
   </div>
 </div>
 
+
 <div *ngIf="selectedEstablishment" class="container mt-4">
   <div class="mb-3">
     <button class="btn btn-secondary" (click)="goBackToEstablishments()">Back to Establishments</button>
@@ -83,7 +84,7 @@
           <!-- Additional Details -->
           <div class="store-card-bottom__tags">
             <p *ngIf="menu.cookTime"><strong>Cook Time:</strong> {{ menu.cookTime }}</p>
-            <p *ngIf="menu.price" class="mb-0"><strong>Price:</strong> ${{ menu.price }}</p>
+            <p *ngIf="menu.price" class="mb-0"><strong>Price:</strong> SSP {{ menu.price }}</p>
           </div>
 
           <!-- Add to Cart Button -->
@@ -93,6 +94,12 @@
         </div>
       </div>
     </div>
+  </div>
+   <!-- Proceed to Checkout Button (Visible on Smaller Screens) -->
+   <div class="text-center mt-4 d-block d-md-none">
+    <button class="btn btn-success btn-lg w-100" routerLink="/checkout">
+      Proceed to Checkout
+    </button>
   </div>
 </div>
 

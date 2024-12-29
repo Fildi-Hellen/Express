@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DriverController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorLoginController;
 use Illuminate\Http\Request;
@@ -56,11 +58,18 @@ Route::get('/menus-by-establishment', [MenuController::class, 'getMenusByEstabli
 
 Route::post('/save-recipient', [OrderController::class, 'saveRecipient']);
 Route::post('/confirm-order', [OrderController::class, 'confirmOrder']);
-Route::get('/vendor-orders', [OrderController::class, 'getVendorOrders']);
 Route::patch('/update-status/{id}', [OrderController::class, 'updateOrderStatus']);
-Route::patch('/assign-driver/{id}', [OrderController::class, 'assignDriver']);
-Route::get('/driver-orders/{driverId}', [OrderController::class, 'getDriverOrders']);
+Route::get('/track-order/{tracking_id}', [OrderController::class, 'trackOrder']);
+Route::get('vendor-orders', [OrderController::class, 'getVendorOrders']);
 
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+Route::patch('/orders/{id}/assign-driver', [OrderController::class, 'assignDriver']);
+Route::get('/drivers', [OrderController::class, 'getAvailableDrivers']);
+Route::get('/drivers/available', [OrderController::class, 'getAvailableDrivers']);
+Route::get('/driver-orders/{driverId}', [OrderController::class, 'getDriverOrders']);
+});
 Route::post('/save-payment', [OrderController::class, 'savePayment']);
 Route::post('/address', [OrderController::class, 'store']);
 
@@ -77,21 +86,17 @@ Route::post('/address', [OrderController::class, 'store']);
 // });
 
 
-
-
-
-
 // Public routes (no authentication needed)
 Route::post('/drivers/register', [DriverController::class, 'register']); // Driver Registration
 Route::post('/drivers/login', [DriverController::class, 'login']);       // Driver Login
+Route::get('/drivers/{driverId}/orders', [DriverController::class, 'getDriverOrders']); // Fetch Assigned Orders
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/drivers/logout', [DriverController::class, 'logout']); // Driver Logout
-    Route::get('drivers/available', [DriverController::class, 'getAvailableDrivers']); // Fetch Available Drivers
-    Route::get('drivers/{driverId}/orders', [DriverController::class, 'getDriverOrders']); // Fetch Assigned Orders
-    Route::post('orders/{id}/assign-driver', [DriverController::class, 'assignDriver']);   // Assign Driver
-    Route::put('orders/{id}/status', [DriverController::class, 'updateOrderStatus']);     // Update Order Status
+    Route::get('/drivers/available', [DriverController::class, 'getAvailableDrivers']); // Fetch Available Drivers
+    Route::post('/orders/{id}/assign-driver', [DriverController::class, 'assignDriver']);   // Assign Driver
+    Route::put('/orders/{id}/status', [DriverController::class, 'updateOrderStatus']);     // Update Order Status
 });
 
 Route::prefix('admin')->group(function () {
@@ -105,3 +110,18 @@ Route::prefix('admin')->group(function () {
     Route::post('reject-vendor/{id}', [AdminController::class, 'rejectVendor']);
     Route::post('request-more-info/{id}', [AdminController::class, 'requestMoreInfo']);
 });
+
+Route::apiResource('blogs', BlogController::class);
+
+Route::post('/blogs/{id}/comments', [BlogController::class, 'addComment']);
+Route::delete('/comments/{id}', [BlogController::class, 'deleteComment']);
+Route::post('/blogs/{id}/like', [BlogController::class, 'likeBlog']);
+Route::get('/blogs/{id}/comments', [BlogController::class, 'viewComments']);
+
+
+
+    Route::get('/users', [UserController::class, 'index']); // Retrieve users
+    Route::delete('/users/{id}', [UserController::class, 'destroy']); // Delete a user
+
+
+

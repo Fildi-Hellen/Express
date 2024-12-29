@@ -10,8 +10,7 @@ export class OrderManagementsComponent implements OnInit {
 
   orders: any[] = [];
   drivers: any[] = [];
-  errorMessage: string = ''; // Declare errorMessage property
-
+  errorMessage: string = '';
 
   constructor(private orderService: OrderService) {}
 
@@ -21,11 +20,30 @@ export class OrderManagementsComponent implements OnInit {
   }
 
   fetchOrders(): void {
-    this.orderService.getVendorOrders().subscribe(
-      (data: any[]) => (this.orders = data),
-      (error: any) => console.error('Error fetching orders:', error)
-    );
+    const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+      console.warn('No token found. Cannot fetch secured vendor orders.');
+      // Optional: Provide fallback behavior (e.g., fetch public orders or show a message)
+      this.orders = [];
+      alert('Please log in to view your vendor orders.');
+      return;
+    }
+  
+    // Fetch vendor orders with authentication
+    this.orderService.getVendorOrders().subscribe({
+      next: (orders: any[]) => {
+        this.orders = orders;
+        console.log('Vendor orders fetched successfully:', orders);
+      },
+      error: (error) => {
+        console.error('Error fetching vendor orders:', error);
+        alert('Failed to fetch vendor orders. Please try again.');
+      },
+    });
   }
+  
+  
 
   fetchAvailableDrivers(): void {
     this.orderService.getAvailableDrivers().subscribe(
@@ -33,6 +51,7 @@ export class OrderManagementsComponent implements OnInit {
       (error: any) => console.error('Error fetching drivers:', error)
     );
   }
+  
 
   updateOrderStatus(orderId: number, status: string): void {
     this.orderService.updateOrderStatus(orderId, status).subscribe(
@@ -47,46 +66,22 @@ export class OrderManagementsComponent implements OnInit {
     );
   }
 
- // Existing method with a minor addition to handle driver assignment
-onDriverChange(event: Event, orderId: number): void {
-  const target = event.target as HTMLSelectElement;
-  const driverId = parseInt(target.value, 10);
-  if (driverId) {
-    this.assignDriver(orderId, driverId);
+  onDriverChange(event: Event, orderId: number): void {
+    const target = event.target as HTMLSelectElement;
+    const driverId = parseInt(target.value, 10);
+    if (driverId) {
+      this.assignDriver(orderId, driverId);
+    }
   }
-}
 
-// Add method to communicate driver assignment to the backend
-assignDriver(orderId: number, driverId: number): void {
-  this.orderService.assignDriver(orderId, driverId).subscribe({
-    next: () => {
-      alert('Driver assigned successfully!');
-      this.fetchOrders(); // Refetch orders to update the list showing assignments
-    },
-    error: (error) => console.error('Error assigning driver:', error),
-  });
-}
-
-  
-
-  fetchDrivers(): void {
-    this.orderService.getAllDrivers().subscribe({
-      next: (data) => (this.drivers = data),
-      error: (error) => {
-        console.error('Error fetching drivers:', error);
-        this.errorMessage = 'Could not load drivers. Please try again later.';
+  assignDriver(orderId: number, driverId: number): void {
+    this.orderService.assignDriver(orderId, driverId).subscribe({
+      next: () => {
+        alert('Driver assigned successfully!');
+        this.fetchOrders(); // Update orders
       },
+      error: (error) => console.error('Error assigning driver:', error),
     });
   }
-
-  // assignDriver(orderId: number, driverId: number): void {
-  //   this.orderService.assignDriver(orderId, driverId).subscribe({
-  //     next: () => {
-  //       alert('Driver assigned successfully!');
-  //       this.fetchOrders(); 
-  //     },
-  //     error: (error) => console.error('Error assigning driver:', error),
-  //   });
-  // }
   
 }

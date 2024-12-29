@@ -37,22 +37,24 @@
                     <ul class="vertical-menu">
 
                         <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
-                        <li><a routerLink="/blog" routerLinkActive="active">Blog</a></li>
-                        <li><a routerLink="/customer" routerLinkActive="active">Categories</a>
+                        <!-- <li><a routerLink="/blog" routerLinkActive="active">Blog</a></li> -->
+                        <li><a routerLink="/customer" routerLinkActive="active" >Categories</a>
+
                             <!-- <ul class="dropdown">
-                                <li><a routerLink="/alcohol" routerLinkActive="active">Alcohol</a></li>
-                                <li><a routerLink="/foods" routerLinkActive="active">Restaurants</a></li>
-                                <li><a routerLink="/pharmacy" routerLinkActive="active">Pharmacueticals</a></li>
-                                <li><a routerLink="/grocery" routerLinkActive="active">Grocery</a></li>
+                                <li><a routerLink="/customer" routerLinkActive="active">Stores</a></li>
                                 <li><a routerLink="/bus" routerLinkActive="active">Courier</a></li>
+                                <li><a routerLink="/bus" routerLinkActive="active">SudRide</a></li>
                                 <li><a routerLink="/real-estates" routerLinkActive="active">Real Estate</a></li>
                             </ul> -->
+                            
                         </li>
-                        <li><a routerLink="/contact" routerLinkActive="active">Contact us</a></li>
+                        <li><a routerLink="/tracking-status" routerLinkActive="active">Track Order</a></li>
+
+                        <!-- <li><a routerLink="/contact" routerLinkActive="active">Contact us</a></li> -->
                     </ul>
                 </nav>
             </div>
-            <div class="col-lg-3 col-md-3">
+            <div class="col-lg-3 col-md-3 " [ngClass]="{'show-menu': isMenuOpen}">
                 <div class="header__nav__option">
                   <a routerLink="/carts-page" class="cart-link">
                     <img src="assets/img/icon/shopping-cart.png" alt="Cart">
