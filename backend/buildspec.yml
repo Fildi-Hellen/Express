@@ -28,13 +28,9 @@ phases:
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
       - set -x  # Re-enable logging
       - echo "Environment variables loaded successfully."
-
-      # Log CodeBuild public IP
       - echo "Fetching CodeBuild's public IP..."
       - curl -s http://checkip.amazonaws.com > public_ip.log
       - echo "CodeBuild's public IP is: $(cat public_ip.log)"
-
-      # Test network connectivity to RDS
       - echo "Testing network connectivity to RDS..."
       - echo "Testing port $DB_PORT on $DB_HOST..."
       - |
@@ -44,7 +40,6 @@ phases:
           echo "Port $DB_PORT on $DB_HOST is not reachable. Exiting with error."
           exit 1
         fi
-
       - echo "Testing database connectivity..."
       - |
         if mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" -e "SHOW DATABASES;"; then
@@ -77,4 +72,3 @@ artifacts:
 cache:
   paths:
     - '/root/.composer/cache'
- 
