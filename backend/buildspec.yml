@@ -1,33 +1,23 @@
 version: 0.2
 
-env:
-  variables:
-    PHP_83_VERSION: "8.3.8" # Define PHP version
-
 phases:
   install:
     commands:
       - echo "Updating system dependencies..."
       - sudo dnf update -y
-      - echo "Installing required tools..."
-      - sudo dnf install -y unzip git nmap dnf-plugins-core
       - echo "Installing MySQL Community client..."
-      - sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
-      - sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
-      - sudo dnf config-manager --enable mysql80-community
       - sudo dnf install -y mysql-community-client --nogpgcheck
-      - echo "Installing Composer..."
-      - curl -sS https://getcomposer.org/installer | php
-      - sudo mv composer.phar /usr/local/bin/composer
 
   pre_build:
     commands:
       - echo "Fetching environment variables from Parameter Store..."
+      - set +x  # Prevent logging sensitive data
       - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text)
       - export DB_PORT=$(aws ssm get-parameter --name "/expressuddb/db_port" --query Parameter.Value --output text)
       - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text)
       - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
+      - set -x
       - echo "Environment variables loaded successfully."
       - echo "Testing database connectivity..."
       - |
@@ -47,13 +37,8 @@ phases:
       - echo "Building the application..."
       - composer install --no-dev --optimize-autoloader
 
-  post_build:
-    commands:
-      - echo "Build completed successfully."
-
 artifacts:
   files:
     - '**/*'
     - '!node_modules/**/*'
   base-directory: /codebuild/output/src
-
