@@ -69,3 +69,4 @@ artifacts:
 cache:
   paths:
     - '/root/.composer/cache'
+    
