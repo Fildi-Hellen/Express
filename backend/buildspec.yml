@@ -14,15 +14,16 @@ phases:
 
   pre_build:
     commands:
-      - echo "Fetching environment variables from AWS Parameter Store..."
+      - echo "Fetching database credentials from AWS Secrets Manager..."
       - set +x  # Disable logging of sensitive information
-      - export DB_HOST=$(aws ssm get-parameter --name "/expressuddb/db_host" --query Parameter.Value --output text)
-      - export DB_PORT=$(aws ssm get-parameter --name "/expressuddb/db_port" --query Parameter.Value --output text)
-      - export DB_DATABASE=$(aws ssm get-parameter --name "/expressuddb/db_name" --query Parameter.Value --output text)
-      - export DB_USERNAME=$(aws ssm get-parameter --name "/expressuddb/db_user" --query Parameter.Value --output text)
-      - export DB_PASSWORD=$(aws ssm get-parameter --name "/expressuddb/db_password" --with-decryption --query Parameter.Value --output text)
+      - SECRET=$(aws secretsmanager get-secret-value --secret-id rds!db-3b364449-a25b-4d2a-9c10-e5f1bf691a12 --query SecretString --output text)
+      - export DB_HOST=$(echo $SECRET | jq -r '.db_host')
+      - export DB_PORT=$(echo $SECRET | jq -r '.db_port')
+      - export DB_DATABASE=$(echo $SECRET | jq -r '.db_name')
+      - export DB_USERNAME=$(echo $SECRET | jq -r '.db_user')
+      - export DB_PASSWORD=$(echo $SECRET | jq -r '.db_password')
       - set -x  # Re-enable logging
-      - echo "Environment variables loaded successfully."
+      - echo "Database credentials loaded successfully."
 
       - echo "Configuring Laravel environment..."
       - cp "$CODEBUILD_SRC_DIR/backend/.env.example" "$CODEBUILD_SRC_DIR/backend/.env"
@@ -68,5 +69,3 @@ artifacts:
 cache:
   paths:
     - '/root/.composer/cache'
-
-
