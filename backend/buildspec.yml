@@ -28,7 +28,8 @@ phases:
       - echo "Validating database environment variables..."
       - |
         if [ -z "$DB_HOST" ] || [ -z "$DB_PORT" ] || [ -z "$DB_DATABASE" ] || [ -z "$DB_USERNAME" ] || [ -z "$DB_PASSWORD" ]; then
-          echo "One or more database environment variables are missing."
+          echo "One or more database environment variables are missing:"
+          echo "DB_HOST=$DB_HOST, DB_PORT=$DB_PORT, DB_DATABASE=$DB_DATABASE, DB_USERNAME=$DB_USERNAME"
           exit 1
         fi
       - echo "Database environment variables validated successfully."
@@ -57,23 +58,25 @@ phases:
     commands:
       - echo "Testing database connectivity..."
       - |
+        # Retry logic for database connectivity
         RETRY_COUNT=5
         RETRY_DELAY=5
         SUCCESS=0
         for i in $(seq 1 $RETRY_COUNT); do
-          if nc -zv "$DB_HOST" "$DB_PORT"; then
-            echo "Database connection successful."
-            SUCCESS=1
-            break
-          else
-            echo "Attempt $i: Failed to connect to the database. Retrying in $RETRY_DELAY seconds..."
-            sleep $RETRY_DELAY
-          fi
+          echo "Attempt $i: Checking connectivity to $DB_HOST:$DB_PORT..."
+          nc -zv "$DB_HOST" "$DB_PORT" && SUCCESS=1 && break || echo "Failed to connect. Retrying in $RETRY_DELAY seconds..."
+          sleep $RETRY_DELAY
         done
-        if [ $SUCCESS -ne 1 ]; then
-          echo "Failed to connect to the database after $RETRY_COUNT attempts."
+
+        # If all retries failed, exit with error
+        if [ $SUCCESS -eq 0 ]; then
+          echo "Database connection failed after $RETRY_COUNT attempts."
+          echo "DB_HOST=$DB_HOST, DB_PORT=$DB_PORT"
           exit 1
         fi
+
+      - echo "Database connection successful."
+
       - echo "Running database migrations..."
       - php artisan migrate --force
       - echo "Post-build steps completed successfully."
