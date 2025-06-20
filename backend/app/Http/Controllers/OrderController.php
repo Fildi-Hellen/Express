@@ -162,6 +162,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'Error fetching drivers', 'error' => $e->getMessage()], 500);
         }
     }
+    
 
     public function trackOrder($tracking_id)
 {

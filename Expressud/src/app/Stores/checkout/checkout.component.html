@@ -58,8 +58,16 @@
           <app-store-item-page  (addressUpdated)="setAddress($event)"></app-store-item-page>
         </div>
         <div class="component-container mx-auto my-4 p-3 shadow border rounded bg-light">
-          <app-stripe-payments   (paymentMethodUpdated)="updatePaymentMethod($event)"></app-stripe-payments>
-        </div>
+          <app-stripe-payments
+          [amount]="totalPrice"
+          [currency]="''"
+          [customerName]="address?.fullName || ''"
+          [customerEmail]="address?.contact || ''"
+          [customerPhone]="address?.contact || ''"
+          (paymentSuccess)="handlePaymentSuccess($event)"
+          (paymentFail)="handlePaymentFail($event)">
+        </app-stripe-payments>
+                </div>
 
         <!-- Order Summary for Small Screens -->
         <div class="d-md-none mt-4 p-3 bg-white shadow zigzag-border">
@@ -72,10 +80,11 @@
       </div>
     </div>
 
+
     <!-- Fixed Order Summary for Larger Screens -->
     <div class="col-md-4 d-none d-md-block">
       <div class="sticky-summary p-3 bg-white shadow zigzag-border">
-        <app-order-summary [cartItems]="cartItems"
+        <app-order-summary 
         [cartItems]="cartItems"
         [totalPrice]="totalPrice"
         [isOrderValid]="isOrderValid()"

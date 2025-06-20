@@ -12,6 +12,7 @@ export class TripHistoryComponent {
 
     constructor(private tripService: TripService) {}
   
+    
     ngOnInit(): void {
       this.loadTripHistory();
     }

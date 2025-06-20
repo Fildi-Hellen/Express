@@ -109,3 +109,17 @@ span img {
 .product__item:hover .product__item__text span img {
 	filter: brightness(0) invert(1);
 }
+
+.product__item__text span {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.product__item__text span.liked img {
+    filter: brightness(1.2) contrast(1.2);
+}
+
+.product__item__text span.liked {
+    color: blue;
+    font-weight: bold;
+}

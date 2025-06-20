@@ -15,6 +15,9 @@ export class DriverAuthComponent {
   name = '';
   email = '';
   password = '';
+  phone = '';
+  vehicleType = '';
+  vehicleNumber = '';
   
 
   constructor(private driverService: DriverService, private router: Router) {}
@@ -24,18 +27,42 @@ export class DriverAuthComponent {
   }
 
   onSubmit() {
-    if (this.isLogin) {
-      this.driverService.loginDriver({ email: this.email, password: this.password }).subscribe(
-        () => alert('Login successful'),
-        (error) => console.error('Login error', error)
-      );
-    } else {
-      this.driverService.registerDriver({ name: this.name, email: this.email, password: this.password }).subscribe(
-        () => alert('Registration successful'),
-        (error) => console.error('Registration error', error)
-      );
-    }
+  if (this.isLogin) {
+    this.driverService.loginDriver({
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: () => {
+        alert('Login successful');
+        this.router.navigate(['/dashboard']); // Or any route
+      },
+      error: (err) => {
+        alert('Login failed');
+        console.error(err);
+      }
+    });
+  } else {
+    this.driverService.registerDriver({
+      name: this.name,
+      email: this.email,
+      password: this.password,
+      phone: this.phone,
+      vehicle_type: this.vehicleType,
+      vehicle_number: this.vehicleNumber
+    }).subscribe({
+      next: () => {
+        alert('Registration successful');
+        this.isLogin = true;
+      },
+      error: (err) => {
+        alert('Registration failed');
+        console.error(err);
+      }
+    });
   }
+}
+
+  
   login(): void {
     this.driverService.loginDriver({ email: this.email, password: this.password }).subscribe({
       next: () => {

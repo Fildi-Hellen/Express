@@ -1,52 +1,75 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Http;
+
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-    public function process(Request $request)
+    public function initiate(Request $request)
     {
-        $validated = $request->validate([
-            'method' => 'required|string',
-            'accountNumber' => 'nullable|string',
-            'amount' => 'nullable|numeric',
+        Log::info('Payment payload:', $request->all());
+    
+        $response = Http::withOptions([
+            'verify' => 'C:/xampp/php/extras/ssl/cacert.pem', // ✅ Use forward slashes
+        ])
+        ->withToken(env('FLW_SECRET_KEY'))
+        ->post('https://api.flutterwave.com/v3/payments', [
+            'tx_ref' => 'tx-' . time(),
+            'amount' => $request->amount,
+            'currency' => $request->currency ?? 'RWF',
+            'redirect_url' => 'http://localhost:4200/payment-success',
+            'payment_options' => $request->channel ?? 'card',
+            'customer' => [
+                'email' => $request->email,
+                'name' => $request->name,
+                'phonenumber' => $request->phone_number,
+            ],
+            'customizations' => [
+                'title' => 'Trip Payment',
+                'description' => 'Booking payment via Flutterwave',
+            ],
         ]);
+    
+        Log::info('Flutterwave Response:', $response->json());
+    
+        return $response->json();
+    }
+    
+    public function handle(Request $request)
+    {
+        // ✅ Optional: verify webhook signature
+        $flutterwaveSignature = $request->header('verif-hash');
+        $localHash = env('FLW_SECRET_HASH');
 
-        $method = $validated['method'];
-
-        switch ($method) {
-            case 'stripe':
-                return $this->processStripePayment($validated);
-            case 'momo':
-                return $this->processMomoPayment($validated);
-            case 'mpesa':
-                return $this->processMpesaPayment($validated);
-            case 'cod':
-                return response()->json(['message' => 'Cash on Delivery selected'], 200);
-            default:
-                return response()->json(['error' => 'Invalid payment method'], 400);
+        if (!$flutterwaveSignature || $flutterwaveSignature !== $localHash) {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-    }
 
-    private function processStripePayment($data)
-    {
-        // Simulate Stripe Payment Processing
-        return response()->json(['message' => 'Stripe payment processed successfully'], 200);
-    }
+        // ✅ Process webhook data
+        $data = $request->all();
 
-    private function processMomoPayment($data)
-    {
-        // Simulate MOMO Payment Processing
-        return response()->json(['message' => 'MOMO payment processed successfully'], 200);
-    }
+        Log::info('Flutterwave Webhook Received:', $data);
 
-    private function processMpesaPayment($data)
-    {
-        // Simulate Mpesa Payment Processing
-        return response()->json(['message' => 'Mpesa payment processed successfully'], 200);
-    }
+        if (
+            isset($data['event']) &&
+            $data['event'] === 'charge.completed' &&
+            isset($data['data']['status']) &&
+            $data['data']['status'] === 'successful'
+        ) {
+            $transactionId = $data['data']['id'];
+            $tx_ref = $data['data']['tx_ref'];
+            $amount = $data['data']['amount'];
+            $currency = $data['data']['currency'];
+            $customer_email = $data['data']['customer']['email'];
 
+            Log::info("Payment Successful for {$customer_email} - {$amount} {$currency} - Ref: {$tx_ref}");
+        }
+
+        return response()->json(['status' => 'ok'], 200);
+    }
     
 }

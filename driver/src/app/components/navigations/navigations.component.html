@@ -1,29 +1,20 @@
-<div class="container mt-4">
-    <h2 class="mb-4 text-center custom-heading">Navigation & Map Integration</h2>
-    <div class="card shadow-sm custom-card mb-4">
-      <div class="card-body">
-        <h4 class="mb-3">Integrated Maps</h4>
-        <div id="map"></div>
-  
-        <hr class="my-4">
-  
-        <h5>Route Details</h5>
-        <p><strong>Distance:</strong> {{ routeDetails.distance }}</p>
-        <p><strong>Estimated Time:</strong> {{ routeDetails.duration }}</p>
-        <ul class="list-group">
-          <li class="list-group-item" *ngFor="let step of routeDetails.steps">{{ step }}</li>
-        </ul>
-      </div>
-    </div>
-  
-    <div class="card shadow-sm custom-card">
-      <div class="card-body">
-        <h4 class="mb-3">Location Sharing</h4>
-        <button class="btn btn-primary custom-btn" (click)="shareCurrentLocation()">Share Current Location</button>
-        <div *ngIf="shareLink" class="mt-3">
-          <p>Your location share link: <a [href]="shareLink" target="_blank">{{ shareLink }}</a></p>
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-8 mx-auto">
+      <h1 class="text-center">Find Your Location On The Map</h1>
+      <div class="main-content">
+        <input #searchInput type="text" class="form-control mb-2" placeholder="Enter Destination" />
+        <button id="btn" (click)="searchLocation()">Search Destination</button>
+
+        <div #mapContainer style="height: 400px;"></div>
+        <button id="btn" class="btn btn-primary mt-2" (click)="detectLocation()">Detect My Location</button>
+
+        <div class="text-center mt-3" *ngIf="deliveryAddress">
+          <p><strong>Destination:</strong> {{ deliveryAddress }}</p>
+          <p *ngIf="travelDistance"><strong>Distance:</strong> {{ travelDistance }}</p>
+          <p *ngIf="travelDuration"><strong>Estimated Time:</strong> {{ travelDuration }}</p>
         </div>
       </div>
     </div>
   </div>
-  
+</div>

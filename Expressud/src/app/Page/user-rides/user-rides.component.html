@@ -1,0 +1,24 @@
+<h3>My Ride History</h3>
+<div *ngFor="let ride of rides" class="card p-3 mb-3 shadow-sm">
+  <p><strong>Ride Type:</strong> {{ ride.ride_type }}</p>
+  <p><strong>Status:</strong>
+    <span class="badge" [ngClass]="{
+      'badge-warning': ride.status === 'pending',
+      'badge-primary': ride.status === 'confirmed',
+      'badge-success': ride.status === 'completed',
+      'badge-danger': ride.status === 'cancelled'
+    }">{{ ride.status | titlecase }}</span>
+  </p>
+  <p><strong>Fare:</strong> {{ ride.fare }} {{ ride.currency }}</p>
+  <p><strong>Passengers:</strong> {{ ride.passengers }}</p>
+  <p><strong>Date:</strong> {{ ride.created_at | date:'short' }}</p>
+
+  <div *ngIf="ride.driver_id">
+    <p><strong>Driver ID:</strong> {{ ride.driver_id }}</p>
+    <p><strong>Assigned:</strong> Yes</p>
+  </div>
+
+  <button *ngIf="ride.status === 'pending'" class="btn btn-danger btn-sm mt-2" (click)="cancelRide(ride.id)">
+    Cancel Ride
+  </button>
+</div>

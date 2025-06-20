@@ -1,8 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { loadStripe } from '@stripe/stripe-js';
 import { StripeService } from '../Services/stripe.service';
 import { HttpClient } from '@angular/common/http';
-import { OrderService } from 'src/app/Services/order.service';
 
 @Component({
   selector: 'app-stripe-payments',
@@ -10,34 +9,112 @@ import { OrderService } from 'src/app/Services/order.service';
   styleUrls:[ './stripe-payments.component.css']
 })
 export class StripePaymentsComponent {
-  selectedPaymentMethod: string = 'stripe'; // Default method
-  accountNumber: string = '';
-  amount: number = 0;
+  @Input() amount = 0;
+  @Input() customerName = '';
+  @Input() customerEmail = '';
+  @Input() customerPhone = '';
+  @Input() currency: string = 'USD'; // 👈 MUST exist
+  @Output() paymentSuccess = new EventEmitter<any>();
+  @Output() paymentFail = new EventEmitter<any>();
 
-  @Output() paymentMethodUpdated = new EventEmitter<string>();
+  selectedPaymentMethod = 'flutterwave';
+  selectedChannel = 'card';
+  // currency = 'USD';
+  isLoading = false;
 
-  constructor(private http: HttpClient, private orderService: OrderService) {}
+  constructor(private stripeService: StripeService, private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.detectLocationAndSetCurrency();
+  }
+
+  detectLocationAndSetCurrency(): void {
+    this.http.get<any>('https://ipapi.co/json/').subscribe({
+      next: (res) => {
+        const country = res?.country_name?.toLowerCase();
+        if (country.includes('rwanda')) {
+          this.currency = 'RWF';
+          this.selectedChannel = 'mobilemoneyrwanda';
+        } else if (country.includes('south sudan')) {
+          this.currency = 'SSP';
+          this.selectedChannel = 'mobilemoneyghana';
+        } else {
+          this.currency = 'USD';
+          this.selectedChannel = 'card';
+        }
+      },
+      error: () => (this.currency = 'USD')
+    });
+  }
 
   processPayment(): void {
-    const paymentData = {
-      method: this.selectedPaymentMethod,
-      accountNumber: this.accountNumber || null,
-      amount: this.amount || null,
+    if (this.selectedPaymentMethod === 'cash') {
+      alert('You selected cash. Please pay on delivery.');
+      this.paymentSuccess.emit('cash');
+      return;
+    }
+
+    if (!this.customerName || !this.customerEmail || !this.amount) {
+      alert('All fields are required.');
+      return;
+    }
+
+    if (this.selectedChannel.includes('mobilemoney') && !this.customerPhone) {
+      alert('Phone number required for MoMo payments.');
+      return;
+    }
+
+    const txRef = 'tx-' + Date.now();
+    const payload = {
+      name: this.customerName,
+      email: this.customerEmail,
+      phone_number: this.customerPhone,
+      amount: this.amount,
+      currency: this.currency,
+      channel: this.selectedChannel,
     };
 
-    // Emit the selected payment method to the parent component
-    this.paymentMethodUpdated.emit(this.selectedPaymentMethod);
+    this.isLoading = true;
 
-    // Save payment method to backend
-    this.orderService.savePaymentMethod(paymentData).subscribe(
-      (response) => {
-        console.log('Payment method saved:', response);
-        alert('Payment method saved successfully!');
+    this.stripeService.initiatePayment(payload).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+
+        if (res?.data?.link) {
+          // @ts-ignore
+          FlutterwaveCheckout({
+            public_key: 'FLWPUBK_TEST-695e1fe57a0583aec25162dd3217f95c-X',
+            tx_ref: txRef,
+            amount: this.amount,
+            currency: this.currency,
+            payment_options: this.selectedChannel,
+            customer: {
+              email: this.customerEmail,
+              name: this.customerName,
+              phonenumber: this.customerPhone,
+            },
+            customizations: {
+              title: 'Trip Payment',
+              description: 'Book ride with Flutterwave',
+            },
+            callback: (response: any) => {
+              if (response.status === 'successful') {
+                this.paymentSuccess.emit(response);
+              } else {
+                this.paymentFail.emit(response);
+              }
+            },
+            onclose: () => console.log('Modal closed'),
+          });
+        } else {
+          alert('❌ Payment link error');
+        }
       },
-      (error) => {
-        console.error('Error saving payment method:', error);
-        alert('Failed to save payment method. Please try again.');
+      error: (err) => {
+        this.isLoading = false;
+        alert('❌ Payment initiation failed');
+        console.error(err);
       }
-    );
+    });
   }
 }

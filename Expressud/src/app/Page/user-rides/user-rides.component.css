@@ -1,0 +1,10 @@
+.badge {
+  padding: 4px 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 500;
+}
+.badge-warning { background-color: #f0ad4e; }
+.badge-primary { background-color: #0275d8; }
+.badge-success { background-color: #5cb85c; }
+.badge-danger { background-color: #d9534f; }

@@ -1,17 +1,17 @@
-        
-        <div id="layout-wrapper">
-            <div class="pace-progress"></div>
-           
+<div *ngIf="incomingRide" class="ride-request">
+  <h3>🚕 Ride Request</h3>
+  <p><strong>Pickup:</strong> {{ incomingRide.pickup_location }}</p>
+  <p><strong>Fare:</strong> {{ incomingRide.fare }} {{ incomingRide.currency }}</p>
+  <p><strong>Passengers:</strong> {{ incomingRide.passengers }}</p>
 
-            <div class="main-content">
+  <div *ngIf="!incomingRide.status || incomingRide.status === 'pending'">
+    <button class="btn btn-success" (click)="acceptRide()">Accept</button>
+    <button class="btn btn-danger" (click)="declineRide()">Decline</button>
+  </div>
 
-           
-                
-                
-            </div>
-         
-
-        </div>
-   
-
-      
+  <div *ngIf="incomingRide.status === 'confirmed'" class="mt-3">
+    <h5>❌ Cancel Ride</h5>
+    <textarea [(ngModel)]="cancellationReason" class="form-control mb-2" placeholder="Why are you cancelling?" rows="3"></textarea>
+    <button class="btn btn-danger" (click)="cancelBookedRide()">Submit Cancellation</button>
+  </div>
+</div>

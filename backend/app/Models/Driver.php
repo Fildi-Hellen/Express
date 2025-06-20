@@ -10,7 +10,29 @@ class Driver extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password', 'is_available'];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'phone',
+        'is_available',
+        'vehicle_type',
+        'vehicle_number',
+        'account_name',
+        'account_number',
+        'bank_name',
+        'payout_method'
+    ];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = [
+        'password',
+        'remember_token'
+    ];
+
+    protected $casts = [
+        'is_available' => 'boolean',
+        'is_available_for_ride'=>'boolean'
+    ];
+    
 }
+

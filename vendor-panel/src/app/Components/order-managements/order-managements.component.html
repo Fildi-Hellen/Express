@@ -27,6 +27,7 @@
             <td>{{ order.contact }}</td>
             <td>{{ order.status }}</td>
             <td>
+              
               <ul>
                 <li *ngFor="let item of order.items">
                   {{ item.name }} (x{{ item.quantity }}) - ${{ item.price }}

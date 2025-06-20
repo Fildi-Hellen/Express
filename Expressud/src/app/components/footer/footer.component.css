@@ -158,8 +158,8 @@
 }
 
 .footer-img div img {
-    width: 30px; /* Set a smaller width */
-    height: 30px; /* Set a smaller height */
+    width: 40px; /* Set a smaller width */
+    height: 40px; /* Set a smaller height */
     object-fit: contain; /* Maintain aspect ratio */
 }
 
@@ -179,7 +179,7 @@
     }
 
 	.footer-img div img {
-        width: 20px;
-        height: 20px;
+        width: 30px;
+        height: 30px;
     }
 }

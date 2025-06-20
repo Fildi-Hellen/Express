@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
+  
   "private": true,
   "dependencies": {
     "@agm/core": "^3.0.0-beta.0",
@@ -36,12 +37,12 @@
     "@videogular/ngx-videogular": "^8.0.0",
     "bootstrap": "^5.3.2",
     "jquery": "^3.7.1",
-    "laravel-echo": "^1.16.1",
+    "laravel-echo": "^1.19.0",
     "leaflet": "^1.9.4",
     "mongodb": "^6.5.0",
     "ngx-slick-carousel": "^17.0.0",
     "ngx-toastr": "^18.0.0",
-    "pusher-js": "^8.4.0-rc2",
+    "pusher-js": "^8.4.0",
     "rxjs": "~7.8.0",
     "slick-carousel": "^1.8.1",
     "swiper": "^11.1.1",
@@ -64,4 +65,5 @@
     "karma-jasmine-html-reporter": "~2.0.0",
     "typescript": "^5.3.3"
   }
+
 }

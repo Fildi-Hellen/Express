@@ -1,0 +1,128 @@
+/* General container styling */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+/* Header - Full width and centered */
+.header {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+#btn{
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  font-size: 2rem;
+  font-weight: bold;
+}
+h5{
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Content: Flexbox Layout */
+.content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Grid Layout for Image & Steps */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 2rem;
+  align-items: center;
+  width: 80%;
+}
+
+/* Image Container */
+.image-container {
+  display: flex;
+  justify-content: center;
+}
+
+.responsive-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Steps Section */
+.steps {
+  display: flex;
+  flex-direction: column;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+li:hover {
+  transform: translateY(-5px);
+}
+
+/* Step Number Styling */
+.step-number {
+  font-size: 18px;
+  color: white;
+  background-color: #201658;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Button */
+#btn {
+  margin-top: 1.5rem;
+  background-color: #201658;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr; /* Stack elements on smaller screens */
+    text-align: center;
+  }
+
+  .image-container {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.highlight{
+  background:#201658;
+  color: white;
+  padding: 0 5px;
+}

@@ -296,19 +296,19 @@
 }
 @media screen and (max-width: 1024px) {
     .header__logo a img {
-        max-width: 120px; /* Smaller size for medium screens */
+        max-width: 120%; /* Smaller size for medium screens */
     }
 }
 
 @media screen and (max-width: 768px) {
     .header__logo a img {
-        max-width: 100px; /* Smaller size for small screens */
+        max-width: 100%; /* Smaller size for small screens */
     }
 }
 
 @media screen and (max-width: 480px) {
     .header__logo a img {
-        max-width: 80px; /* Smallest size for mobile screens */
+        max-width: 20vh; /* Smallest size for mobile screens */
     }
 }
 

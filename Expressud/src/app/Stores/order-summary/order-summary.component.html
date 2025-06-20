@@ -23,7 +23,7 @@
       <h4>Total: SSP {{ totalPrice }}</h4>
     </div>
     <div class="text-end mt-3">
-      <button class="btn btn-primary" [disabled]="!isOrderValid" (click)="confirmOrder()">
+      <button id="btn" [disabled]="!isOrderValid" (click)="confirmOrder()">
         Confirm Order
       </button>
     </div>
@@ -32,3 +32,4 @@
     <p>Your cart is empty.</p>
   </div>
 </div>
+

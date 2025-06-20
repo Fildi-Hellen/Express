@@ -1,0 +1,9 @@
+<h3>User Notifications</h3>
+<ul *ngIf="notifications.length > 0; else empty">
+  <li *ngFor="let note of notifications">
+    {{ note.data.message }} - {{ note.created_at | date:'short' }}
+  </li>
+</ul>
+<ng-template #empty>
+  <p>No notifications found.</p>
+</ng-template>

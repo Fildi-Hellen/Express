@@ -15,6 +15,7 @@ export class CommunicationsComponent implements OnInit, OnDestroy{
     messageSubscription!: Subscription;
     callSubscription!: Subscription;
     callStatus: string = '';
+    
   
     constructor(private chatService: ChatService) {}
   

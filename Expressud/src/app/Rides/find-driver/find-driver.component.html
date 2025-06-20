@@ -1,0 +1,40 @@
+<div *ngIf="booking">
+  <h2>Ride Summary</h2>
+  <p><strong>Pickup:</strong> {{ booking.pickup_location }}</p>
+  <p><strong>Destination:</strong> {{ booking.destination }}</p>
+  <p><strong>Fare:</strong> {{ booking.fare }} {{ booking.currency }}</p>
+  <p><strong>Passengers:</strong> {{ booking.passengers }}</p>
+</div>
+
+<div *ngIf="isLoading">
+  <p>🔄 Loading drivers…</p>
+</div>
+
+<div *ngIf="!isLoading && drivers.length">
+  <h3>Select a Driver</h3>
+  <div *ngFor="let d of drivers" class="driver-card">
+    <img [src]="d.image" alt="driver" width="50" height="50" />
+    <p><strong>{{ d.name }}</strong></p>
+    <p>🚗 {{ d.vehicle_type }}</p>
+    <p>📍 {{ d.distance }} km</p>
+    <p>🕒 {{ d.time }} mins</p>
+    <p>⭐ {{ d.rating }}</p>
+    <p>💰 {{ d.price }}</p>
+    <button (click)="orderRide(d)">Confirm</button>
+  </div>
+</div>
+
+<div *ngIf="confirmationMessage">
+  <p>{{ confirmationMessage }}</p>
+  <button *ngIf="!showCancelForm" (click)="toggleCancel()">Cancel Ride?</button>
+</div>
+
+<div *ngIf="showCancelForm">
+  <textarea
+    [(ngModel)]="cancellationReason"
+    placeholder="Reason for cancellation"
+    rows="3"
+    class="form-control mb-2"
+  ></textarea>
+  <button class="btn btn-danger" (click)="cancelRide()">Submit Cancel</button>
+</div>

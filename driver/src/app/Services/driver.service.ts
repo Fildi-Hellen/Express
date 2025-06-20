@@ -25,16 +25,28 @@ export class DriverService {
   }
   
   
-  getDriverOrders(driverId: number): Observable<any[]> {
-    // No headers are set for unauthenticated access
-    return this.http.get<any[]>(`${this.baseUrl}/drivers/${driverId}/orders`);
-  }
+
+ getDriverOrders(driverId: number): Observable<any[]> {
+  const headers = this.getAuthHeaders();
+  return this.http.get<any[]>(
+    `${this.baseUrl}/drivers/${driverId}/orders`,
+    { headers }
+  );
+}
+
   
 
-  // Register a new driver
-  registerDriver(driverData: { name: string; email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/drivers/register`, driverData);
-  }
+  registerDriver(driverData: {
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  vehicle_type: string;
+  vehicle_number: string;
+}): Observable<any> {
+  return this.http.post(`${this.baseUrl}/drivers/register`, driverData);
+}
+
 
   loginDriver(credentials: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.baseUrl}/drivers/login`, credentials).pipe(
@@ -69,5 +81,21 @@ export class DriverService {
     return this.http.put(`${this.baseUrl}/orders/${orderId}/status`, { status }, { headers });
   }
   
+  // getAvailableDrivers(pickup: string, destination: string): Observable<Driver[]> {
+  //   return this.http.post<Driver[]>('/api/rides/available-drivers', {
+  //     pickup,
+  //     destination
+  //   });
+  // }
+  
+  confirmBooking(rideData: any): Observable<any> {
+    return this.http.post('/api/rides/confirm', rideData);
+  }
+
+  findDrivers(rideId: number): Observable<any> {
+  const headers = this.getAuthHeaders();
+  return this.http.get(`${this.baseUrl}/find-drivers/${rideId}`, { headers });
+}
+
   
 }

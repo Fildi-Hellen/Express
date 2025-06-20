@@ -1,28 +1,26 @@
 import { Injectable } from '@angular/core';
 import Echo from 'laravel-echo';
-import * as Pusher from 'pusher-js';
+import Pusher from 'pusher-js';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EchoService {
-  private echo: Echo;
+public echo: Echo<any>;
 
   constructor() {
-    // Ensure Pusher is available globally
     (window as any).Pusher = Pusher;
 
     this.echo = new Echo({
       broadcaster: 'pusher',
-      key: 'd5f8bb8dc391844fce5e',  // Replace with your Pusher key
-      cluster: 'eu',  // Replace with your Pusher cluster
+      key: '69d11a194a2472138da8',          // Replace with your real key
+      cluster: 'eu',         // Replace with 'mt1' or 'eu'
       forceTLS: true,
     });
   }
 
-  listen(channel: string, event: string, callback: Function) {
-    this.echo.channel(channel).listen(event, (data: any) => {
-      callback(data);
-    });
+  // Example method to listen to a channel
+ listen(channel: string, event: string, cb: (data: any) => void) {
+    return this.echo.channel(channel).listen(event, cb);
   }
 }

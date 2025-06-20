@@ -1,0 +1,32 @@
+<section class="container">
+   <!-- Header takes full width and is centered -->
+   <div class="header">
+     <button id="btn">Get started</button>
+     <h2 class="subtitle">How to <mark class="highlight">get started</mark></h2>
+   </div>
+ 
+   <!-- Main Content Section -->
+   <div class="content">
+     <div class="grid">
+       <!-- Left: Image Container -->
+       <div class="image-container">
+         <img src="/assets/img/courier/pop.jpeg" alt="safety" class="responsive-image">
+       </div>
+ 
+       <!-- Right: Steps -->
+       <div class="steps">
+         <ul>
+           <li *ngFor="let step of steps">
+             <span class="step-number">{{ step.number }}</span>
+             <span>
+               <h5>{{ step.title }}</h5>
+               <p>{{ step.description }}</p>
+             </span>
+           </li>
+         </ul>
+         <button mat-raised-button id="btn" (click)="openRideDialog()">Order E-ride</button>
+       </div>
+     </div>
+   </div>
+ </section>
+ 

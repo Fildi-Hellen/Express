@@ -6,15 +6,20 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DriverAuthController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\DriverRideController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\RideController;
+use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorLoginController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
@@ -28,8 +33,6 @@ Route::middleware('auth:sanctum')->get('/checkout', function () {
 });
 
 Route::post('/api/address', [AddressController::class, 'store']);
-
-Route::post('/api/payment', [PaymentController::class, 'process']);
 
 Route::post('/vendor/register', [VendorController::class, 'register']);
 Route::post('/vendor/forgot-password', [VendorLoginController::class, 'sendResetLink']);
@@ -73,17 +76,7 @@ Route::get('/driver-orders/{driverId}', [OrderController::class, 'getDriverOrder
 Route::post('/save-payment', [OrderController::class, 'savePayment']);
 Route::post('/address', [OrderController::class, 'store']);
 
-// Route::middleware('auth:vendor')->group(function () {
-//     Route::post('/vendor/menus', [MenuController::class, 'store']);
-//     Route::get('/vendor/profile', [VendorController::class, 'profile']);
-// });
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::post('/orders/{id}/assign-driver', [DriverController::class, 'assignDriver']);
-//     Route::get('/drivers/available', [DriverController::class, 'getAvailableDrivers']);
-//     Route::get('/drivers', [DriverController::class, 'getAllDrivers']);
-//     Route::get('/drivers/{driverId}/orders', [DriverController::class, 'getDriverOrders']);
 
-// });
 
 
 // Public routes (no authentication needed)
@@ -97,7 +90,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/drivers/available', [DriverController::class, 'getAvailableDrivers']); // Fetch Available Drivers
     Route::post('/orders/{id}/assign-driver', [DriverController::class, 'assignDriver']);   // Assign Driver
     Route::put('/orders/{id}/status', [DriverController::class, 'updateOrderStatus']);     // Update Order Status
+    Route::get('/payout/earnings', [DriverController::class, 'earnings']);
+    Route::get('/payout/history', [DriverController::class, 'history']);
+    Route::get('/payout/settings', [DriverController::class, 'settings']);
+    Route::post('/payout/settings', [DriverController::class, 'updateSettings']);
+    Route::post('/payout/initiate', [DriverController::class, 'initiate']);
+    Route::post('/payout/callback', [DriverController::class, 'callback']);
 });
+
+
 
 Route::prefix('admin')->group(function () {
     Route::get('/menus', [AdminController::class, 'getIncomingMenus']);
@@ -119,9 +120,80 @@ Route::post('/blogs/{id}/like', [BlogController::class, 'likeBlog']);
 Route::get('/blogs/{id}/comments', [BlogController::class, 'viewComments']);
 
 
-
     Route::get('/users', [UserController::class, 'index']); // Retrieve users
     Route::delete('/users/{id}', [UserController::class, 'destroy']); // Delete a user
+
+    Route::post('/pay/initiate', [PaymentController::class, 'initiate']);
+    Route::post('/webhook/flutterwave', [PaymentController::class, 'handle']);
+
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/driver/trip-history', [TripController::class, 'getTripHistory']);
+        Route::get('/driver/current-trips', [TripController::class, 'getCurrentTrips']);
+        Route::get('/driver/trip-requests', [TripController::class, 'getTripRequests']);
+        Route::post('/driver/trip-accept', [TripController::class, 'acceptTrip']);
+        Route::post('/driver/trip-decline', [TripController::class, 'declineTrip']);
+    });
+
+    Route::middleware('auth:sanctum')->get('/user/notifications', function () {
+    return response()->json(Auth::user()->notifications);
+});
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Create a new ride
+    Route::post('/create-ride', [RideController::class, 'create']);
+
+    // Get available drivers for a ride
+    Route::get('/find-drivers/{ride}', [RideController::class, 'findDrivers']);
+
+    // Confirm ride with selected driver
+    Route::post('/confirm-ride', [RideController::class, 'confirm']);
+    Route::get('/rides/created', [RideController::class, 'getCreatedRides']);
+
+    // Get all rides for the logged-in user
+    Route::get('/user/rides', [RideController::class, 'userRides']);
+
+    // Cancel a pending ride
+    Route::post('/cancel-ride/{id}', [RideController::class, 'cancelRide']);
+
+     // 2. Driver panel
+    Route::get('/driver/rides/requests',    [RideController::class, 'getDriverRideRequests']);
+    Route::post('/driver/rides/{id}/accept',[RideController::class, 'driverAcceptRide']);
+    Route::post('/driver/rides/{id}/cancel',[RideController::class, 'driverCancelRide']);
+    Route::get('/driver/rides/current',     [RideController::class, 'getDriverCurrentRides']);
+});
+    Route::post('/create-and-find-drivers', [RideController::class, 'createAndFindDrivers']);
+
+// Public
+Route::post('/drivers/register', [DriverAuthController::class, 'register']);
+Route::post('/drivers/login', [DriverAuthController::class, 'login']);
+
+// Authenticated
+Route::middleware('auth:driver')->group(function () {
+    Route::post('/driver/logout', [DriverAuthController::class, 'logout']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // Get all available drivers (for admin or dispatch UI)
+    Route::get('/drivers/available', [DriverRideController::class, 'getAvailableDrivers']);
+
+    // Assign a driver to a specific order
+    Route::post('/orders/{id}/assign-driver', [DriverRideController::class, 'assignDriver']);
+
+    // Get all active (assigned / on-the-way) orders for a driver
+    Route::get('/drivers/{driverId}/orders', [DriverRideController::class, 'getDriverOrders']);
+
+    // Update order status (e.g., assigned → on the way → delivered)
+    Route::post('/orders/{id}/status', [DriverRideController::class, 'updateOrderStatus']);
+});
+
+Route::post('/driver/accept-ride', [RideController::class, 'driverAcceptRide']);
+Route::post('/driver/cancel-ride/{id}', [RideController::class, 'driverCancelRide']);
+
+
+Route::post('/create-and-find-drivers', [RideController::class, 'createAndFindDrivers']);
+
+    
 
 
 

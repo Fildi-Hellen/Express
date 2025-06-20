@@ -1,69 +1,180 @@
-import { Component, OnInit } from '@angular/core';
-import { MapService } from '../../Services/map.service';
-import L from 'leaflet';
+import { Component, ElementRef, EventEmitter, NgZone, OnInit, Output, ViewChild } from '@angular/core';
+
 
 @Component({
     selector: 'app-navigations',
+    standalone:false,
     templateUrl: './navigations.component.html',
-    styleUrl: './navigations.component.css',
-    standalone: false
+    styleUrls: ['./navigations.component.css'],
+   
 })
 export class NavigationsComponent implements OnInit {
 
-    map!: L.Map;
-    currentPosition: [number, number] = [40.7128, -74.0060]; // Example: New York City
-    destination: [number, number] = [40.730610, -73.935242]; // Example destination
-    routeDetails: any = {};
-    shareLink: string = '';
-  
-    constructor(private mapService: MapService) {}
-  
-    ngOnInit(): void {
-        
-      this.initMap();
-      this.loadRouteDetails();
+  @ViewChild('mapContainer', { static: false }) gmap!: ElementRef;
+  @ViewChild('searchInput', { static: false }) searchInput!: ElementRef;
+  @Output() addressDetected = new EventEmitter<string>();
 
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'assets/images/marker.png',
-        iconUrl: 'assets/images/pin-icon.png',
-        shadowUrl: 'assets/images/location-pin.png'
-      });
+  map!: google.maps.Map;
+  geocoder!: google.maps.Geocoder;
+  directionsService!: google.maps.DirectionsService;
+  directionsRenderer!: google.maps.DirectionsRenderer;
+  distanceService!: google.maps.DistanceMatrixService;
 
-    }
-  
-    initMap(): void {
-      this.map = L.map('map', {
-        center: this.currentPosition,
-        zoom: 13
-      });
-  
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(this.map);
-  
-      // Add markers for current position and destination
-      L.marker(this.currentPosition).addTo(this.map).bindPopup('You are here');
-      L.marker(this.destination).addTo(this.map).bindPopup('Destination');
-  
-      // In a real scenario, draw a route line between these points using a routing API.
-    }
-  
-    loadRouteDetails(): void {
-      this.mapService.getRouteDetails(this.currentPosition, this.destination).subscribe(data => {
-        this.routeDetails = data;
-      });
-    }
-  
-    shareCurrentLocation(): void {
-      this.mapService.shareLocation().subscribe(response => {
-        if (response.success) {
-          this.shareLink = response.link;
-          alert('Location share link copied!');
+  deliveryAddress = '';
+  origin!: google.maps.LatLngLiteral;
+  destination!: google.maps.LatLngLiteral;
+  travelDistance = '';
+  travelDuration = '';
+
+  options: google.maps.MapOptions = {
+    center: { lat: -31, lng: 147 },
+    zoom: 4,
+  };
+
+  constructor(private ngZone: NgZone) {}
+
+  ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
+    this.initializeMap();
+    this.initializePlacesAutocomplete();
+  }
+
+  initializeMap(): void {
+    this.map = new google.maps.Map(this.gmap.nativeElement, this.options);
+    this.geocoder = new google.maps.Geocoder();
+    this.directionsService = new google.maps.DirectionsService();
+    this.directionsRenderer = new google.maps.DirectionsRenderer({ map: this.map });
+    this.distanceService = new google.maps.DistanceMatrixService();
+  }
+
+  initializePlacesAutocomplete(): void {
+    const autocomplete = new google.maps.places.Autocomplete(this.searchInput.nativeElement);
+    autocomplete.addListener('place_changed', () => {
+      this.ngZone.run(() => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry || !place.geometry.location) return;
+
+        this.destination = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        };
+        this.deliveryAddress = place.formatted_address ?? '';
+        this.addressDetected.emit(this.deliveryAddress);
+
+        if (this.origin && this.destination) {
+          this.drawRoute();
+          this.calculateDistance();
         }
       });
+    });
+  }
+
+  detectLocation(): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.origin = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+
+          this.map.setCenter(this.origin);
+          new google.maps.Marker({
+            position: this.origin,
+            map: this.map,
+            title: 'Your Location',
+          });
+
+          this.fetchAddress(this.origin);
+        },
+        () => {
+          this.addressDetected.emit('');
+        }
+      );
+    } else {
+      this.addressDetected.emit('');
     }
+  }
 
-    
+  fetchAddress(latLng: google.maps.LatLngLiteral): void {
+    this.geocoder.geocode({ location: latLng }, (results, status) => {
+      if (status === 'OK' && results && results[0]) {
+        this.ngZone.run(() => {
+          this.deliveryAddress = results[0].formatted_address;
+          this.addressDetected.emit(this.deliveryAddress);
+        });
+      } else {
+        this.addressDetected.emit('');
+      }
+    });
+  }
 
+  drawRoute(): void {
+    this.directionsService.route(
+      {
+        origin: this.origin,
+        destination: this.destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === 'OK' && result) {
+          this.directionsRenderer.setDirections(result);
+        }
+      }
+    );
+  }
+
+  calculateDistance(): void {
+    this.distanceService.getDistanceMatrix(
+      {
+        origins: [this.origin],
+        destinations: [this.destination],
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === 'OK' && response) {
+          const info = response.rows[0].elements[0];
+          this.travelDistance = info.distance.text;
+          this.travelDuration = info.duration.text;
+        }
+      }
+    );
+  }
+
+  searchLocation(): void {
+    const input = this.searchInput.nativeElement.value;
+    if (!input) return;
+  
+    this.geocoder.geocode({ address: input }, (results, status) => {
+      if (status === 'OK' && results && results[0]) {
+        const location = results[0].geometry.location;
+  
+        this.destination = {
+          lat: location.lat(),
+          lng: location.lng()
+        };
+  
+        this.map.setCenter(this.destination);
+  
+        new google.maps.Marker({
+          position: this.destination,
+          map: this.map,
+          icon: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+          title: 'Destination'
+        });
+  
+        this.ngZone.run(() => {
+          this.deliveryAddress = results[0].formatted_address;
+          this.addressDetected.emit(this.deliveryAddress);
+          if (this.origin && this.destination) {
+            this.drawRoute();
+            this.calculateDistance();
+          }
+        });
+      } else {
+        console.error('Geocoding failed:', status);
+      }
+    });
+  }
 }

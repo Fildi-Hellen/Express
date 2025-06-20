@@ -94,6 +94,16 @@ import { VendorForgotPasswordComponent } from './auth/vendor-forgot-password/ven
 import { CustomerComponent } from './components/customer/customer.component';
 import { CheckoutGuard } from './auth/guards/checkout.guard';
 import { RidesudComponent } from './components/ridesud/ridesud.component';
+import { PageComponent } from './Rides/page/page.component';
+import { BookingsComponent } from './Rides/bookings/bookings.component';
+import { HomeRidesComponent } from './Rides/home-rides/home-rides.component';
+import { FaqRidesComponent } from './Rides/faq-rides/faq-rides.component';
+import { StartbookingComponent } from './Rides/startbooking/startbooking.component';
+import { TodoComponent } from './Rides/todo/todo.component';
+import { HeadStartedComponent } from './Rides/head-started/head-started.component';
+import { FindDriverComponent } from './Rides/find-driver/find-driver.component';
+import { UserRidesComponent } from './Page/user-rides/user-rides.component';
+import { UserNotificationsComponent } from './Page/user-notifications/user-notifications.component';
 
 
 
@@ -101,6 +111,14 @@ import { RidesudComponent } from './components/ridesud/ridesud.component';
 
 const routes: Routes = [
   {path:'',component:HomeComponent},
+  {path:'page',component:PageComponent},
+  {path:'bookings',component:BookingsComponent},
+  {path:'home-rides',component:HomeRidesComponent},
+  {path: 'find-driver', component:FindDriverComponent},
+  {path:'faq-rides',component:FaqRidesComponent},
+  {path:'startbooking',component:StartbookingComponent},
+  {path:'head-started',component:HeadStartedComponent},
+  {path:'todo',component:TodoComponent},
   // {path:'home',component:HomeComponent,canActivate: [AuthGuard, RoleGuard], data: { expectedRole: 'customer' }},
   {path:'home',component:HomeComponent},
    {path:'auth',component:AuthComponent},
@@ -202,7 +220,9 @@ const routes: Routes = [
   {path:'vendor-login',component:VendorLoginComponent},
   {path:'vendor-forgot-password',component:VendorForgotPasswordComponent},
   {path:'tracking',component:TrackingComponent},
-  { path: 'track-order', component: TrackingComponent }
+  { path: 'track-order', component: TrackingComponent },
+  {path:'user-rides',component:UserRidesComponent},
+  {path:'user-notifications',component:UserNotificationsComponent}
 
 
 

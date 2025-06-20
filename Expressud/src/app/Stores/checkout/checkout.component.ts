@@ -115,5 +115,37 @@ export class CheckoutComponent implements OnInit {
     this.cartService.updateCart(this.cartItems); // Assume CartService has this method
     this.calculateTotalPrice();
   }
+  handlePaymentSuccess(response: any): void {
+    console.log('✅ Payment success:', response);
+  
+    this.selectedPaymentMethod = 'flutterwave';
+  
+    const orderData = {
+      address: this.address,
+      paymentMethod: this.selectedPaymentMethod,
+      recipient: this.recipient,
+      cartItems: this.cartItems,
+      total: this.totalPrice,
+      paymentDetails: response // 👈 attach full payment object
+    };
+  
+    this.orderService.confirmOrder(orderData).subscribe({
+      next: (res) => {
+        alert('Order confirmed! Tracking ID: ' + res.order.tracking_id);
+        this.cartService.clearCart();
+        this.resetCheckout();
+      },
+      error: (err) => {
+        console.error('Order failed:', err);
+        alert('Failed to confirm order.');
+      }
+    });
+  }
+  
+  handlePaymentFail(error: any): void {
+    console.error('❌ Payment failed:', error);
+    alert('Payment was not completed.');
+  }
+  
 
 }

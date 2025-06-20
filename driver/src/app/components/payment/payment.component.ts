@@ -13,6 +13,7 @@ export class PaymentComponent {
   paymentHistory: any[] = [];
   payoutSettings: any = {};
   withdrawalAmount: number = 0;
+  
 
   constructor(private paymentService: PaymentService) {}
 

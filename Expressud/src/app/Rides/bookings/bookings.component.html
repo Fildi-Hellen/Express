@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>Book a Ride</h2>
+<div mat-dialog-content>
+  <div class="map-container">
+    <app-navigation></app-navigation>
+  </div>
+
+ <form [formGroup]="rideForm" class="booking-form">
+    <mat-form-field appearance="outline" fullWidth>
+      <mat-label>Pickup Location</mat-label>
+      <input matInput formControlName="pickupLocation" placeholder="e.g. 123 Main St">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" fullWidth>
+      <mat-label>Destination</mat-label>
+      <input matInput formControlName="destination" placeholder="e.g. 456 Elm St">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" fullWidth>
+      <mat-label>Select Ride Type</mat-label>
+      <mat-select formControlName="rideType">
+        <mat-option *ngFor="let type of rideTypes" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" fullWidth>
+      <mat-label>Fare ({{ currencyCode }})</mat-label>
+      <input matInput type="number" formControlName="fare">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" fullWidth>
+      <mat-label>Passengers</mat-label>
+      <input matInput type="number" formControlName="passengers" min="1" max="5">
+    </mat-form-field>
+  </form>
+
+<app-stripe-payments
+  [amount]="rideForm.value.fare"
+  [currency]="currencyCode"
+  [customerName]="''"
+  [customerEmail]="''"
+  [customerPhone]="''"
+  (paymentSuccess)="onPaymentSuccess($event)"
+  (paymentFail)="onPaymentFail($event)"
+></app-stripe-payments>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button id="btn" (click)="findDriver()">Find Driver</button>
+</div>

@@ -114,6 +114,22 @@ import { VendorForgotPasswordComponent } from './auth/vendor-forgot-password/ven
 import { VendorLoginComponent } from './auth/vendor-login/vendor-login.component';
 import { CustomerComponent } from './components/customer/customer.component';
 import { RidesudComponent } from './components/ridesud/ridesud.component';
+import { PageComponent } from "./Rides/page/page.component";
+import { TodoComponent } from './Rides/todo/todo.component';
+import { BookingsComponent } from './Rides/bookings/bookings.component';
+import { StartbookingComponent } from './Rides/startbooking/startbooking.component';
+import { FaqRidesComponent } from './Rides/faq-rides/faq-rides.component';
+import { HomeRidesComponent } from './Rides/home-rides/home-rides.component';
+import { HeadStartedComponent } from './Rides/head-started/head-started.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { FindDriverComponent } from './Rides/find-driver/find-driver.component';
+import { UserNotificationsComponent } from './Page/user-notifications/user-notifications.component';
+import { UserRidesComponent } from './Page/user-rides/user-rides.component';
+
+
 
 
 
@@ -216,40 +232,50 @@ import { RidesudComponent } from './components/ridesud/ridesud.component';
     PharmacyServingComponent,
     PharmacyComponent,
     SearchComponent,
-    RidesudComponent
+    RidesudComponent,
+    PageComponent,
+    TodoComponent,
+    BookingsComponent,
+    StartbookingComponent,
+    FaqRidesComponent,
+    HomeRidesComponent,
+    HeadStartedComponent,
+    FindDriverComponent,
+    UserNotificationsComponent,
+    UserRidesComponent
   
 
     
   ],
 
   imports: [
-     NgbModule,
-     BrowserModule,
-     AppRoutingModule,
-     SlickCarouselModule,
-     HttpClientModule,
-     BrowserAnimationsModule,
-     CommonModule,
-     MatExpansionModule,
-     FontAwesomeModule,
-     ReactiveFormsModule,
-     GoogleMapsModule,
-     MatDialogModule,
-     FormsModule,
-     MatIconModule,
+    NgbModule,
+    BrowserModule,
+    AppRoutingModule,
+    SlickCarouselModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    CommonModule,
+    MatExpansionModule,
+    FontAwesomeModule,
+    ReactiveFormsModule,
+    GoogleMapsModule,
+    MatDialogModule,
+    FormsModule,
     MatIconModule,
-     IonicModule.forRoot(),
-     ToastrModule.forRoot({
-      timeOut:3000,
-      positionClass:'toast-bottom-right',
-      preventDuplicates: true,
-      newestOnTop:false
-    })
-
-     
-
+    IonicModule.forRoot(),
+    ToastrModule.forRoot({
+        timeOut: 3000,
+        positionClass: 'toast-bottom-right',
+        preventDuplicates: true,
+        newestOnTop: false
+    }),MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
     
-  ],
+ 
+],
   providers: [
     provideAnimationsAsync(),
     DatePipe,

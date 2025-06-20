@@ -1,16 +1,20 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-8 mx-auto">
-      <div id="layout-wrapper">
-        <h1 class="text-center">Find Your Location On The Map</h1>
-        <div class="main-content">
-          <div id="mapContainer" #mapContainer style="height: 400px;"></div>
-          <button id="btn" (click)="detectLocation()">Detect My Location</button>
-          <p class="text-center" *ngIf="deliveryAddress">Detected Address: {{ deliveryAddress }}</p>
+      <h1 class="text-center">Find Your Location On The Map</h1>
+      <div class="main-content">
+        <input #searchInput type="text" class="form-control mb-2" placeholder="Enter Destination" />
+        <button id="btn" (click)="searchLocation()">Search Destination</button>
+
+        <div #mapContainer style="height: 400px;"></div>
+        <button id="btn" class="btn btn-primary mt-2" (click)="detectLocation()">Detect My Location</button>
+
+        <div class="text-center mt-3" *ngIf="deliveryAddress">
+          <p><strong>Destination:</strong> {{ deliveryAddress }}</p>
+          <p *ngIf="travelDistance"><strong>Distance:</strong> {{ travelDistance }}</p>
+          <p *ngIf="travelDuration"><strong>Estimated Time:</strong> {{ travelDuration }}</p>
         </div>
       </div>
-
-     
     </div>
   </div>
 </div>
