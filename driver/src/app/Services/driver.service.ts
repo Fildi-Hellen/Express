@@ -44,7 +44,12 @@ export class DriverService {
   vehicle_type: string;
   vehicle_number: string;
 }): Observable<any> {
-  return this.http.post(`${this.baseUrl}/drivers/register`, driverData);
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  });
+  
+  return this.http.post(`${this.baseUrl}/drivers/register`, driverData, { headers });
 }
 
 

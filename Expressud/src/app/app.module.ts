@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule, DatePipe, TitleCasePipe, SlicePipe, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import  {HomeComponent} from './components/home/home.component';
@@ -17,6 +17,7 @@ import { BusComponent } from './shared/courier/bus/bus.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
+import { RouterModule } from '@angular/router';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
@@ -125,6 +126,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 import { FindDriverComponent } from './Rides/find-driver/find-driver.component';
 import { UserNotificationsComponent } from './Page/user-notifications/user-notifications.component';
 import { UserRidesComponent } from './Page/user-rides/user-rides.component';
@@ -252,6 +256,7 @@ import { UserRidesComponent } from './Page/user-rides/user-rides.component';
     NgbModule,
     BrowserModule,
     AppRoutingModule,
+    RouterModule,
     SlickCarouselModule,
     HttpClientModule,
     BrowserAnimationsModule,
@@ -273,17 +278,25 @@ import { UserRidesComponent } from './Page/user-rides/user-rides.component';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
     
  
 ],
   providers: [
     provideAnimationsAsync(),
     DatePipe,
+    TitleCasePipe,
+    SlicePipe,
+    CurrencyPipe,
+    DecimalPipe,
     ContactService,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     {provide:HTTP_INTERCEPTORS, useClass:AuthInterceptor, multi: true },
     {provide:HTTP_INTERCEPTORS, useClass:LoadingInterceptor, multi: true },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

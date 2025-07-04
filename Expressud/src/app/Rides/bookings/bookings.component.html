@@ -1,52 +1,308 @@
-<h2 mat-dialog-title>Book a Ride</h2>
-<div mat-dialog-content>
-  <div class="map-container">
-    <app-navigation></app-navigation>
+<!-- Enhanced Book a Ride Modal with Map -->
+<div class="booking-modal-overlay" [@fadeInOut]>
+  <div class="booking-modal-expanded" [@slideInOut]>
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-content">
+        <div class="header-icon">
+          🚗
+        </div>
+        <div class="header-text">
+          <h2>Book a Ride</h2>
+          <p>Fast, reliable transportation at your fingertips</p>
+        </div>
+      </div>
+      <button class="close-btn" mat-dialog-close aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Content with Map Integration -->
+    <div class="modal-content-with-map">
+      
+      <!-- Left Side: Form -->
+      <div class="form-section-container">
+        <form [formGroup]="rideForm" class="booking-form">
+          
+          <!-- Ride Type Selection -->
+          <div class="form-section">
+            <div class="section-label">
+              <i class="fas fa-car"></i>
+              <span>Choose Ride Type</span>
+            </div>
+            <div class="ride-type-grid">
+              <div *ngFor="let type of rideTypes" 
+                   class="ride-type-option"
+                   [class.selected]="rideForm.get('rideType')?.value === type.value"
+                   (click)="selectRideType(type.value)">
+                <div class="ride-icon">{{type.icon}}</div>
+                <div class="ride-label">{{type.label}}</div>
+                <div class="ride-multiplier">×{{type.multiplier}}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Inputs with Map Integration -->
+          <div class="form-section">
+            <div class="section-label">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Trip Details</span>
+              <button type="button" 
+                      class="map-toggle-btn"
+                      (click)="toggleMapView()"
+                      [class.active]="showMapView">
+                <i class="fas fa-map"></i>
+                {{showMapView ? 'Hide Map' : 'Show Map'}}
+              </button>
+            </div>
+            
+            <div class="location-inputs">
+              <div class="input-group">
+                <div class="input-icon pickup">
+                  <i class="fas fa-circle"></i>
+                </div>
+                <input type="text" 
+                       class="location-input"
+                       formControlName="pickupLocation"
+                       placeholder="Enter pickup location"
+                       [class.error]="hasError('pickupLocation')"
+                       (focus)="onLocationInputFocus('pickup')"
+                       (input)="onLocationInputChange('pickup', $event)">
+                <button type="button" 
+                        class="location-pin-btn"
+                        (click)="setCurrentLocation('pickup')"
+                        title="Use current location">
+                  <i class="fas fa-crosshairs"></i>
+                </button>
+              </div>
+              
+              <div class="input-group">
+                <div class="input-icon destination">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <input type="text" 
+                       class="location-input"
+                       formControlName="destination"
+                       placeholder="Enter destination"
+                       [class.error]="hasError('destination')"
+                       (focus)="onLocationInputFocus('destination')"
+                       (input)="onLocationInputChange('destination', $event)">
+                <button type="button" 
+                        class="location-pin-btn"
+                        (click)="openLocationPicker('destination')"
+                        title="Pick from map">
+                  <i class="fas fa-map-pin"></i>
+                </button>
+              </div>
+              
+              <button type="button" class="swap-btn" (click)="swapLocations()">
+                <i class="fas fa-exchange-alt"></i>
+              </button>
+            </div>
+
+            <!-- Location Suggestions -->
+            <div class="location-suggestions" *ngIf="locationSuggestions.length > 0 && activeLocationInput">
+              <div *ngFor="let suggestion of locationSuggestions" 
+                   class="suggestion-item"
+                   (click)="selectLocationSuggestion(suggestion)">
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="suggestion-content">
+                  <div class="suggestion-name">{{suggestion.name}}</div>
+                  <div class="suggestion-address">{{suggestion.address}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Route Information -->
+          <div class="route-info" *ngIf="routeInfo && pickupCoordinates && destinationCoordinates">
+            <div class="route-summary">
+              <div class="route-item">
+                <i class="fas fa-route"></i>
+                <span>{{routeInfo.distance}}</span>
+              </div>
+              <div class="route-item">
+                <i class="fas fa-clock"></i>
+                <span>{{routeInfo.duration}}</span>
+              </div>
+              <div class="route-item">
+                <i class="fas fa-road"></i>
+                <span>{{routeInfo.via}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Passengers and Fare Row -->
+          <div class="form-section">
+            <div class="form-row">
+              <!-- Passengers -->
+              <div class="form-group">
+                <div class="input-label">
+                  <i class="fas fa-users"></i>
+                  <span>Passengers</span>
+                </div>
+                <div class="passenger-selector">
+                  <button type="button" 
+                          class="count-btn" 
+                          (click)="changePassengers(-1)"
+                          [disabled]="rideForm.get('passengers')?.value <= 1">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <span class="passenger-count">{{rideForm.get('passengers')?.value}}</span>
+                  <button type="button" 
+                          class="count-btn" 
+                          (click)="changePassengers(1)"
+                          [disabled]="rideForm.get('passengers')?.value >= 6">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Estimated Fare -->
+              <div class="form-group">
+                <div class="input-label">
+                  <i class="fas fa-money-bill-wave"></i>
+                  <span>Estimated Fare</span>
+                </div>
+                <div class="fare-display">
+                  <span class="fare-amount">{{estimatedFare}}</span>
+                  <span class="currency">{{currencyCode}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-section" *ngIf="paymentMethods.length > 0">
+            <div class="section-label">
+              <i class="fas fa-credit-card"></i>
+              <span>Payment Method</span>
+            </div>
+            <select class="payment-select" formControlName="paymentMethod">
+              <option *ngFor="let method of paymentMethods" [value]="method">
+                {{method}}
+              </option>
+            </select>
+          </div>
+
+          <!-- Error Messages -->
+          <div class="error-messages" *ngIf="rideForm.touched && rideForm.invalid">
+            <div *ngIf="hasError('pickupLocation')" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              {{getErrorMessage('pickupLocation')}}
+            </div>
+            <div *ngIf="hasError('destination')" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              {{getErrorMessage('destination')}}
+            </div>
+          </div>
+        </form>
+
+        <!-- Payment Component -->
+        <div class="payment-section" *ngIf="rideForm.valid && estimatedFare > 0 && !showMapView">
+          <app-stripe-payments
+            [amount]="estimatedFare"
+            [currency]="currencyCode"
+            [customerName]="''"
+            [customerEmail]="''"
+            [customerPhone]="''"
+            (paymentSuccess)="onPaymentSuccess($event)"
+            (paymentFail)="onPaymentFail($event)">
+          </app-stripe-payments>
+        </div>
+      </div>
+
+      <!-- Right Side: Map -->
+      <div class="map-section" [class.hidden]="!showMapView">
+        <div class="map-header">
+          <h4>Select Locations</h4>
+          <div class="map-controls">
+            <button type="button" 
+                    class="map-control-btn"
+                    [class.active]="mapMode === 'pickup'"
+                    (click)="setMapMode('pickup')">
+              <i class="fas fa-circle pickup-dot"></i>
+              Pickup
+            </button>
+            <button type="button" 
+                    class="map-control-btn"
+                    [class.active]="mapMode === 'destination'"
+                    (click)="setMapMode('destination')">
+              <i class="fas fa-map-marker-alt destination-dot"></i>
+              Destination
+            </button>
+          </div>
+        </div>
+        
+        <div class="map-container">
+          <!-- Custom Map Implementation -->
+          <div #mapContainer id="bookingMap" style="height: 400px; width: 100%; background: #e0e0e0;">
+            <div class="map-loading" *ngIf="!mapInitialized">
+              <div class="loading-spinner"></div>
+              <p>Loading map...</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Map Instructions -->
+        <div class="map-instructions" *ngIf="mapMode">
+          <div class="instruction-card">
+            <i class="fas fa-info-circle"></i>
+            <span *ngIf="mapMode === 'pickup'">Click on the map to set your pickup location</span>
+            <span *ngIf="mapMode === 'destination'">Click on the map to set your destination</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button type="button" 
+              class="cancel-btn" 
+              mat-dialog-close>
+        <i class="fas fa-times"></i>
+        Cancel
+      </button>
+      
+      <button type="button" 
+              class="book-btn"
+              [disabled]="!rideForm.valid || isLoading"
+              (click)="findDriver()">
+        <span *ngIf="isLoading" class="spinner"></span>
+        <i *ngIf="!isLoading" class="fas fa-search"></i>
+        {{isLoading ? 'Searching...' : 'Find Driver'}}
+      </button>
+    </div>
   </div>
-
- <form [formGroup]="rideForm" class="booking-form">
-    <mat-form-field appearance="outline" fullWidth>
-      <mat-label>Pickup Location</mat-label>
-      <input matInput formControlName="pickupLocation" placeholder="e.g. 123 Main St">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" fullWidth>
-      <mat-label>Destination</mat-label>
-      <input matInput formControlName="destination" placeholder="e.g. 456 Elm St">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" fullWidth>
-      <mat-label>Select Ride Type</mat-label>
-      <mat-select formControlName="rideType">
-        <mat-option *ngFor="let type of rideTypes" [value]="type">
-          {{ type }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" fullWidth>
-      <mat-label>Fare ({{ currencyCode }})</mat-label>
-      <input matInput type="number" formControlName="fare">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" fullWidth>
-      <mat-label>Passengers</mat-label>
-      <input matInput type="number" formControlName="passengers" min="1" max="5">
-    </mat-form-field>
-  </form>
-
-<app-stripe-payments
-  [amount]="rideForm.value.fare"
-  [currency]="currencyCode"
-  [customerName]="''"
-  [customerEmail]="''"
-  [customerPhone]="''"
-  (paymentSuccess)="onPaymentSuccess($event)"
-  (paymentFail)="onPaymentFail($event)"
-></app-stripe-payments>
 </div>
 
-<div mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button id="btn" (click)="findDriver()">Find Driver</button>
+<!-- Location Picker Modal -->
+<div class="location-picker-overlay" *ngIf="showLocationPicker" [@fadeInOut]>
+  <div class="location-picker-modal" [@slideInOut]>
+    <div class="picker-header">
+      <h3>Select {{activeLocationInput}} Location</h3>
+      <button class="close-picker-btn" (click)="closeLocationPicker()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="picker-map-container">
+      <!-- Embedded Navigation Component -->
+      <div class="embedded-nav-wrapper">
+        <app-navigation (addressDetected)="onAddressDetected($event)"></app-navigation>
+      </div>
+    </div>
+    
+    <div class="picker-footer">
+      <button class="cancel-picker-btn" (click)="closeLocationPicker()">
+        Cancel
+      </button>
+      <button class="confirm-picker-btn" 
+              [disabled]="!selectedLocationFromNav"
+              (click)="confirmLocationFromNav()">
+        Confirm Location
+      </button>
+    </div>
+  </div>
 </div>

@@ -16,8 +16,13 @@ class Driver extends Authenticatable
         'password',
         'phone',
         'is_available',
+        'is_available_for_ride',
         'vehicle_type',
         'vehicle_number',
+        // Will be uncommented after migration runs successfully
+        // 'vehicle_model',
+        // 'license_plate',
+        // 'rating',
         'account_name',
         'account_number',
         'bank_name',

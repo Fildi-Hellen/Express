@@ -20,8 +20,11 @@ class DriverAuthController extends Controller
         'vehicle_number' => 'required|string'
     ]);
 
-
     $data['password'] = bcrypt($data['password']);
+    
+    // Set default values for new drivers (only existing columns)
+    $data['is_available'] = true;
+    $data['is_available_for_ride'] = true;
 
     $driver = Driver::create($data);
 

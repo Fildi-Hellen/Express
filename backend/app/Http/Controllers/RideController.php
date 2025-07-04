@@ -250,19 +250,127 @@ public function getDriverCurrentRides(Request $request)
 {
     $driverId = Auth::id();
 
-    $current = Ride::where('driver_id', $driverId)
-        ->where('status', 'confirmed')
-        ->get(['id','pickup_location','destination','fare'])
+    $current = Ride::with('user:id,name')
+        ->where('driver_id', $driverId)
+        ->whereIn('status', ['confirmed', 'in_progress'])
+        ->get(['id','user_id','pickup_location','destination','fare','status'])
         ->map(fn($r) => [
             'id'             => $r->id,
             'passengerName'  => $r->user->name,
             'pickupLocation' => $r->pickup_location,
             'destination'    => $r->destination,
             'fare'           => $r->fare,
+            'status'         => $r->status,
         ]);
 
     return response()->json($current);
 }
+
+    /** Driver makes a price offer (increase price) */
+    public function driverMakePriceOffer(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'proposed_price' => 'required|numeric|min:1',
+            'message' => 'nullable|string|max:255'
+        ]);
+
+        $ride = Ride::findOrFail($id);
+        
+        if ($ride->status !== 'pending') {
+            return response()->json(['message' => 'Can only make offers on pending rides'], 400);
+        }
+
+        // Update the ride with driver's proposed price
+        $ride->update([
+            'proposed_price' => $validated['proposed_price'],
+            'price_offer_message' => $validated['message'] ?? 'Driver price adjustment'
+        ]);
+
+        // Notify user about price change (you can implement real-time notification)
+        return response()->json([
+            'success' => true,
+            'message' => 'Price offer sent to customer',
+            'ride' => $ride
+        ]);
+    }
+
+    /** Start trip (when driver reaches pickup location) */
+    public function driverStartTrip(Request $request, $id)
+    {
+        $driverId = Auth::id();
+        $ride = Ride::where('id', $id)
+                    ->where('driver_id', $driverId)
+                    ->firstOrFail();
+
+        if ($ride->status !== 'confirmed') {
+            return response()->json(['message' => 'Trip must be confirmed first'], 400);
+        }
+
+        $ride->update([
+            'status' => 'in_progress',
+            'started_at' => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Trip started',
+            'ride' => $ride
+        ]);
+    }
+
+    /** Complete trip */
+    public function driverCompleteTrip(Request $request, $id)
+    {
+        $driverId = Auth::id();
+        $ride = Ride::where('id', $id)
+                    ->where('driver_id', $driverId)
+                    ->firstOrFail();
+
+        if ($ride->status !== 'in_progress') {
+            return response()->json(['message' => 'Trip must be in progress'], 400);
+        }
+
+        $ride->update([
+            'status' => 'completed',
+            'completed_at' => now()
+        ]);
+
+        // Make driver available again
+        $driver = Driver::find($driverId);
+        if ($driver) {
+            $driver->update(['is_available' => true]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Trip completed successfully',
+            'ride' => $ride
+        ]);
+    }
+
+    /** Get driver's trip history */
+    public function getDriverTripHistory(Request $request)
+    {
+        $driverId = Auth::id();
+        
+        $history = Ride::with('user:id,name')
+            ->where('driver_id', $driverId)
+            ->whereIn('status', ['completed', 'cancelled'])
+            ->orderBy('created_at', 'desc')
+            ->get(['id','user_id','pickup_location','destination','fare','status','created_at','completed_at'])
+            ->map(fn($r) => [
+                'id' => $r->id,
+                'passengerName' => $r->user->name,
+                'pickupLocation' => $r->pickup_location,
+                'destination' => $r->destination,
+                'fare' => $r->fare,
+                'status' => $r->status,
+                'date' => $r->created_at->format('Y-m-d H:i'),
+                'completedAt' => $r->completed_at?->format('Y-m-d H:i')
+            ]);
+
+        return response()->json($history);
+    }
 
 
 
