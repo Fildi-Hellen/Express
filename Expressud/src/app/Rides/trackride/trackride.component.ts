@@ -902,10 +902,44 @@ For support: support@expressud.com
   setActiveTab(tab: string): void {
     this.activeTabSection = tab;
     console.log(`📋 Switching to tab: ${tab}`);
-    
-    // Load data if switching to history and not loaded yet
-    if (tab === 'history' && this.rideHistory.length === 0) {
-      this.loadRideHistory();
+  }
+
+  /**
+   * Get current tab rides
+   */
+  getCurrentTabRides(): Ride[] {
+    switch(this.activeTabSection) {
+      case 'pending': return this.pendingRides;
+      case 'confirmed': return this.confirmedRides;
+      case 'in_progress': return this.inProgressRides;
+      case 'completed': return this.completedRides;
+      default: return [];
+    }
+  }
+
+  /**
+   * Get tab title
+   */
+  getTabTitle(): string {
+    switch(this.activeTabSection) {
+      case 'pending': return 'Pending Requests';
+      case 'confirmed': return 'Confirmed Rides';
+      case 'in_progress': return 'In Progress';
+      case 'completed': return 'Completed Rides';
+      default: return 'Rides';
+    }
+  }
+
+  /**
+   * Get tab icon
+   */
+  getTabIcon(): string {
+    switch(this.activeTabSection) {
+      case 'pending': return 'fas fa-clock';
+      case 'confirmed': return 'fas fa-check-circle';
+      case 'in_progress': return 'fas fa-car';
+      case 'completed': return 'fas fa-flag-checkered';
+      default: return 'fas fa-list';
     }
   }
 }

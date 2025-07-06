@@ -101,7 +101,7 @@
             <div class="d-flex justify-content-between mt-2 small">
               <span [class.text-warning]="currentRide.status === 'pending'">Requested</span>
               <span [class.text-warning]="currentRide.status === 'confirmed'">Confirmed</span>
-              <span [class.text-warning]="currentRide.status === 'started'">En Route</span>
+              <span [class.text-warning]="currentRide.status === 'in_progress'">En Route</span>
               <span [class.text-warning]="currentRide.status === 'completed'">Completed</span>
             </div>
           </div>
@@ -115,33 +115,11 @@
     <div class="col-md-3 col-sm-6 mb-3">
       <div class="card text-center border-0 shadow-sm h-100">
         <div class="card-body">
-          <div class="text-primary mb-2">
-            <i class="fas fa-car fa-2x"></i>
-          </div>
-          <h4 class="fw-bold mb-1">{{activeRides.length}}</h4>
-          <small class="text-muted">Active Rides</small>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-      <div class="card text-center border-0 shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-success mb-2">
-            <i class="fas fa-check-circle fa-2x"></i>
-          </div>
-          <h4 class="fw-bold mb-1">{{getTripHistoryCount()}}</h4>
-          <small class="text-muted">Completed Trips</small>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-      <div class="card text-center border-0 shadow-sm h-100">
-        <div class="card-body">
           <div class="text-warning mb-2">
-            <i class="fas fa-dollar-sign fa-2x"></i>
+            <i class="fas fa-clock fa-2x"></i>
           </div>
-          <h4 class="fw-bold mb-1">{{formatCurrency(userStats?.totalSpent || 0)}}</h4>
-          <small class="text-muted">Total Spent</small>
+          <h4 class="fw-bold mb-1">{{pendingRides.length}}</h4>
+          <small class="text-muted">Pending</small>
         </div>
       </div>
     </div>
@@ -149,10 +127,32 @@
       <div class="card text-center border-0 shadow-sm h-100">
         <div class="card-body">
           <div class="text-info mb-2">
-            <i class="fas fa-star fa-2x"></i>
+            <i class="fas fa-check-circle fa-2x"></i>
           </div>
-          <h4 class="fw-bold mb-1">{{userStats?.averageRating || 0}}</h4>
-          <small class="text-muted">Avg Rating</small>
+          <h4 class="fw-bold mb-1">{{confirmedRides.length}}</h4>
+          <small class="text-muted">Confirmed</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="card text-center border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-primary mb-2">
+            <i class="fas fa-car fa-2x"></i>
+          </div>
+          <h4 class="fw-bold mb-1">{{inProgressRides.length}}</h4>
+          <small class="text-muted">In Progress</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="card text-center border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-success mb-2">
+            <i class="fas fa-flag-checkered fa-2x"></i>
+          </div>
+          <h4 class="fw-bold mb-1">{{completedRides.length}}</h4>
+          <small class="text-muted">Completed</small>
         </div>
       </div>
     </div>
@@ -164,23 +164,39 @@
       <!-- Tab Navigation -->
       <nav class="nav nav-pills nav-fill mb-4">
         <button class="nav-link" 
-                [class.active]="activeTabSection === 'active'"
-                id="active-rides-tab"
-                (click)="setActiveTab('active')">
-          <i class="fas fa-car me-2"></i>
-          Active Rides
-          <span class="badge bg-danger ms-2" *ngIf="activeRides.length > 0">
-            {{activeRides.length}}
+                [class.active]="activeTabSection === 'pending'"
+                (click)="setActiveTab('pending')">
+          <i class="fas fa-clock me-2"></i>
+          Pending
+          <span class="badge bg-warning ms-2" *ngIf="pendingRides.length > 0">
+            {{pendingRides.length}}
           </span>
         </button>
         <button class="nav-link" 
-                [class.active]="activeTabSection === 'history'"
-                id="ride-history-tab"
-                (click)="setActiveTab('history')">
-          <i class="fas fa-history me-2"></i>
-          Trip History
-          <span class="badge bg-secondary ms-2" *ngIf="getTripHistoryCount() > 0">
-            {{getTripHistoryCount()}}
+                [class.active]="activeTabSection === 'confirmed'"
+                (click)="setActiveTab('confirmed')">
+          <i class="fas fa-check-circle me-2"></i>
+          Confirmed
+          <span class="badge bg-info ms-2" *ngIf="confirmedRides.length > 0">
+            {{confirmedRides.length}}
+          </span>
+        </button>
+        <button class="nav-link" 
+                [class.active]="activeTabSection === 'in_progress'"
+                (click)="setActiveTab('in_progress')">
+          <i class="fas fa-car me-2"></i>
+          In Progress
+          <span class="badge bg-primary ms-2" *ngIf="inProgressRides.length > 0">
+            {{inProgressRides.length}}
+          </span>
+        </button>
+        <button class="nav-link" 
+                [class.active]="activeTabSection === 'completed'"
+                (click)="setActiveTab('completed')">
+          <i class="fas fa-flag-checkered me-2"></i>
+          Completed
+          <span class="badge bg-success ms-2" *ngIf="completedRides.length > 0">
+            {{completedRides.length}}
           </span>
         </button>
       </nav>
