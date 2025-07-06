@@ -882,3 +882,33 @@
     transform: rotate(90deg);
   }
 }
+
+/* Fare validation styles */
+.fare-info {
+  margin-top: 0.5rem;
+}
+
+.minimum-fare-label {
+  color: #6c757d;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.fare-error {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #dc3545;
+  font-size: 0.875rem;
+}
+
+.fare-input.error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.fare-input:focus {
+  border-color: #201658 !important;
+  box-shadow: 0 0 0 0.2rem rgba(32, 22, 88, 0.25) !important;
+}

@@ -59,6 +59,11 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   destinationCoordinates: any;
   routeInfo: RouteInfo | null = null;
   currencyCode = 'USD';
+  
+  // Track previous locations to avoid unnecessary recalculation
+  private previousPickup: string = '';
+  private previousDestination: string = '';
+  private previousRideType: string = '';
 
   // Location picker properties
   showLocationPicker = false;
@@ -142,14 +147,41 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
       destination: ['', [Validators.required, Validators.minLength(3)]],
       rideType: ['standard', Validators.required],
       passengers: [1, [Validators.required, Validators.min(1), Validators.max(8)]],
+      fare: [0, [Validators.required, Validators.min(0)]],
       paymentMethod: ['card', Validators.required]
-    }, { validators: this.sameLocationValidator });
+    }, { validators: [this.sameLocationValidator, this.minimumFareValidator.bind(this)] });
   }
 
   private setupFormWatchers(): void {
-    this.rideForm.valueChanges
+    // Watch only pickup location, destination, and ride type changes
+    this.rideForm.get('pickupLocation')?.valueChanges
       .pipe(
-        debounceTime(500),
+        debounceTime(800),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        if (this.rideForm.get('pickupLocation')?.valid && 
+            this.rideForm.get('destination')?.valid) {
+          this.calculateEstimatedFare();
+        }
+      });
+      
+    this.rideForm.get('destination')?.valueChanges
+      .pipe(
+        debounceTime(800),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        if (this.rideForm.get('pickupLocation')?.valid && 
+            this.rideForm.get('destination')?.valid) {
+          this.calculateEstimatedFare();
+        }
+      });
+      
+    this.rideForm.get('rideType')?.valueChanges
+      .pipe(
         distinctUntilChanged(),
         takeUntil(this.destroy$)
       )
@@ -171,22 +203,66 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
     return null;
   }
 
+  private shouldRecalculateFare(): boolean {
+    const currentPickup = this.rideForm.get('pickupLocation')?.value || '';
+    const currentDestination = this.rideForm.get('destination')?.value || '';
+    const currentRideType = this.rideForm.get('rideType')?.value || '';
+    
+    const shouldRecalculate = (
+      this.previousPickup !== currentPickup ||
+      this.previousDestination !== currentDestination ||
+      this.previousRideType !== currentRideType
+    );
+    
+    // Update tracking variables
+    this.previousPickup = currentPickup;
+    this.previousDestination = currentDestination;
+    this.previousRideType = currentRideType;
+    
+    return shouldRecalculate;
+  }
+
+  private minimumFareValidator(control: AbstractControl): ValidationErrors | null {
+    const fareControl = control.get('fare');
+    const fareValue = fareControl?.value;
+    
+    if (fareValue && this.estimatedFare && fareValue < this.estimatedFare) {
+      return { minimumFare: { actual: fareValue, minimum: this.estimatedFare } };
+    }
+    return null;
+  }
+
   private calculateEstimatedFare(): void {
     const selectedRideType = this.getSelectedRideType();
     if (selectedRideType && this.rideForm.get('pickupLocation')?.value && this.rideForm.get('destination')?.value) {
-      const mockDistance = Math.random() * 20 + 2;
-      const mockDuration = Math.random() * 30 + 10;
       
-      this.estimatedFare = selectedRideType.baseFare + (mockDistance * selectedRideType.perKmRate * selectedRideType.multiplier);
-      
-      this.routeInfo = {
-        distance: `${mockDistance.toFixed(1)} km`,
-        duration: `${mockDuration.toFixed(0)} min`,
-        via: 'Via Main Roads',
-        polyline: ''
-      };
+      // Only calculate if we don't have an estimated fare yet, or if locations have changed significantly
+      if (this.estimatedFare === 0 || this.shouldRecalculateFare()) {
+        const mockDistance = Math.random() * 20 + 2;
+        const mockDuration = Math.random() * 30 + 10;
+        
+        this.estimatedFare = selectedRideType.baseFare + (mockDistance * selectedRideType.perKmRate * selectedRideType.multiplier);
+        
+        // Store the calculation details to avoid recalculation
+        this.routeInfo = {
+          distance: `${mockDistance.toFixed(1)} km`,
+          duration: `${mockDuration.toFixed(0)} min`,
+          via: 'Via Main Roads',
+          polyline: ''
+        };
+        
+        // Update the fare form control with the estimated fare if it's empty or less than estimated
+        const currentFare = this.rideForm.get('fare')?.value;
+        if (!currentFare || currentFare < this.estimatedFare) {
+          this.rideForm.get('fare')?.setValue(this.estimatedFare);
+        }
+        
+        // Update the fare validator
+        this.rideForm.get('fare')?.updateValueAndValidity();
+      }
     } else {
       this.routeInfo = null;
+      this.estimatedFare = 0;
     }
   }
 
@@ -209,6 +285,7 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
           passengers: formData.passengers,
           paymentMethod: formData.paymentMethod,
           estimatedFare: this.estimatedFare,
+          actualFare: formData.fare, // Use the fare from the form
           currency: this.currencyCode,
           pickupCoordinates: this.pickupCoordinates,
           destinationCoordinates: this.destinationCoordinates,
@@ -287,6 +364,9 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (field?.errors?.['sameLocation']) {
       return 'Pickup and destination cannot be the same';
+    }
+    if (this.rideForm.errors?.['minimumFare']) {
+      return `Fare cannot be below minimum fare of ${this.estimatedFare.toFixed(0)} RWF`;
     }
     return '';
   }

@@ -166,11 +166,21 @@
                   <span>Estimated Fare</span>
                 </div>
                 <div class="fare-display">
-                  <input type="text" 
+                  <input type="number" 
                          class="fare-input"
-                         [value]="estimatedFare | number: '1.0-2'"
+                         formControlName="fare"
+                         [min]="estimatedFare"
+                         [placeholder]="estimatedFare.toString()"
+                         [class.error]="hasError('fare')"
                          >
                   <span class="currency">RWF</span>
+                </div>
+                <div class="fare-info">
+                  <small class="minimum-fare-label">Minimum fare: {{estimatedFare | number: '1.0-0'}} RWF</small>
+                </div>
+                <div *ngIf="hasError('fare')" class="fare-error">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <small>{{getErrorMessage('fare')}}</small>
                 </div>
               </div>
             </div>
@@ -203,9 +213,9 @@
         </form>
 
         <!-- Payment Component -->
-        <div class="payment-section" *ngIf="rideForm.valid && estimatedFare > 0 && !showMapView">
+        <div class="payment-section" *ngIf="rideForm.valid && rideForm.get('fare')?.value > 0 && !showMapView">
           <app-stripe-payments
-            [amount]="estimatedFare"
+            [amount]="rideForm.get('fare')?.value"
             [currency]="currencyCode"
             [customerName]="''"
             [customerEmail]="''"
