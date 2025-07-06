@@ -197,14 +197,19 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.isLoading = true;
-    const rideData = this.rideForm.value;
+    const formData = this.rideForm.value;
 
     setTimeout(() => {
       try {
         const ride = {
           id: Date.now(),
-          ...rideData,
+          rideType: formData.rideType,
+          pickupLocation: formData.pickupLocation,
+          destination: formData.destination,
+          passengers: formData.passengers,
+          paymentMethod: formData.paymentMethod,
           estimatedFare: this.estimatedFare,
+          currency: this.currencyCode,
           pickupCoordinates: this.pickupCoordinates,
           destinationCoordinates: this.destinationCoordinates,
           routeInfo: this.routeInfo

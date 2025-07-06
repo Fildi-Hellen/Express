@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 export interface RideRequest {
   ride_type: string;
@@ -91,12 +92,50 @@ export class RideService {
   }
 
   /**
-   * Get user's ride history
+   * Get user's ride history with proper error handling
    */
   getUserRides(): Observable<Ride[]> {
-    return this.http.get<Ride[]>(
+    console.log('🚗 Fetching user rides...');
+    
+    return this.http.get<any>(
       `${this.apiUrl}/user/rides`,
       { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(response => {
+        console.log('📊 User rides response:', response);
+        
+        // Handle different response formats
+        let rides: Ride[] = [];
+        
+        if (response && response.success && Array.isArray(response.data)) {
+          // New format with success wrapper
+          rides = response.data;
+          console.log(`✅ Loaded ${rides.length} rides (new format)`);
+        } else if (Array.isArray(response)) {
+          // Direct array format
+          rides = response;
+          console.log(`✅ Loaded ${rides.length} rides (direct format)`);
+        } else {
+          console.warn('⚠️ Unexpected response format:', response);
+          rides = [];
+        }
+        
+        // Validate and transform the data
+        rides = rides.map(ride => ({
+          ...ride,
+          fare: Number(ride.fare) || 0,
+          passengers: Number(ride.passengers) || 1,
+          currency: ride.currency || 'RWF',
+          ride_type: ride.ride_type || 'standard'
+        }));
+        
+        console.log('🎯 Final processed rides:', rides);
+        return rides;
+      }),
+      catchError(error => {
+        console.error('❌ Error fetching user rides:', error);
+        throw error;
+      })
     );
   }
 
@@ -195,5 +234,26 @@ export class RideService {
 
   private deg2rad(deg: number): number {
     return deg * (Math.PI/180);
+  }
+
+  /**
+   * Debug API call to check raw database content
+   */
+  debugUserRides(): Observable<any> {
+    console.log('🔍 Debug: Checking raw database content...');
+    
+    return this.http.get<any>(
+      `${this.apiUrl}/user/rides/debug`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(response => {
+        console.log('🔍 Debug response:', response);
+        return response;
+      }),
+      catchError(error => {
+        console.error('❌ Debug API error:', error);
+        throw error;
+      })
+    );
   }
 }

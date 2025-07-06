@@ -9,7 +9,7 @@
         <div #mapContainer style="height: 400px;"></div>
         <button id="btn" class="btn btn-primary mt-2" (click)="detectLocation()">Detect My Location</button>
 
-        <div class="text-center mt-3" *ngIf="deliveryAddress">
+        <div class="text-center" *ngIf="deliveryAddress">
           <p><strong>Destination:</strong> {{ deliveryAddress }}</p>
           <p *ngIf="travelDistance"><strong>Distance:</strong> {{ travelDistance }}</p>
           <p *ngIf="travelDuration"><strong>Estimated Time:</strong> {{ travelDuration }}</p>

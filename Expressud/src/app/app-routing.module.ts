@@ -98,7 +98,7 @@ import { PageComponent } from './Rides/page/page.component';
 import { BookingsComponent } from './Rides/bookings/bookings.component';
 import { HomeRidesComponent } from './Rides/home-rides/home-rides.component';
 import { FaqRidesComponent } from './Rides/faq-rides/faq-rides.component';
-import { StartbookingComponent } from './Rides/startbooking/startbooking.component';
+import { TrackRideComponet } from './Rides/trackride/trackride.component';
 import { TodoComponent } from './Rides/todo/todo.component';
 import { HeadStartedComponent } from './Rides/head-started/head-started.component';
 import { FindDriverComponent } from './Rides/find-driver/find-driver.component';
@@ -116,7 +116,7 @@ const routes: Routes = [
   {path:'home-rides',component:HomeRidesComponent},
   {path: 'find-driver', component:FindDriverComponent},
   {path:'faq-rides',component:FaqRidesComponent},
-  {path:'startbooking',component:StartbookingComponent},
+  {path:'trackride',component:TrackRideComponet},
   {path:'head-started',component:HeadStartedComponent},
   {path:'todo',component:TodoComponent},
   // {path:'home',component:HomeComponent,canActivate: [AuthGuard, RoleGuard], data: { expectedRole: 'customer' }},

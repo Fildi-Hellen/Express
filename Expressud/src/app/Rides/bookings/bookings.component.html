@@ -8,9 +8,9 @@
         <div class="header-icon">
           🚗
         </div>
-        <div class="header-text">
-          <h2>Book a Ride</h2>
-          <p>Fast, reliable transportation at your fingertips</p>
+        <div class="header-text" style="color: white;">
+          <h2  style="color: white;">Book a Ride</h2>
+          <p style="color: white;">Fast, reliable transportation at your fingertips</p>
         </div>
       </div>
       <button class="close-btn" mat-dialog-close aria-label="Close">
@@ -166,8 +166,11 @@
                   <span>Estimated Fare</span>
                 </div>
                 <div class="fare-display">
-                  <span class="fare-amount">{{estimatedFare}}</span>
-                  <span class="currency">{{currencyCode}}</span>
+                  <input type="text" 
+                         class="fare-input"
+                         [value]="estimatedFare | number: '1.0-2'"
+                         >
+                  <span class="currency">RWF</span>
                 </div>
               </div>
             </div>

@@ -148,15 +148,25 @@ export class FindDriverComponent implements OnInit, OnDestroy {
   }
 
   private loadDrivers(): void {
-    // Use the existing createRideAndFetchDrivers method
+    // Map the booking data to match API expectations
     const rideData = {
-      ride_type: this.booking.ride_type || this.booking.rideType,
-      pickup_location: this.booking.pickup_location,
+      ride_type: this.booking.rideType || this.booking.ride_type,
+      pickup_location: this.booking.pickupLocation || this.booking.pickup_location,
       destination: this.booking.destination,
-      fare: this.booking.fare,
-      currency: this.booking.currency,
+      fare: this.booking.estimatedFare || this.booking.fare,
+      currency: this.booking.currency || 'USD',
       passengers: this.booking.passengers
     };
+
+    // Validate required fields and log for debugging
+    console.log('Booking data received:', this.booking);
+    console.log('Mapped ride data:', rideData);
+    if (!rideData.pickup_location || !rideData.destination) {
+      console.error('Missing required fields:', rideData);
+      this.showErrorMessage('Pickup location and destination are required.');
+      this.isLoading = false;
+      return;
+    }
 
     this.driverService.createRideAndFetchDrivers(rideData).subscribe({
       next: (response: any) => {
@@ -175,6 +185,7 @@ export class FindDriverComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.error('Error fetching drivers:', err);
+        console.error('Request data:', rideData);
         this.isLoading = false;
         this.showErrorMessage('Failed to find drivers. Please try again.');
       }

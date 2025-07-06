@@ -118,7 +118,7 @@ import { RidesudComponent } from './components/ridesud/ridesud.component';
 import { PageComponent } from "./Rides/page/page.component";
 import { TodoComponent } from './Rides/todo/todo.component';
 import { BookingsComponent } from './Rides/bookings/bookings.component';
-import { StartbookingComponent } from './Rides/startbooking/startbooking.component';
+import { TrackRideComponet } from './Rides/trackride/trackride.component';
 import { FaqRidesComponent } from './Rides/faq-rides/faq-rides.component';
 import { HomeRidesComponent } from './Rides/home-rides/home-rides.component';
 import { HeadStartedComponent } from './Rides/head-started/head-started.component';
@@ -240,7 +240,7 @@ import { UserRidesComponent } from './Page/user-rides/user-rides.component';
     PageComponent,
     TodoComponent,
     BookingsComponent,
-    StartbookingComponent,
+    TrackRideComponet,
     FaqRidesComponent,
     HomeRidesComponent,
     HeadStartedComponent,
