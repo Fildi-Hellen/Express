@@ -154,8 +154,8 @@ class RideController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            \Log::error('Error fetching user rides: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            // \Log::error('Error fetching user rides: ' . $e->getMessage());
+            // \Log::error('Stack trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch rides',
@@ -326,7 +326,7 @@ public function cancelRide(Request $request, $id)
                 'created_at'     => $r->created_at->toISOString(),
             ]);
 
-        \Log::info("Returning {$requests->count()} available requests for driver {$driverId} (filtered: " . ($filterByDriver ? 'yes' : 'no') . ")");
+        // \Log::info("Returning {$requests->count()} available requests for driver {$driverId} (filtered: " . ($filterByDriver ? 'yes' : 'no') . ")");
 
         return response()->json([
             'success' => true,
@@ -339,7 +339,7 @@ public function cancelRide(Request $request, $id)
         ]);
         
     } catch (\Exception $e) {
-        \Log::error('Error getting ride requests: ' . $e->getMessage());
+        // \Log::error('Error getting ride requests: ' . $e->getMessage());
         return response()->json([
             'success' => false,
             'data' => [],
