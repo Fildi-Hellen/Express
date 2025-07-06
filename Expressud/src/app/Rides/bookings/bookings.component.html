@@ -72,8 +72,10 @@
                 <button type="button" 
                         class="location-pin-btn"
                         (click)="setCurrentLocation('pickup')"
+                        [disabled]="isLoadingMap"
                         title="Use current location">
-                  <i class="fas fa-crosshairs"></i>
+                  <i *ngIf="!isLoadingMap" class="fas fa-crosshairs"></i>
+                  <i *ngIf="isLoadingMap" class="fas fa-spinner fa-spin"></i>
                 </button>
               </div>
               

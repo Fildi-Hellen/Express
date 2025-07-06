@@ -688,6 +688,9 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setCurrentLocation(type: 'pickup' | 'destination'): void {
     if (navigator.geolocation) {
+      // Show loading state
+      this.isLoadingMap = true;
+      
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const coords = {
@@ -695,23 +698,63 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
             lng: position.coords.longitude
           };
           
-          const address = `Current Location (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)})`;
-          
-          if (type === 'pickup') {
-            this.rideForm.get('pickupLocation')?.setValue(address);
-            this.pickupCoordinates = coords;
-          }
-          
-          this.calculateEstimatedFare();
+          // Use reverse geocoding to get actual address
+          this.reverseGeocodeCurrentLocation(coords, type);
         },
         (error) => {
+          this.isLoadingMap = false;
           console.error('Error getting location:', error);
           alert('Unable to get your current location. Please enter manually.');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
         }
       );
     } else {
       alert('Geolocation is not supported by this browser.');
     }
+  }
+  
+  private reverseGeocodeCurrentLocation(coords: { lat: number, lng: number }, type: 'pickup' | 'destination'): void {
+    // Initialize geocoder if not already done
+    if (!this.geocoder) {
+      this.geocoder = new google.maps.Geocoder();
+    }
+    
+    this.geocoder.geocode({ location: coords }, (results: any, status: any) => {
+      this.isLoadingMap = false;
+      
+      if (status === 'OK' && results[0]) {
+        const address = results[0].formatted_address;
+        
+        if (type === 'pickup') {
+          this.rideForm.get('pickupLocation')?.setValue(address);
+          this.pickupCoordinates = coords;
+        } else {
+          this.rideForm.get('destination')?.setValue(address);
+          this.destinationCoordinates = coords;
+        }
+        
+        this.calculateEstimatedFare();
+        console.log(`✅ Current location set for ${type}: ${address}`);
+      } else {
+        // Fallback to coordinates if geocoding fails
+        const fallbackAddress = `Current Location (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)})`;
+        
+        if (type === 'pickup') {
+          this.rideForm.get('pickupLocation')?.setValue(fallbackAddress);
+          this.pickupCoordinates = coords;
+        } else {
+          this.rideForm.get('destination')?.setValue(fallbackAddress);
+          this.destinationCoordinates = coords;
+        }
+        
+        this.calculateEstimatedFare();
+        console.warn('Geocoding failed, using coordinates:', status);
+      }
+    });
   }
 
   swapLocations(): void {
