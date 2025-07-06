@@ -912,3 +912,109 @@
   border-color: #201658 !important;
   box-shadow: 0 0 0 0.2rem rgba(32, 22, 88, 0.25) !important;
 }
+
+/* Enhanced Map Instructions and Loading States */
+.instruction-card {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.instruction-card.loading {
+  background: linear-gradient(135deg, #201658, #2a1b6b);
+  color: white;
+  border-color: #201658;
+}
+
+.instruction-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.instruction-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Map Controls Enhancement */
+.map-control-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.map-control-btn.active {
+  background-color: #201658 !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(32, 22, 88, 0.3);
+}
+
+.map-control-btn:hover:not(.active) {
+  background-color: #f8f9fa;
+  transform: translateY(-1px);
+}
+
+.pickup-dot {
+  color: #28a745;
+}
+
+.destination-dot {
+  color: #dc3545;
+}
+
+/* Map Container Enhancement */
+.map-container {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+#bookingMap {
+  border-radius: 10px;
+}
+
+/* Loading overlay for map */
+.map-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.map-loading .loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #201658;
+  margin: 0 auto 10px;
+}

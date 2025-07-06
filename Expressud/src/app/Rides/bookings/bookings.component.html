@@ -260,10 +260,20 @@
         
         <!-- Map Instructions -->
         <div class="map-instructions" *ngIf="mapMode">
-          <div class="instruction-card">
-            <i class="fas fa-info-circle"></i>
-            <span *ngIf="mapMode === 'pickup'">Click on the map to set your pickup location</span>
-            <span *ngIf="mapMode === 'destination'">Click on the map to set your destination</span>
+          <div class="instruction-card" [class.loading]="isLoadingMap">
+            <div *ngIf="!isLoadingMap" class="instruction-content">
+              <i class="fas fa-info-circle"></i>
+              <span *ngIf="mapMode === 'pickup'" class="instruction-text">
+                Click on the map to set your pickup location
+              </span>
+              <span *ngIf="mapMode === 'destination'" class="instruction-text">
+                Click on the map to set your destination
+              </span>
+            </div>
+            <div *ngIf="isLoadingMap" class="loading-content">
+              <div class="loading-spinner"></div>
+              <span>Getting address...</span>
+            </div>
           </div>
         </div>
       </div>

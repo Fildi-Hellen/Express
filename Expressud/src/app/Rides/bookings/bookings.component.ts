@@ -77,6 +77,11 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   mapMode: 'pickup' | 'destination' | null = null;
   isLoadingMap = false;
   
+  // Map markers
+  private pickupMarker: any = null;
+  private destinationMarker: any = null;
+  private geocoder: any = null;
+  
   // Navigation component integration
   selectedLocationFromNav: string = '';
   
@@ -489,32 +494,19 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
         zoomControl: true
       });
       
+      // Initialize geocoder
+      this.geocoder = new google.maps.Geocoder();
+      
       this.mapInitialized = true;
       console.log('Map initialized successfully');
       
-      // Add click listener for location selection
+      // Add click listener for location selection with address lookup
       this.map.addListener('click', (event: any) => {
         if (event.latLng && this.mapMode) {
           const lat = event.latLng.lat();
           const lng = event.latLng.lng();
           
-          // Create marker
-          const marker = new google.maps.Marker({
-            position: { lat, lng },
-            map: this.map,
-            title: `${this.mapMode} location`
-          });
-          
-          // Update coordinates based on mode
-          if (this.mapMode === 'pickup') {
-            this.pickupCoordinates = { lat, lng };
-            this.rideForm.get('pickupLocation')?.setValue(`Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-          } else if (this.mapMode === 'destination') {
-            this.destinationCoordinates = { lat, lng };
-            this.rideForm.get('destination')?.setValue(`Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-          }
-          
-          this.calculateEstimatedFare();
+          this.handleMapClick(lat, lng);
         }
       });
       
@@ -525,6 +517,141 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setMapMode(mode: 'pickup' | 'destination'): void {
     this.mapMode = mode;
+  }
+
+  private handleMapClick(lat: number, lng: number): void {
+    if (!this.mapMode) return;
+    
+    // Show loading indicator
+    this.isLoadingMap = true;
+    
+    // Remove existing marker for this mode
+    this.clearMarker(this.mapMode);
+    
+    // Create new marker
+    const marker = new google.maps.Marker({
+      position: { lat, lng },
+      map: this.map,
+      title: `${this.mapMode} location`,
+      icon: this.getMarkerIcon(this.mapMode),
+      animation: google.maps.Animation.DROP
+    });
+    
+    // Store marker reference
+    if (this.mapMode === 'pickup') {
+      this.pickupMarker = marker;
+    } else {
+      this.destinationMarker = marker;
+    }
+    
+    // Reverse geocode to get address
+    this.reverseGeocode(lat, lng, this.mapMode);
+  }
+  
+  private reverseGeocode(lat: number, lng: number, mode: 'pickup' | 'destination'): void {
+    if (!this.geocoder) {
+      console.error('Geocoder not initialized');
+      this.handleGeocodeError(lat, lng, mode);
+      return;
+    }
+    
+    const latLng = { lat, lng };
+    
+    this.geocoder.geocode({ location: latLng }, (results: any, status: any) => {
+      this.isLoadingMap = false;
+      
+      if (status === 'OK' && results[0]) {
+        const address = results[0].formatted_address;
+        this.updateLocationField(mode, address, { lat, lng });
+        
+        // Add info window to marker
+        this.addMarkerInfoWindow(mode, address);
+        
+        console.log(`Address found for ${mode}:`, address);
+      } else {
+        console.warn('Geocoder failed:', status);
+        this.handleGeocodeError(lat, lng, mode);
+      }
+    });
+  }
+  
+  private handleGeocodeError(lat: number, lng: number, mode: 'pickup' | 'destination'): void {
+    // Fallback to coordinates if geocoding fails
+    const fallbackAddress = `Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    this.updateLocationField(mode, fallbackAddress, { lat, lng });
+    this.isLoadingMap = false;
+  }
+  
+  private updateLocationField(mode: 'pickup' | 'destination', address: string, coordinates: { lat: number, lng: number }): void {
+    if (mode === 'pickup') {
+      this.pickupCoordinates = coordinates;
+      this.rideForm.get('pickupLocation')?.setValue(address);
+    } else {
+      this.destinationCoordinates = coordinates;
+      this.rideForm.get('destination')?.setValue(address);
+    }
+    
+    // Trigger fare calculation
+    this.calculateEstimatedFare();
+    
+    // Show success feedback
+    this.showLocationSelectedFeedback(mode, address);
+  }
+  
+  private clearMarker(mode: 'pickup' | 'destination'): void {
+    if (mode === 'pickup' && this.pickupMarker) {
+      this.pickupMarker.setMap(null);
+      this.pickupMarker = null;
+    } else if (mode === 'destination' && this.destinationMarker) {
+      this.destinationMarker.setMap(null);
+      this.destinationMarker = null;
+    }
+  }
+  
+  private getMarkerIcon(mode: 'pickup' | 'destination'): any {
+    const baseIcon = {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 10,
+      strokeWeight: 3,
+      strokeColor: '#fff',
+    };
+    
+    if (mode === 'pickup') {
+      return {
+        ...baseIcon,
+        fillColor: '#28a745', // Green for pickup
+        fillOpacity: 1
+      };
+    } else {
+      return {
+        ...baseIcon,
+        fillColor: '#dc3545', // Red for destination
+        fillOpacity: 1
+      };
+    }
+  }
+  
+  private addMarkerInfoWindow(mode: 'pickup' | 'destination', address: string): void {
+    const marker = mode === 'pickup' ? this.pickupMarker : this.destinationMarker;
+    if (!marker) return;
+    
+    const infoWindow = new google.maps.InfoWindow({
+      content: `
+        <div style="padding: 10px; max-width: 200px;">
+          <h6 style="margin: 0 0 5px 0; color: #201658;">${mode === 'pickup' ? 'Pickup Location' : 'Destination'}</h6>
+          <p style="margin: 0; font-size: 14px;">${address}</p>
+        </div>
+      `
+    });
+    
+    marker.addListener('click', () => {
+      infoWindow.open(this.map, marker);
+    });
+  }
+  
+  private showLocationSelectedFeedback(mode: 'pickup' | 'destination', address: string): void {
+    // Simple feedback - you can enhance this with toast notifications
+    console.log(`✅ ${mode === 'pickup' ? 'Pickup' : 'Destination'} location selected: ${address}`);
   }
 
   // Location input methods
