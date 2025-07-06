@@ -11,62 +11,124 @@ class DriverAuthController extends Controller
 {
     public function register(Request $request)
 {
-    $data = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:drivers',
-        'password' => 'required|string|min:8',
-        'phone' => 'required|string',
-        'vehicle_type' => 'required|string',
-        'vehicle_number' => 'required|string'
-    ]);
+    try {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:drivers',
+            'password' => 'required|string|min:8',
+            'phone' => 'required|string|max:20',
+            'vehicle_type' => 'required|string|max:50',
+            'vehicle_number' => 'required|string|max:20'
+        ]);
 
+        $data['password'] = bcrypt($data['password']);
+        
+        // Set default values for new drivers
+        $data['is_available'] = true;
+        $data['is_available_for_ride'] = true;
+        $data['rating'] = 5.0; // Default rating
 
-    $data['password'] = bcrypt($data['password']);
+        $driver = Driver::create($data);
+        
+        // Create token for immediate login
+        $token = $driver->createToken('DriverToken')->plainTextToken;
 
-    $driver = Driver::create($data);
-
-    return response()->json([
-        'message' => 'Registration successful',
-        'driver' => $driver
-    ], 201);
+        return response()->json([
+            'message' => 'Registration successful',
+            'driver' => $driver,
+            'token' => $token
+        ], 201);
+        
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        Log::error('Driver registration failed: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Registration failed',
+            'error' => 'Something went wrong. Please try again.'
+        ], 500);
+    }
 }
 
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            $credentials = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
 
-        if (Auth::guard('driver')->attempt($credentials)) {
-            $driver = Auth::guard('driver')->user();
-                /** @var \App\Models\Driver $driver **/
+            // Find the driver by email
+            $driver = Driver::where('email', $credentials['email'])->first();
+
+            // Check if driver exists and password is correct
+            if (!$driver || !\Hash::check($credentials['password'], $driver->password)) {
+                return response()->json([
+                    'message' => 'Invalid credentials'
+                ], 401);
+            }
+
+            // Create token for the driver
             $token = $driver->createToken('DriverToken')->plainTextToken;
 
+            // Set driver as available
             $driver->is_available = true;
-           $driver->save();
+            $driver->save();
 
             return response()->json([
                 'message' => 'Login successful',
                 'token' => $token,
-                 'driver' => $driver,
+                'driver' => $driver,
             ], 200);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Driver login failed: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Login failed',
+                'error' => 'Something went wrong. Please try again.'
+            ], 500);
         }
-
-        Log::warning('Invalid login attempt', ['email' => $request->email]);
-
-        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        $driver = Auth::guard('driver')->user();
-        if ($driver) $driver->is_available = false;
-
-        Auth::guard('driver')->logout();
-
-        return response()->json(['message' => 'Logout successful']);
+        try {
+            // Get the currently authenticated driver
+            $driver = $request->user();
+            
+            if ($driver) {
+                // Set driver as unavailable
+                $driver->is_available = false;
+                $driver->save();
+                
+                // Revoke all tokens for this driver
+                $driver->tokens()->delete();
+                
+                return response()->json([
+                    'message' => 'Logout successful'
+                ], 200);
+            }
+            
+            return response()->json([
+                'message' => 'No authenticated user found'
+            ], 401);
+            
+        } catch (\Exception $e) {
+            Log::error('Driver logout failed: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Logout failed',
+                'error' => 'Something went wrong. Please try again.'
+            ], 500);
+        }
     }
 
 }

@@ -3,16 +3,32 @@
     <div class="col-12 col-md-8 mx-auto">
       <h1 class="text-center">Find Your Location On The Map</h1>
       <div class="main-content">
-        <input #searchInput type="text" class="form-control mb-2" placeholder="Enter Destination" />
-        <button id="btn" (click)="searchLocation()">Search Destination</button>
+        <div class="search-section">
+          <input #searchInput type="text" class="form-control mb-2" placeholder="Enter Destination" />
+          <button id="btn" (click)="searchLocation()">Search Destination</button>
+        </div>
 
-        <div #mapContainer style="height: 400px;"></div>
-        <button id="btn" class="btn btn-primary mt-2" (click)="detectLocation()">Detect My Location</button>
+        <div class="map-instructions">
+          <div class="instruction-card">
+            <i class="fas fa-info-circle"></i>
+            <span>Click anywhere on the map to select a location, or use the search box above</span>
+          </div>
+        </div>
 
-        <div class="text-center mt-3" *ngIf="deliveryAddress">
-          <p><strong>Destination:</strong> {{ deliveryAddress }}</p>
-          <p *ngIf="travelDistance"><strong>Distance:</strong> {{ travelDistance }}</p>
-          <p *ngIf="travelDuration"><strong>Estimated Time:</strong> {{ travelDuration }}</p>
+        <div #mapContainer style="height: 400px; border-radius: 10px; overflow: hidden;"></div>
+        
+        <div class="controls-section">
+          <button id="btn" class="btn btn-primary mt-2" (click)="detectLocation()">
+            <i class="fas fa-crosshairs"></i> Detect My Location
+          </button>
+        </div>
+
+        <div class="location-info text-center" *ngIf="deliveryAddress">
+          <div class="address-card">
+            <p><strong>Selected Location:</strong> {{ deliveryAddress }}</p>
+            <p *ngIf="travelDistance"><strong>Distance:</strong> {{ travelDistance }}</p>
+            <p *ngIf="travelDuration"><strong>Estimated Time:</strong> {{ travelDuration }}</p>
+          </div>
         </div>
       </div>
     </div>

@@ -44,7 +44,25 @@ export class DriverService {
   vehicle_type: string;
   vehicle_number: string;
 }): Observable<any> {
-  return this.http.post(`${this.baseUrl}/drivers/register`, driverData);
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  });
+  
+  return this.http.post(`${this.baseUrl}/drivers/register`, driverData, { headers }).pipe(
+    tap((response: any) => {
+      console.log('Registration response:', response);
+      // Auto-store token if provided
+      if (response.token && response.driver) {
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('driverId', response.driver.id);
+      }
+    }),
+    catchError((error) => {
+      console.error('Registration error:', error);
+      return throwError(() => error);
+    })
+  );
 }
 
 

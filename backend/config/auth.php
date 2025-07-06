@@ -54,7 +54,7 @@ return [
 
 
         'driver' => [ // Custom guard for drivers
-        'driver' => 'session',
+        'driver' => 'sanctum',
         'provider' => 'drivers',
     ],
 

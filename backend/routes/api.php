@@ -28,6 +28,25 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
+// Test login for development (REMOVE IN PRODUCTION)
+Route::post('/test-login', function() {
+    $user = \App\Models\User::firstOrCreate(
+        ['email' => 'test@example.com'],
+        [
+            'name' => 'Test User',
+            'password' => bcrypt('password123')
+        ]
+    );
+    
+    $token = $user->createToken('test-token')->plainTextToken;
+    
+    return response()->json([
+        'user' => $user,
+        'token' => $token,
+        'message' => 'Test login successful'
+    ]);
+});
 Route::middleware('auth:sanctum')->get('/checkout', function () {
     return response()->json(['message' => 'You are authorized']);
 });
@@ -80,13 +99,13 @@ Route::post('/address', [OrderController::class, 'store']);
 
 
 // Public routes (no authentication needed)
-Route::post('/drivers/register', [DriverController::class, 'register']); // Driver Registration
-Route::post('/drivers/login', [DriverController::class, 'login']);       // Driver Login
+Route::post('/drivers/register', [DriverAuthController::class, 'register']); // Driver Registration
+Route::post('/drivers/login', [DriverAuthController::class, 'login']);       // Driver Login
 Route::get('/drivers/{driverId}/orders', [DriverController::class, 'getDriverOrders']); // Fetch Assigned Orders
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/drivers/logout', [DriverController::class, 'logout']); // Driver Logout
+    Route::post('/drivers/logout', [DriverAuthController::class, 'logout']); // Driver Logout
     Route::get('/drivers/available', [DriverController::class, 'getAvailableDrivers']); // Fetch Available Drivers
     Route::post('/orders/{id}/assign-driver', [DriverController::class, 'assignDriver']);   // Assign Driver
     Route::put('/orders/{id}/status', [DriverController::class, 'updateOrderStatus']);     // Update Order Status
@@ -152,6 +171,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Get all rides for the logged-in user
     Route::get('/user/rides', [RideController::class, 'userRides']);
+    
+    // Debug endpoint for troubleshooting
+    Route::get('/user/rides/debug', [RideController::class, 'debugUserRides']);
 
     // Cancel a pending ride
     Route::post('/cancel-ride/{id}', [RideController::class, 'cancelRide']);
@@ -161,17 +183,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/driver/rides/{id}/accept',[RideController::class, 'driverAcceptRide']);
     Route::post('/driver/rides/{id}/cancel',[RideController::class, 'driverCancelRide']);
     Route::get('/driver/rides/current',     [RideController::class, 'getDriverCurrentRides']);
-});
+    Route::post('/driver/rides/{id}/price-offer',[RideController::class, 'driverMakePriceOffer']);
+    Route::post('/driver/rides/{id}/start',[RideController::class, 'driverStartTrip']);
+    Route::post('/driver/rides/{id}/complete',[RideController::class, 'driverCompleteTrip']);
+    Route::get('/driver/rides/history',[RideController::class, 'getDriverTripHistory']);
+    
+    // Create ride and find drivers (MOVED INSIDE AUTH GROUP)
     Route::post('/create-and-find-drivers', [RideController::class, 'createAndFindDrivers']);
-
-// Public
-Route::post('/drivers/register', [DriverAuthController::class, 'register']);
-Route::post('/drivers/login', [DriverAuthController::class, 'login']);
-
-// Authenticated
-Route::middleware('auth:driver')->group(function () {
-    Route::post('/driver/logout', [DriverAuthController::class, 'logout']);
 });
+
+// Note: Removed duplicate routes - already defined above
 Route::middleware('auth:sanctum')->group(function () {
     
     // Get all available drivers (for admin or dispatch UI)
@@ -191,7 +212,6 @@ Route::post('/driver/accept-ride', [RideController::class, 'driverAcceptRide']);
 Route::post('/driver/cancel-ride/{id}', [RideController::class, 'driverCancelRide']);
 
 
-Route::post('/create-and-find-drivers', [RideController::class, 'createAndFindDrivers']);
 
     
 

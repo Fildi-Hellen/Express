@@ -1,18 +1,1020 @@
+/* Enhanced Booking Modal Styles with Map Integration */
+
+/* Modal Overlay */
+.booking-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(32, 22, 88, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+/* Expanded Modal Container for Map */
+.booking-modal-expanded {
+  background: white;
+  border-radius: 20px;
+  width: 95vw;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal Header */
+.modal-header {
+  background: linear-gradient(135deg, #2c1958 0%, #1a0d33 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #3d2a66;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-icon {
+  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+.header-text h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.header-text p {
+  margin: 0.25rem 0 0 0;
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* Modal Content with Map Layout */
+.modal-content-with-map {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left Side: Form Section */
+.form-section-container {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 160px);
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Form Sections */
+.form-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.form-section:hover {
+  border-color: #2c1958;
+  box-shadow: 0 4px 12px rgba(44, 25, 88, 0.1);
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #2c1958;
+  font-size: 1rem;
+}
+
+.section-label i {
+  color: #2c1958;
+  font-size: 1.1rem;
+}
+
+/* Ride Type Grid */
+.ride-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.ride-type-option {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ride-type-option:hover {
+  border-color: #2c1958;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(44, 25, 88, 0.15);
+}
+
+.ride-type-option.selected {
+  border-color: #2c1958;
+  background: linear-gradient(135deg, #2c1958 0%, #1a0d33 100%);
+  color: white;
+}
+
+.ride-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ride-label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.ride-multiplier {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Map Toggle Button */
+.map-toggle-btn {
+  margin-left: auto;
+  background: #2c1958;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.map-toggle-btn:hover {
+  background: #1a0d33;
+  transform: scale(1.05);
+}
+
+.map-toggle-btn.active {
+  background: #4caf50;
+}
+
+/* Location Inputs */
+.location-inputs {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.input-group:focus-within {
+  border-color: #2c1958;
+  box-shadow: 0 0 0 3px rgba(44, 25, 88, 0.1);
+}
+
+.input-icon {
+  margin-right: 0.75rem;
+  font-size: 1rem;
+}
+
+.input-icon.pickup i {
+  color: #4caf50;
+}
+
+.input-icon.destination i {
+  color: #f44336;
+}
+
+.location-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  background: transparent;
+}
+
+.location-input::placeholder {
+  color: #adb5bd;
+}
+
+.location-input.error {
+  color: #f44336;
+}
+
+.location-pin-btn {
+  background: #e9ecef;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.location-pin-btn:hover {
+  background: #2c1958;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Swap Button */
+.swap-btn {
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #2c1958;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(44, 25, 88, 0.3);
+}
+
+.swap-btn:hover {
+  background: #1a0d33;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Location Suggestions */
+.location-suggestions {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.suggestion-item:hover {
+  background: #f8f9fa;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-content {
+  flex: 1;
+}
+
+.suggestion-name {
+  font-weight: 600;
+  color: #2c1958;
+}
+
+.suggestion-address {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+/* Route Information */
+.route-info {
+  background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.route-summary {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.route-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.route-item i {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.route-item span {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Form Row */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.input-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #2c1958;
+  font-size: 0.9rem;
+}
+
+/* Passenger Selector */
+.passenger-selector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+}
+
+.count-btn {
+  background: #2c1958;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.count-btn:hover:not(:disabled) {
+  background: #1a0d33;
+  transform: scale(1.1);
+}
+
+.count-btn:disabled {
+  background: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.passenger-count {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c1958;
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* Fare Display */
+.fare-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+}
+
+.fare-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c1958;
+}
+
+.currency {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+/* Payment Select */
+.payment-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  background: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-select:focus {
+  outline: none;
+  border-color: #2c1958;
+  box-shadow: 0 0 0 3px rgba(44, 25, 88, 0.1);
+}
+
+/* Error Messages */
+.error-messages {
+  background: #fff5f5;
+  border: 2px solid #fed7d7;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #c53030;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.error-message:last-child {
+  margin-bottom: 0;
+}
+
+.error-message i {
+  color: #e53e3e;
+}
+
+/* Payment Section */
+.payment-section {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+}
+
+/* Right Side: Map Section */
+.map-section {
+  flex: 1;
+  background: #f8f9fa;
+  border-left: 2px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.map-section.hidden {
+  display: none;
+}
+
+.map-header {
+  padding: 1.5rem;
+  border-bottom: 2px solid #e9ecef;
+  background: white;
+}
+
+.map-header h4 {
+  margin: 0 0 1rem 0;
+  color: #2c1958;
+  font-size: 1.1rem;
+}
+
+.map-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.map-control-btn {
+  background: #e9ecef;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.map-control-btn:hover {
+  background: #dee2e6;
+}
+
+.map-control-btn.active {
+  background: #2c1958;
+  color: white;
+}
+
+.pickup-dot {
+  color: #4caf50;
+}
+
+.destination-dot {
+  color: #f44336;
+}
+
 .map-container {
-    display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Map Loading */
+.map-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e9ecef;
+  border-top: 4px solid #2c1958;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Map Instructions */
+.map-instructions {
+  padding: 1rem 1.5rem;
+  background: white;
+  border-top: 2px solid #e9ecef;
+}
+
+.instruction-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #e3f2fd;
+  border-radius: 8px;
+  color: #1565c0;
+  font-size: 0.9rem;
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 1.5rem 2rem;
+  background: #f8f9fa;
+  border-top: 2px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.cancel-btn, .book-btn {
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.cancel-btn {
+  background: white;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+}
+
+.cancel-btn:hover {
+  background: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.book-btn {
+  background: linear-gradient(135deg, #2c1958 0%, #1a0d33 100%);
+  color: white;
+  border: none;
+  min-width: 140px;
+}
+
+.book-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1a0d33 0%, #0d0519 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(44, 25, 88, 0.3);
+}
+
+.book-btn:disabled {
+  background: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Location Picker Modal Styles */
+.location-picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.location-picker-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90vw;
+  max-width: 600px;
+  max-height: 100vh;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.picker-header {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2c1958;
+  color: white;
+}
+
+.picker-map-container {
+  position: relative;
+  height: 500px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.picker-footer {
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  border-top: 1px solid #eee;
+}
+
+.close-picker-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.close-picker-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cancel-picker-btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #ddd;
+  background: white;
+  color: #666;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-picker-btn:hover {
+  background: #f5f5f5;
+}
+
+.confirm-picker-btn {
+  padding: 0.75rem 1.5rem;
+  background: #2c1958;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.confirm-picker-btn:hover:not(:disabled) {
+  background: #1f0f3d;
+}
+
+.confirm-picker-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .modal-content-with-map {
+    flex-direction: column;
+  }
+  
+  .map-section {
+    border-left: none;
+    border-top: 2px solid #e9ecef;
+    max-height: 400px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-modal-expanded {
+    width: 98vw;
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 1rem;
+  }
+  
+  .form-section-container {
+    padding: 1rem;
+  }
+  
+  .ride-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .route-summary {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .route-item {
+    flex-direction: row;
     justify-content: center;
-    margin-bottom: 15px;
   }
   
-  mat-form-field {
+  .modal-footer {
+    padding: 1rem;
+    flex-direction: column;
+  }
+  
+  .cancel-btn, .book-btn {
     width: 100%;
-    margin-bottom: 15px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    gap: 0.5rem;
   }
   
-  @media (max-width: 600px) {
-    mat-dialog-container {
-      width: 100% !important;
-      max-width: 90%;
-    }
+  .header-icon {
+    font-size: 1.5rem;
+    padding: 0.25rem;
   }
   
+  .header-text h2 {
+    font-size: 1.2rem;
+  }
+  
+  .header-text p {
+    font-size: 0.8rem;
+  }
+  
+  .ride-type-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .location-inputs {
+    gap: 0.75rem;
+  }
+  
+  .swap-btn {
+    position: static;
+    align-self: center;
+    margin: 0.5rem 0;
+    transform: rotate(90deg);
+  }
+}
+
+/* Fare validation styles */
+.fare-info {
+  margin-top: 0.5rem;
+}
+
+.minimum-fare-label {
+  color: #6c757d;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.fare-error {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #dc3545;
+  font-size: 0.875rem;
+}
+
+.fare-input.error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.fare-input:focus {
+  border-color: #201658 !important;
+  box-shadow: 0 0 0 0.2rem rgba(32, 22, 88, 0.25) !important;
+}
+
+/* Enhanced Map Instructions and Loading States */
+.instruction-card {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.instruction-card.loading {
+  background: linear-gradient(135deg, #201658, #2a1b6b);
+  color: white;
+  border-color: #201658;
+}
+
+.instruction-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.instruction-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Map Controls Enhancement */
+.map-control-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.map-control-btn.active {
+  background-color: #201658 !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(32, 22, 88, 0.3);
+}
+
+.map-control-btn:hover:not(.active) {
+  background-color: #f8f9fa;
+  transform: translateY(-1px);
+}
+
+.pickup-dot {
+  color: #28a745;
+}
+
+.destination-dot {
+  color: #dc3545;
+}
+
+/* Map Container Enhancement */
+.map-container {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+#bookingMap {
+  border-radius: 10px;
+}
+
+/* Loading overlay for map */
+.map-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.map-loading .loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #201658;
+  margin: 0 auto 10px;
+}

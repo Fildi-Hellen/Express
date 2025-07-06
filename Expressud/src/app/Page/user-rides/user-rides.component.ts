@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DriverService } from 'src/app/Services/driver.service';
+import { RideService } from 'src/app/Services/ride.service';
 
 @Component({
   selector: 'app-user-rides',
@@ -10,14 +10,14 @@ export class UserRidesComponent implements OnInit {
 
    rides: any[] = [];
 
-  constructor(private driverService: DriverService) {}
+  constructor(private rideService: RideService) {}
 
   ngOnInit(): void {
     this.loadRides();
   }
 
   private loadRides(): void {
-    this.driverService.getUserRides().subscribe({
+    this.rideService.getUserRides().subscribe({
       next: data => this.rides = data,
       error: err => {
         console.error('Error loading rides', err);
@@ -39,7 +39,7 @@ export class UserRidesComponent implements OnInit {
     }
 
     // Pass both rideId and reason
-    this.driverService.cancelRide(rideId, reason.trim()).subscribe({
+    this.rideService.cancelRide(rideId, reason.trim()).subscribe({
       next: () => {
         alert('Ride canceled successfully.');
         this.loadRides();  // refresh the list
@@ -47,6 +47,39 @@ export class UserRidesComponent implements OnInit {
       error: err => {
         console.error('Cancel error:', err);
         alert(err.error?.message || 'Failed to cancel ride.');
+      }
+    });
+  }
+
+  trackRide(rideId: number): void {
+    this.rideService.trackRide(rideId).subscribe({
+      next: ride => {
+        alert(`Ride Status: ${ride.status}`);
+      },
+      error: err => {
+        console.error('Tracking error:', err);
+        alert('Could not track ride.');
+      }
+    });
+  }
+
+  rateRide(rideId: number): void {
+    const rating = prompt('Rate this ride (1-5 stars):');
+    if (!rating || isNaN(+rating) || +rating < 1 || +rating > 5) {
+      alert('Please enter a valid rating between 1-5');
+      return;
+    }
+    
+    const comment = prompt('Any comments? (optional):');
+    
+    this.rideService.rateRide(rideId, +rating, comment || undefined).subscribe({
+      next: () => {
+        alert('Thank you for rating!');
+        this.loadRides();
+      },
+      error: err => {
+        console.error('Rating error:', err);
+        alert('Failed to submit rating.');
       }
     });
   }

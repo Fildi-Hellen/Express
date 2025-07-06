@@ -50,6 +50,46 @@ export class NavigationComponent implements OnInit {
     this.directionsService = new google.maps.DirectionsService();
     this.directionsRenderer = new google.maps.DirectionsRenderer({ map: this.map });
     this.distanceService = new google.maps.DistanceMatrixService();
+    
+    // Add click listener for location selection
+    this.map.addListener('click', (event: any) => {
+      if (event.latLng) {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        
+        this.destination = { lat, lng };
+        
+        // Clear existing markers and add new one
+        this.clearMarkers();
+        new google.maps.Marker({
+          position: this.destination,
+          map: this.map,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10,
+            strokeWeight: 3,
+            strokeColor: '#fff',
+            fillColor: '#dc3545',
+            fillOpacity: 1
+          },
+          title: 'Selected Location',
+          animation: google.maps.Animation.DROP
+        });
+        
+        // Reverse geocode to get address
+        this.fetchAddress(this.destination);
+        
+        if (this.origin && this.destination) {
+          this.drawRoute();
+          this.calculateDistance();
+        }
+      }
+    });
+  }
+  
+  private clearMarkers(): void {
+    // Note: In a more robust implementation, you'd want to track markers
+    // For now, we'll clear by recreating the map if needed
   }
 
   initializePlacesAutocomplete(): void {
@@ -84,19 +124,36 @@ export class NavigationComponent implements OnInit {
           };
 
           this.map.setCenter(this.origin);
+          this.map.setZoom(15); // Zoom in closer for better view
+          
           new google.maps.Marker({
             position: this.origin,
             map: this.map,
-            title: 'Your Location',
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              strokeWeight: 3,
+              strokeColor: '#fff',
+              fillColor: '#28a745', // Green for current location
+              fillOpacity: 1
+            },
+            title: 'Your Current Location',
           });
 
           this.fetchAddress(this.origin);
         },
-        () => {
+        (error) => {
+          console.error('Geolocation error:', error);
           this.addressDetected.emit('');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
         }
       );
     } else {
+      alert('Geolocation is not supported by this browser.');
       this.addressDetected.emit('');
     }
   }

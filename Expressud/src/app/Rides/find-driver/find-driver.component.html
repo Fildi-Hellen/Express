@@ -1,40 +1,242 @@
-<div *ngIf="booking">
-  <h2>Ride Summary</h2>
-  <p><strong>Pickup:</strong> {{ booking.pickup_location }}</p>
-  <p><strong>Destination:</strong> {{ booking.destination }}</p>
-  <p><strong>Fare:</strong> {{ booking.fare }} {{ booking.currency }}</p>
-  <p><strong>Passengers:</strong> {{ booking.passengers }}</p>
-</div>
+<!-- Enhanced Find Driver Modal -->
+<div class="driver-modal-overlay" [@fadeInOut]>
+  <div class="driver-modal" [@slideInOut]>
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-content">
+        <div class="header-icon">
+          🚖
+        </div>
+        <div class="header-text">
+          <h2>Available Drivers</h2>
+          <p>{{drivers.length}} drivers found near you</p>
+        </div>
+      </div>
+      <button class="close-btn" mat-dialog-close aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
 
-<div *ngIf="isLoading">
-  <p>🔄 Loading drivers…</p>
-</div>
+    <!-- Ride Summary -->
+    <div class="ride-summary" *ngIf="booking">
+      <div class="summary-row">
+        <div class="location-info">
+          <div class="location-item">
+            <i class="fas fa-circle pickup-dot"></i>
+            <span class="location-text">{{booking.pickup_location}}</span>
+          </div>
+          <div class="route-line"></div>
+          <div class="location-item">
+            <i class="fas fa-map-marker-alt destination-dot"></i>
+            <span class="location-text">{{booking.destination}}</span>
+          </div>
+        </div>
+        <div class="booking-details">
+          <div class="detail-item">
+            <i class="fas fa-users"></i>
+            <span>{{booking.passengers}} passenger{{booking.passengers > 1 ? 's' : ''}}</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>{{booking.fare}} {{booking.currency}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<div *ngIf="!isLoading && drivers.length">
-  <h3>Select a Driver</h3>
-  <div *ngFor="let d of drivers" class="driver-card">
-    <img [src]="d.image" alt="driver" width="50" height="50" />
-    <p><strong>{{ d.name }}</strong></p>
-    <p>🚗 {{ d.vehicle_type }}</p>
-    <p>📍 {{ d.distance }} km</p>
-    <p>🕒 {{ d.time }} mins</p>
-    <p>⭐ {{ d.rating }}</p>
-    <p>💰 {{ d.price }}</p>
-    <button (click)="orderRide(d)">Confirm</button>
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="loading-animation">
+        <div class="car-icon">🚗</div>
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <p class="loading-text">Finding nearby drivers...</p>
+    </div>
+
+    <!-- Drivers List -->
+    <div class="drivers-container" *ngIf="!isLoading && drivers.length > 0">
+      <div class="drivers-header">
+        <h3>Select Your Driver</h3>
+        <p class="drivers-count">{{drivers.length}} available</p>
+      </div>
+      
+      <div class="drivers-list">
+        <div *ngFor="let driver of drivers; let i = index" 
+             class="driver-card"
+             [class.selected]="selectedDriver?.id === driver.id"
+             (click)="selectDriver(driver)">
+          
+          <!-- Driver Photo and Status -->
+          <div class="driver-photo-section">
+            <div class="photo-container">
+              <img [src]="driver.image || 'https://via.placeholder.com/60x60/201658/ffffff?text=D'" 
+                   [alt]="driver.name"
+                   class="driver-photo"
+                   (error)="onImageError($event)">
+              <div class="online-status"></div>
+            </div>
+            <div class="arrival-time">
+              <i class="fas fa-clock"></i>
+              <span>{{driver.time}} min</span>
+            </div>
+          </div>
+
+          <!-- Driver Info -->
+          <div class="driver-info">
+            <div class="driver-header">
+              <h4 class="driver-name">{{driver.name}}</h4>
+              <div class="driver-rating">
+                <div class="stars">
+                  <span *ngFor="let star of getStarArray(driver.rating)" 
+                        class="star" 
+                        [class.filled]="star">⭐</span>
+                </div>
+                <span class="rating-value">({{driver.rating}})</span>
+              </div>
+            </div>
+            
+            <div class="vehicle-info">
+              <span class="vehicle-type">{{driver.vehicle_type}}</span>
+              <span class="license-plate">{{driver.license_plate}}</span>
+            </div>
+            
+            <div class="driver-details">
+              <div class="detail-badge">
+                <i class="fas fa-road"></i>
+                <span>{{driver.distance}} km away</span>
+              </div>
+              <div class="detail-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>{{driver.trips_completed}}+ trips</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Price and Selection -->
+          <div class="driver-price-section">
+            <div class="price-container" [class]="getPriceClass(driver.price)">
+              <span class="price-amount">{{driver.price}}</span>
+              <span class="currency">{{booking?.currency}}</span>
+            </div>
+            
+            <div class="selection-indicator" *ngIf="selectedDriver?.id === driver.id">
+              <i class="fas fa-check-circle"></i>
+              <span>Selected</span>
+            </div>
+            
+            <button class="quick-select-btn" 
+                    *ngIf="selectedDriver?.id !== driver.id"
+                    (click)="selectDriver(driver); $event.stopPropagation()">
+              Select
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Drivers Found -->
+    <div class="no-drivers" *ngIf="!isLoading && drivers.length === 0">
+      <div class="empty-state">
+        <i class="fas fa-car-side"></i>
+        <h3>No Drivers Available</h3>
+        <p>There are no drivers in your area right now. Please try again in a few minutes.</p>
+        <button class="retry-btn" (click)="retrySearch()">
+          <i class="fas fa-redo"></i>
+          Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Confirmation Message -->
+    <div class="confirmation-section" *ngIf="confirmationMessage && !showCancelForm">
+      <div class="confirmation-card">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Ride Confirmed!</h3>
+        <p>{{confirmationMessage}}</p>
+        
+        <div class="action-buttons">
+          <button class="track-btn" (click)="trackRide()">
+            <i class="fas fa-map-marker-alt"></i>
+            Track Driver
+          </button>
+          <button class="cancel-request-btn" (click)="toggleCancel()">
+            <i class="fas fa-times"></i>
+            Cancel Ride
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancellation Form -->
+    <div class="cancellation-form" *ngIf="showCancelForm">
+      <div class="cancel-header">
+        <h3>Cancel Ride</h3>
+        <p>Please tell us why you're canceling</p>
+      </div>
+      
+      <div class="cancel-reasons">
+        <div *ngFor="let reason of cancelReasons" 
+             class="reason-option"
+             [class.selected]="cancellationReason === reason"
+             (click)="cancellationReason = reason">
+          <div class="reason-radio">
+            <div class="radio-dot" *ngIf="cancellationReason === reason"></div>
+          </div>
+          <span>{{reason}}</span>
+        </div>
+      </div>
+      
+      <textarea 
+        *ngIf="cancellationReason === 'Other'"
+        [(ngModel)]="customCancelReason"
+        placeholder="Please specify your reason..."
+        class="custom-reason-input"
+        rows="3">
+      </textarea>
+      
+      <div class="cancel-actions">
+        <button class="back-btn" (click)="showCancelForm = false">
+          <i class="fas fa-arrow-left"></i>
+          Back
+        </button>
+        <button class="confirm-cancel-btn" 
+                [disabled]="!cancellationReason"
+                (click)="cancelRide()">
+          <i class="fas fa-check"></i>
+          Confirm Cancel
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer" *ngIf="selectedDriver && !confirmationMessage && !showCancelForm">
+      <div class="selected-driver-info">
+        <img [src]="selectedDriver.image || 'https://via.placeholder.com/40x40/201658/ffffff?text=D'" 
+             [alt]="selectedDriver.name"
+             class="mini-photo">
+        <div class="mini-info">
+          <span class="name">{{selectedDriver.name}}</span>
+          <span class="vehicle">{{selectedDriver.vehicle_type}}</span>
+        </div>
+        <div class="mini-price">
+          <span>{{selectedDriver.price}} {{booking?.currency}}</span>
+        </div>
+      </div>
+      
+      <button class="confirm-ride-btn" 
+              [disabled]="isConfirming"
+              (click)="orderRide(selectedDriver)">
+        <span *ngIf="isConfirming" class="spinner"></span>
+        <i *ngIf="!isConfirming" class="fas fa-check"></i>
+        {{isConfirming ? 'Confirming...' : 'Confirm Ride'}}
+      </button>
+    </div>
   </div>
-</div>
-
-<div *ngIf="confirmationMessage">
-  <p>{{ confirmationMessage }}</p>
-  <button *ngIf="!showCancelForm" (click)="toggleCancel()">Cancel Ride?</button>
-</div>
-
-<div *ngIf="showCancelForm">
-  <textarea
-    [(ngModel)]="cancellationReason"
-    placeholder="Reason for cancellation"
-    rows="3"
-    class="form-control mb-2"
-  ></textarea>
-  <button class="btn btn-danger" (click)="cancelRide()">Submit Cancel</button>
 </div>
