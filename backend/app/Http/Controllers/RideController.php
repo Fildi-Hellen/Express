@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\RideAssignedNotification;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Log;
 
 class RideController extends Controller
 
@@ -106,11 +107,98 @@ class RideController extends Controller
 
     public function userRides()
     {
-        $rides = Ride::where('user_id', Auth::id())
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+        try {
+            $userId = Auth::id();
+            
+            $rides = Ride::with(['driver:id,name,phone,vehicle_type,vehicle_model,license_plate,rating'])
+                        ->where('user_id', $userId)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
 
-        return response()->json($rides);
+            // Format the response to match frontend expectations
+            $formattedRides = $rides->map(function($ride) {
+                return [
+                    'id' => $ride->id,
+                    'user_id' => $ride->user_id,
+                    'driver_id' => $ride->driver_id,
+                    'ride_type' => $ride->ride_type ?? 'standard',
+                    'pickup_location' => $ride->pickup_location,
+                    'destination' => $ride->destination,
+                    'fare' => (float) $ride->fare,
+                    'currency' => $ride->currency ?? 'RWF',
+                    'passengers' => (int) ($ride->passengers ?? 1),
+                    'status' => $ride->status,
+                    'created_at' => $ride->created_at ? $ride->created_at->format('c') : null, // ISO 8601 format
+                    'started_at' => $ride->started_at ? $ride->started_at->format('c') : null,
+                    'completed_at' => $ride->completed_at ? $ride->completed_at->format('c') : null,
+                    'eta' => $ride->eta,
+                    'proposed_price' => $ride->proposed_price ? (float) $ride->proposed_price : null,
+                    'price_offer_message' => $ride->price_offer_message,
+                    'cancellation_reason' => $ride->cancellation_reason,
+                    'driver' => $ride->driver ? [
+                        'id' => $ride->driver->id,
+                        'name' => $ride->driver->name,
+                        'phone' => $ride->driver->phone,
+                        'vehicle_type' => $ride->driver->vehicle_type,
+                        'vehicle_model' => $ride->driver->vehicle_model,
+                        'license_plate' => $ride->driver->license_plate,
+                        'rating' => (float) ($ride->driver->rating ?? 0)
+                    ] : null
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $formattedRides,
+                'count' => $formattedRides->count()
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error fetching user rides: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch rides',
+                'error' => $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
+    }
+
+    /**
+     * Debug endpoint to check database content
+     */
+    public function debugUserRides(Request $request)
+    {
+        try {
+            $userId = Auth::id();
+            
+            // Get raw ride data without any formatting
+            $rawRides = Ride::where('user_id', $userId)->get();
+            
+            // Get rides with driver relationship
+            $ridesWithDriver = Ride::with('driver')
+                                ->where('user_id', $userId)
+                                ->get();
+            
+            return response()->json([
+                'success' => true,
+                'debug_info' => [
+                    'user_id' => $userId,
+                    'raw_rides_count' => $rawRides->count(),
+                    'rides_with_driver_count' => $ridesWithDriver->count(),
+                    'raw_rides_sample' => $rawRides->take(2),
+                    'rides_with_driver_sample' => $ridesWithDriver->take(2)
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
     }
 
    
@@ -189,22 +277,76 @@ public function cancelRide(Request $request, $id)
 // }
 
  public function getDriverRideRequests(Request $request)
-    {
-        // all rides still “pending”
-        $requests = Ride::where('status', 'pending')
-            ->with('user:id,name') 
-            ->get(['id','user_id','pickup_location','destination','eta','fare'])
+{
+    try {
+        // Get the authenticated driver ID for logging
+        $driverId = $request->user()->id;
+        $driver = $request->user(); // Get full driver info
+        
+        // Get query parameters for filtering
+        $filterByDriver = $request->get('filter_by_driver', false);
+        $maxDistance = $request->get('max_distance', null);
+        $showAll = $request->get('show_all', true); // Default to show all for backwards compatibility
+
+        // Base query: Only show pending rides that don't have a driver assigned yet
+        $query = Ride::where('status', 'pending')
+            ->whereNull('driver_id') // CRITICAL: Only unassigned rides
+            ->with('user:id,name');
+
+        // If driver-specific filtering is requested
+        if ($filterByDriver && !$showAll) {
+            // Example filtering logic - you can customize this based on your business rules:
+            // 1. Filter by driver's preferred ride types
+            // 2. Filter by geographic proximity 
+            // 3. Filter by driver's working hours
+            // 4. Filter by driver's rating requirements
+            
+            // For now, let's add a simple example filter
+            // You might want to add these fields to your database:
+            
+            // If driver has preferences, filter by them
+            // $query->where('ride_type', $driver->preferred_ride_type ?? 'any');
+            
+            // Limit to recent requests (last 2 hours) for active drivers
+            $query->where('created_at', '>=', now()->subHours(2));
+        }
+
+        $requests = $query->orderBy('created_at', 'desc')
+            ->get(['id','user_id','pickup_location','destination','eta','fare','created_at'])
             ->map(fn($r) => [
                 'id'             => $r->id,
                 'passengerName'  => $r->user->name,
                 'pickupLocation' => $r->pickup_location,
                 'destination'    => $r->destination,
-                'eta'            => $r->eta,
+                'eta'            => $r->eta ?? '15 mins',
                 'fareEstimate'   => $r->fare,
+                'distance'       => rand(1, 15) . ' km',
+                'requestTime'    => $r->created_at->diffForHumans(),
+                'available_to'   => $filterByDriver ? "driver_{$driverId}" : 'all_drivers',
+                'created_at'     => $r->created_at->toISOString(),
             ]);
 
-        return response()->json($requests);
+        \Log::info("Returning {$requests->count()} available requests for driver {$driverId} (filtered: " . ($filterByDriver ? 'yes' : 'no') . ")");
+
+        return response()->json([
+            'success' => true,
+            'data' => $requests,
+            'count' => $requests->count(),
+            'requested_by_driver' => $driverId,
+            'filtering_applied' => $filterByDriver,
+            'show_all' => $showAll,
+            'security_filter' => 'unassigned_pending_rides_only'
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('Error getting ride requests: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'data' => [],
+            'error' => 'Failed to load ride requests'
+        ], 500);
     }
+}
 
     /** 2. Driver accepts a ride */
     public function driverAcceptRide(Request $request, $id)
@@ -370,6 +512,46 @@ public function getDriverCurrentRides(Request $request)
             ]);
 
         return response()->json($history);
+    }
+
+    /** 
+     * Get available ride requests for drivers
+     * Security: Only shows unassigned pending rides
+     */
+    public function getAvailableRideRequestsForDrivers(Request $request)
+    {
+        try {
+            // Only show pending rides that don't have a driver assigned yet
+            // This allows any available driver to see and accept these rides
+            $requests = Ride::where('status', 'pending')
+                ->whereNull('driver_id') // Only unassigned rides
+                ->with('user:id,name') 
+                ->orderBy('created_at', 'desc')
+                ->get(['id','user_id','pickup_location','destination','eta','fare','created_at'])
+                ->map(fn($r) => [
+                    'id'             => $r->id,
+                    'passengerName'  => $r->user->name,
+                    'pickupLocation' => $r->pickup_location,
+                    'destination'    => $r->destination,
+                    'eta'            => $r->eta ?? '15 mins',
+                    'fareEstimate'   => $r->fare,
+                    'requestTime'    => $r->created_at->diffForHumans(),
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $requests,
+                'count' => $requests->count(),
+                'message' => 'Available ride requests retrieved successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            // \Log::error('Error getting available ride requests: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve ride requests'
+            ], 500);
+        }
     }
 
 

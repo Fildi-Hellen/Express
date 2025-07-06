@@ -105,7 +105,7 @@ Route::get('/drivers/{driverId}/orders', [DriverController::class, 'getDriverOrd
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/drivers/logout', [DriverController::class, 'logout']); // Driver Logout
+    Route::post('/drivers/logout', [DriverAuthController::class, 'logout']); // Driver Logout
     Route::get('/drivers/available', [DriverController::class, 'getAvailableDrivers']); // Fetch Available Drivers
     Route::post('/orders/{id}/assign-driver', [DriverController::class, 'assignDriver']);   // Assign Driver
     Route::put('/orders/{id}/status', [DriverController::class, 'updateOrderStatus']);     // Update Order Status
@@ -171,6 +171,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Get all rides for the logged-in user
     Route::get('/user/rides', [RideController::class, 'userRides']);
+    
+    // Debug endpoint for troubleshooting
+    Route::get('/user/rides/debug', [RideController::class, 'debugUserRides']);
 
     // Cancel a pending ride
     Route::post('/cancel-ride/{id}', [RideController::class, 'cancelRide']);
@@ -189,14 +192,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/create-and-find-drivers', [RideController::class, 'createAndFindDrivers']);
 });
 
-// Public
-Route::post('/drivers/register', [DriverAuthController::class, 'register']);
-Route::post('/drivers/login', [DriverAuthController::class, 'login']);
-
-// Authenticated
-Route::middleware('auth:driver')->group(function () {
-    Route::post('/driver/logout', [DriverAuthController::class, 'logout']);
-});
+// Note: Removed duplicate routes - already defined above
 Route::middleware('auth:sanctum')->group(function () {
     
     // Get all available drivers (for admin or dispatch UI)

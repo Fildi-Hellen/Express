@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Ride extends Model
 {
@@ -27,6 +28,15 @@ class Ride extends Model
         'cancellation_reason'
     ];
 
+    protected $casts = [
+        'started_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'fare' => 'decimal:2',
+        'proposed_price' => 'decimal:2',
+        'passengers' => 'integer'
+    ];
 
     public function driver()
     {
