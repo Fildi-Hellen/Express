@@ -44,7 +44,7 @@ export class TrackRideComponet implements OnInit, OnDestroy {
   isCancelling = false;
   
   // Filters and pagination
-  historyFilter = 'all';
+  historyFilter = 'completed'; // 'all', 'completed', 'cancelled', 'this_week', 'this_month' - Default to show completed rides
   currentPage = 1;
   totalPages = 1;
   itemsPerPage = 10;
@@ -66,7 +66,7 @@ export class TrackRideComponet implements OnInit, OnDestroy {
   lastApiCallTime: string = 'Never';
   
   // Tab management
-  activeTabSection: string = 'pending'; // 'pending', 'confirmed', 'in_progress', 'completed'
+  activeTabSection: string = 'completed'; // 'pending', 'confirmed', 'in_progress', 'completed' - Default to history tab
   
   // Ride arrays by status
   pendingRides: Ride[] = [];
@@ -85,6 +85,7 @@ export class TrackRideComponet implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadActiveRides(); // This already categorizes all rides
+    this.loadRideHistory(); // Load ride history to populate the history tab by default
     this.loadActiveOrders();
     this.setupRealTimeUpdates();
   }
@@ -251,6 +252,7 @@ export class TrackRideComponet implements OnInit, OnDestroy {
           
           console.log(`📋 Filtered ${this.rideHistory.length} historical rides`);
           
+          // Apply the current filter (defaults to 'completed')
           this.filterHistory();
           this.loadUserStats(); // Recalculate stats after loading history
         },
@@ -456,6 +458,8 @@ ${ride.cancellation_reason ? `Cancellation Reason: ${ride.cancellation_reason}` 
     this.filteredHistory = filtered;
     this.totalPages = Math.ceil(this.filteredHistory.length / this.itemsPerPage);
     this.currentPage = 1;
+    
+    console.log(`🔍 Filtered history: ${this.filteredHistory.length} rides with filter '${this.historyFilter}'`);
   }
 
   /**
@@ -662,7 +666,7 @@ For support: support@expressud.com
     switch (status) {
       case 'pending': return 25;
       case 'confirmed': return 50;
-      case 'started': return 75;
+      case 'in_progress': return 75;
       case 'completed': return 100;
       default: return 0;
     }

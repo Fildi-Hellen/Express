@@ -75,13 +75,13 @@
                           *ngIf="currentRide.driver">
                     <i class="fas fa-phone me-2"></i>Call Driver
                   </button>
-                  <button class="btn btn-outline-danger" 
+                  <!-- <button class="btn btn-outline-danger" 
                           (click)="cancelRide(currentRide.id)"
                           *ngIf="currentRide.status === 'pending' || currentRide.status === 'confirmed'"
                           [disabled]="isCancelling">
                     <i class="fas fa-times me-2"></i>
                     {{isCancelling ? 'Cancelling...' : 'Cancel Ride'}}
-                  </button>
+                  </button> -->
                 </div>
               </div>
             </div>
@@ -204,13 +204,13 @@
       <!-- Tab Content -->
       <div class="tab-content" id="rideTabsContent">
         
-        <!-- Active Rides Tab -->
+        <!-- Pending Rides Tab -->
         <div class="tab-pane fade" 
-             [class.show]="activeTabSection === 'active'"
-             [class.active]="activeTabSection === 'active'"
-             id="active-rides" 
+             [class.show]="activeTabSection === 'pending'"
+             [class.active]="activeTabSection === 'pending'"
+             id="pending-rides" 
              role="tabpanel" 
-             aria-labelledby="active-rides-tab">
+             aria-labelledby="pending-rides-tab">
           <div class="row">
             <!-- Active Rides List -->
             <div class="col-lg-8 mb-4">
@@ -285,12 +285,12 @@
                                     *ngIf="ride.status === 'confirmed' || ride.status === 'started'">
                               <i class="fas fa-map me-1"></i>Track
                             </button>
-                            <button class="btn btn-outline-danger btn-sm" 
+                            <!-- <button class="btn btn-outline-danger btn-sm" 
                                     (click)="cancelRide(ride.id)"
                                     *ngIf="ride.status === 'pending' || ride.status === 'confirmed'"
                                     [disabled]="isCancelling">
                               <i class="fas fa-times me-1"></i>Cancel
-                            </button>
+                            </button> -->
                           </div>
                         </div>
                       </div>
@@ -333,7 +333,7 @@
                       <i class="fas fa-sync-alt me-2" [class.fa-spin]="isLoadingRides"></i>
                       Refresh Rides
                     </button>
-                    <button class="btn btn-outline-warning me-2" (click)="testApiConnection()">
+                    <!-- <button class="btn btn-outline-warning me-2" (click)="testApiConnection()">
                       <i class="fas fa-bug me-2"></i>Test API
                     </button>
                     <button class="btn btn-outline-info me-2" (click)="testDebugApi()">
@@ -344,7 +344,7 @@
                     </button>
                     <button class="btn btn-outline-danger me-2" (click)="clearSimulation()">
                       <i class="fas fa-trash me-2"></i>Clear Simulation
-                    </button>
+                    </button> -->
                     <button class="btn btn-outline-secondary" (click)="supportContact()">
                       <i class="fas fa-headset me-2"></i>Contact Support
                     </button>
@@ -387,10 +387,145 @@
           </div>
         </div>
 
+        <!-- Confirmed Rides Tab -->
+        <div class="tab-pane fade" 
+             [class.show]="activeTabSection === 'confirmed'"
+             [class.active]="activeTabSection === 'confirmed'"
+             id="confirmed-rides" 
+             role="tabpanel" 
+             aria-labelledby="confirmed-rides-tab">
+          <div class="card shadow border-0">
+            <div class="card-header bg-info text-white">
+              <h5 class="card-title mb-0">
+                <i class="fas fa-check-circle me-2"></i>Confirmed Rides
+              </h5>
+            </div>
+            <div class="card-body">
+              <div *ngIf="confirmedRides && confirmedRides.length > 0" class="ride-list">
+                <div *ngFor="let ride of confirmedRides" class="border rounded p-3 mb-3 border-info">
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="mb-0">Ride #{{ride.id}}</h6>
+                        <span class="badge bg-info">{{ride.status | titlecase}}</span>
+                      </div>
+                      <div class="ride-route">
+                        <div class="mb-1">
+                          <i class="fas fa-map-marker-alt text-success me-2"></i>
+                          <small>{{ride.pickup_location}}</small>
+                        </div>
+                        <div class="mb-1">
+                          <i class="fas fa-flag-checkered text-danger me-2"></i>
+                          <small>{{ride.destination}}</small>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center mt-2">
+                        <small class="text-muted me-3">
+                          <i class="fas fa-clock me-1"></i>
+                          {{formatTime(ride.created_at)}}
+                        </small>
+                        <small class="text-muted" *ngIf="ride.driver">
+                          <i class="fas fa-user me-1"></i>
+                          {{ride.driver.name}}
+                        </small>
+                      </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                      <h5 class="mb-2">{{formatCurrency(ride.fare)}}</h5>
+                      <div class="btn-group-vertical w-100">
+                        <button class="btn btn-outline-primary btn-sm mb-1" (click)="viewRideDetails(ride)">
+                          <i class="fas fa-eye me-1"></i>Details
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" (click)="trackRide(ride.id)">
+                          <i class="fas fa-map me-1"></i>Track
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="!confirmedRides || confirmedRides.length === 0" class="text-center py-5">
+                <i class="fas fa-check-circle text-muted" style="font-size: 4rem;"></i>
+                <h5 class="mt-3 text-muted">No Confirmed Rides</h5>
+                <p class="text-muted">Your confirmed rides will appear here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- In Progress Rides Tab -->
+        <div class="tab-pane fade" 
+             [class.show]="activeTabSection === 'in_progress'"
+             [class.active]="activeTabSection === 'in_progress'"
+             id="in-progress-rides" 
+             role="tabpanel" 
+             aria-labelledby="in-progress-rides-tab">
+          <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">
+                <i class="fas fa-car me-2"></i>Rides In Progress
+              </h5>
+            </div>
+            <div class="card-body">
+              <div *ngIf="inProgressRides && inProgressRides.length > 0" class="ride-list">
+                <div *ngFor="let ride of inProgressRides" class="border rounded p-3 mb-3 border-primary">
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="mb-0">Ride #{{ride.id}}</h6>
+                        <span class="badge bg-primary">{{ride.status | titlecase}}</span>
+                      </div>
+                      <div class="ride-route">
+                        <div class="mb-1">
+                          <i class="fas fa-map-marker-alt text-success me-2"></i>
+                          <small>{{ride.pickup_location}}</small>
+                        </div>
+                        <div class="mb-1">
+                          <i class="fas fa-flag-checkered text-danger me-2"></i>
+                          <small>{{ride.destination}}</small>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center mt-2">
+                        <small class="text-muted me-3">
+                          <i class="fas fa-clock me-1"></i>
+                          {{formatTime(ride.created_at)}}
+                        </small>
+                        <small class="text-muted" *ngIf="ride.driver">
+                          <i class="fas fa-user me-1"></i>
+                          {{ride.driver.name}}
+                        </small>
+                      </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                      <h5 class="mb-2">{{formatCurrency(ride.fare)}}</h5>
+                      <div class="btn-group-vertical w-100">
+                        <button class="btn btn-outline-primary btn-sm mb-1" (click)="viewRideDetails(ride)">
+                          <i class="fas fa-eye me-1"></i>Details
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" (click)="trackRide(ride.id)">
+                          <i class="fas fa-map me-1"></i>Live Track
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" (click)="contactDriver()" *ngIf="ride.driver">
+                          <i class="fas fa-phone me-1"></i>Call Driver
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="!inProgressRides || inProgressRides.length === 0" class="text-center py-5">
+                <i class="fas fa-car text-muted" style="font-size: 4rem;"></i>
+                <h5 class="mt-3 text-muted">No Rides In Progress</h5>
+                <p class="text-muted">Your active rides will appear here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Ride History Tab -->
         <div class="tab-pane fade" 
-             [class.show]="activeTabSection === 'history'"
-             [class.active]="activeTabSection === 'history'"
+             [class.show]="activeTabSection === 'completed'"
+             [class.active]="activeTabSection === 'completed'"
              id="ride-history" 
              role="tabpanel" 
              aria-labelledby="ride-history-tab">
@@ -400,7 +535,8 @@
                 <i class="fas fa-history me-2"></i>Ride History
               </h5>
               <div class="d-flex gap-2">
-                <select class="form-select form-select-sm" [(ngModel)]="historyFilter" (change)="filterHistory()">
+                <select 
+                class="form-select form-select-sm" [(ngModel)]="historyFilter" (change)="filterHistory()">
                   <option value="all">All Rides</option>
                   <option value="completed">Completed</option>
                   <option value="cancelled">Cancelled</option>
