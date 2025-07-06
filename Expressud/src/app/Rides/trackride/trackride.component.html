@@ -124,26 +124,26 @@
       </div>
     </div>
     <div class="col-md-3 col-sm-6 mb-3">
-      <div class="card text-center border-0 shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-info mb-2">
-            <i class="fas fa-check-circle fa-2x"></i>
-          </div>
-          <h4 class="fw-bold mb-1">{{confirmedRides.length}}</h4>
-          <small class="text-muted">Confirmed</small>
-        </div>
-      </div>
+    <div class="card text-center border-0 shadow-sm h-100">
+    <div class="card-body">
+    <div class="mb-2" style="color: #201658;">
+    <i class="fas fa-check-circle fa-2x"></i>
+    </div>
+    <h4 class="fw-bold mb-1">{{confirmedRides.length}}</h4>
+    <small class="text-muted">Confirmed</small>
+    </div>
+    </div>
     </div>
     <div class="col-md-3 col-sm-6 mb-3">
-      <div class="card text-center border-0 shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-primary mb-2">
-            <i class="fas fa-car fa-2x"></i>
-          </div>
-          <h4 class="fw-bold mb-1">{{inProgressRides.length}}</h4>
-          <small class="text-muted">In Progress</small>
-        </div>
-      </div>
+    <div class="card text-center border-0 shadow-sm h-100">
+    <div class="card-body">
+    <div class="mb-2" style="color: #201658;">
+    <i class="fas fa-car fa-2x"></i>
+    </div>
+    <h4 class="fw-bold mb-1">{{inProgressRides.length}}</h4>
+    <small class="text-muted">In Progress</small>
+    </div>
+    </div>
     </div>
     <div class="col-md-3 col-sm-6 mb-3">
       <div class="card text-center border-0 shadow-sm h-100">
@@ -165,6 +165,8 @@
       <nav class="nav nav-pills nav-fill mb-4">
         <button class="nav-link" 
                 [class.active]="activeTabSection === 'pending'"
+                [style.background-color]="activeTabSection === 'pending' ? '#201658' : ''"
+                [style.color]="activeTabSection === 'pending' ? 'white' : ''"
                 (click)="setActiveTab('pending')">
           <i class="fas fa-clock me-2"></i>
           Pending
@@ -174,24 +176,36 @@
         </button>
         <button class="nav-link" 
                 [class.active]="activeTabSection === 'confirmed'"
+                [style.background-color]="activeTabSection === 'confirmed' ? '#201658' : ''"
+                [style.color]="activeTabSection === 'confirmed' ? 'white' : ''"
                 (click)="setActiveTab('confirmed')">
           <i class="fas fa-check-circle me-2"></i>
           Confirmed
-          <span class="badge bg-info ms-2" *ngIf="confirmedRides.length > 0">
+          <span class="badge ms-2" 
+                [style.background-color]="confirmedRides.length > 0 ? '#201658' : ''"
+                [style.color]="confirmedRides.length > 0 ? 'white' : ''"
+                *ngIf="confirmedRides.length > 0">
             {{confirmedRides.length}}
           </span>
         </button>
         <button class="nav-link" 
                 [class.active]="activeTabSection === 'in_progress'"
+                [style.background-color]="activeTabSection === 'in_progress' ? '#201658' : ''"
+                [style.color]="activeTabSection === 'in_progress' ? 'white' : ''"
                 (click)="setActiveTab('in_progress')">
           <i class="fas fa-car me-2"></i>
           In Progress
-          <span class="badge bg-primary ms-2" *ngIf="inProgressRides.length > 0">
+          <span class="badge ms-2" 
+                [style.background-color]="inProgressRides.length > 0 ? '#201658' : ''"
+                [style.color]="inProgressRides.length > 0 ? 'white' : ''"
+                *ngIf="inProgressRides.length > 0">
             {{inProgressRides.length}}
           </span>
         </button>
         <button class="nav-link" 
                 [class.active]="activeTabSection === 'completed'"
+                [style.background-color]="activeTabSection === 'completed' ? '#201658' : ''"
+                [style.color]="activeTabSection === 'completed' ? 'white' : ''"
                 (click)="setActiveTab('completed')">
           <i class="fas fa-flag-checkered me-2"></i>
           Completed
@@ -317,7 +331,7 @@
             <!-- Quick Actions Panel -->
             <div class="col-lg-4">
               <div class="card shadow border-0 mb-4">
-                <div class="card-header bg-success text-white">
+                <div class="card-header text-white" style="background-color: #201658;">
                   <h5 class="card-title mb-0">
                     <i class="fas fa-bolt me-2"></i>Quick Actions
                   </h5>
@@ -354,7 +368,7 @@
 
               <!-- Live Stats -->
               <div class="card shadow border-0">
-                <div class="card-header text-white">
+                <div class="card-header text-white" style="background-color: #201658;">
                   <h5 class="card-title mb-0">
                     <i class="fas fa-chart-line me-2"></i>Your Stats
                   </h5>
@@ -395,19 +409,19 @@
              role="tabpanel" 
              aria-labelledby="confirmed-rides-tab">
           <div class="card shadow border-0">
-            <div class="card-header bg-info text-white">
-              <h5 class="card-title mb-0">
+            <div class="card-header text-white" style="background-color: #201658;">
+              <h5 class="card-title mb-0" style="color: white;">
                 <i class="fas fa-check-circle me-2"></i>Confirmed Rides
               </h5>
             </div>
             <div class="card-body">
               <div *ngIf="confirmedRides && confirmedRides.length > 0" class="ride-list">
-                <div *ngFor="let ride of confirmedRides" class="border rounded p-3 mb-3 border-info">
+                <div *ngFor="let ride of confirmedRides" class="border rounded p-3 mb-3" style="border-color: #201658 !important;">
                   <div class="row align-items-center">
                     <div class="col-md-8">
                       <div class="d-flex justify-content-between align-items-start mb-2">
                         <h6 class="mb-0">Ride #{{ride.id}}</h6>
-                        <span class="badge bg-info">{{ride.status | titlecase}}</span>
+                        <span class="badge text-white" style="background-color: #201658;">{{ride.status | titlecase}}</span>
                       </div>
                       <div class="ride-route">
                         <div class="mb-1">
@@ -433,10 +447,13 @@
                     <div class="col-md-4 text-end">
                       <h5 class="mb-2">{{formatCurrency(ride.fare)}}</h5>
                       <div class="btn-group-vertical w-100">
-                        <button class="btn btn-outline-primary btn-sm mb-1" (click)="viewRideDetails(ride)">
+                        <button class="btn btn-sm mb-1" 
+                                style="background-color: #201658; color: white; border-color: #201658;"
+                                (click)="viewRideDetails(ride)">
                           <i class="fas fa-eye me-1"></i>Details
                         </button>
-                        <button class="btn btn-outline-success btn-sm" (click)="trackRide(ride.id)">
+                        <button class="btn btn-outline-success btn-sm" 
+                                (click)="trackRide(ride.id)">
                           <i class="fas fa-map me-1"></i>Track
                         </button>
                       </div>
@@ -461,19 +478,19 @@
              role="tabpanel" 
              aria-labelledby="in-progress-rides-tab">
           <div class="card shadow border-0">
-            <div class="card-header bg-primary text-white">
-              <h5 class="card-title mb-0">
+            <div class="card-header text-white" style="background-color: #201658;">
+              <h5 class="card-title mb-0" style="color: white;">
                 <i class="fas fa-car me-2"></i>Rides In Progress
               </h5>
             </div>
             <div class="card-body">
               <div *ngIf="inProgressRides && inProgressRides.length > 0" class="ride-list">
-                <div *ngFor="let ride of inProgressRides" class="border rounded p-3 mb-3 border-primary">
+                <div *ngFor="let ride of inProgressRides" class="border rounded p-3 mb-3" style="border-color: #201658 !important;">
                   <div class="row align-items-center">
                     <div class="col-md-8">
                       <div class="d-flex justify-content-between align-items-start mb-2">
                         <h6 class="mb-0">Ride #{{ride.id}}</h6>
-                        <span class="badge bg-primary">{{ride.status | titlecase}}</span>
+                        <span class="badge text-white" style="background-color: #201658;">{{ride.status | titlecase}}</span>
                       </div>
                       <div class="ride-route">
                         <div class="mb-1">
@@ -499,13 +516,17 @@
                     <div class="col-md-4 text-end">
                       <h5 class="mb-2">{{formatCurrency(ride.fare)}}</h5>
                       <div class="btn-group-vertical w-100">
-                        <button class="btn btn-outline-primary btn-sm mb-1" (click)="viewRideDetails(ride)">
+                        <button class="btn btn-sm mb-1" 
+                                style="background-color: #201658; color: white; border-color: #201658;"
+                                (click)="viewRideDetails(ride)">
                           <i class="fas fa-eye me-1"></i>Details
                         </button>
-                        <button class="btn btn-outline-success btn-sm" (click)="trackRide(ride.id)">
+                        <button class="btn btn-outline-success btn-sm" 
+                                (click)="trackRide(ride.id)">
                           <i class="fas fa-map me-1"></i>Live Track
                         </button>
-                        <button class="btn btn-outline-info btn-sm" (click)="contactDriver()" *ngIf="ride.driver">
+                        <button class="btn btn-outline-warning btn-sm" 
+                                (click)="contactDriver()" *ngIf="ride.driver">
                           <i class="fas fa-phone me-1"></i>Call Driver
                         </button>
                       </div>
@@ -530,8 +551,8 @@
              role="tabpanel" 
              aria-labelledby="ride-history-tab">
           <div class="card shadow border-0">
-            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-              <h5 class="card-title mb-0">
+            <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #201658;">
+              <h5 class="card-title mb-0" style="color: white;">
                 <i class="fas fa-history me-2"></i>Ride History
               </h5>
               <div class="d-flex gap-2">
@@ -563,8 +584,9 @@
                       <div class="card-header d-flex justify-content-between align-items-center"
                            [class.bg-success]="ride.status === 'completed'"
                            [class.bg-danger]="ride.status === 'cancelled'"
-                           [class.bg-warning]="ride.status === 'pending'"
-                           [class.text-white]="ride.status !== 'pending'">
+                           [class.text-white]="ride.status !== 'pending'"
+                           [style.background-color]="ride.status === 'pending' ? '#201658' : ''"
+                           [class.text-white]="ride.status === 'pending'">
                         <div class="d-flex align-items-center">
                           <i class="fas fa-route me-2"></i>
                           <span class="fw-bold">Ride #{{ride.id}}</span>
@@ -574,8 +596,8 @@
                               [class.text-success]="ride.status === 'completed'"
                               [class.bg-light]="ride.status === 'cancelled'"
                               [class.text-danger]="ride.status === 'cancelled'"
-                              [class.bg-dark]="ride.status === 'pending'"
-                              [class.text-warning]="ride.status === 'pending'">
+                              [class.text-white]="ride.status === 'pending'"
+                              [style.background-color]="ride.status === 'pending' ? '#201658' : ''">
                           {{ride.status | titlecase}}
                         </span>
                       </div>
@@ -585,7 +607,7 @@
                         <!-- Date and Time -->
                         <div class="mb-3">
                           <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="text-primary mb-0">
+                            <h6 class="mb-0" style="color: #201658;">
                               <i class="fas fa-calendar-alt me-2"></i>
                               {{formatDate(ride.created_at)}}
                             </h6>
@@ -625,7 +647,7 @@
                           <div class="driver-info bg-light rounded p-2">
                             <div class="d-flex align-items-center">
                               <div class="driver-avatar me-2">
-                                <i class="fas fa-user-circle text-primary fs-5"></i>
+                                <i class="fas fa-user-circle fs-5" style="color: #201658;"></i>
                               </div>
                               <div class="driver-details flex-grow-1">
                                 <div class="fw-semibold">{{ride.driver.name}}</div>
@@ -691,7 +713,8 @@
                       <!-- Card Footer -->
                       <div class="card-footer bg-transparent border-0">
                         <div class="d-flex gap-2">
-                          <button class="btn btn-outline-primary btn-sm flex-fill" 
+                          <button class="btn btn-sm flex-fill" 
+                                  style="background-color: #201658; color: white; border-color: #201658;"
                                   (click)="viewRideDetails(ride)">
                             <i class="fas fa-eye me-1"></i>View Details
                           </button>
@@ -756,7 +779,7 @@
 <!-- Custom Styles -->
 <style>
 .bg-gradient-primary {
-  background: linear-gradient(135deg, #2c1958, #331f62);
+  background: linear-gradient(135deg, #201658, #2a1b6b);
 }
 
 .ride-card {
@@ -797,7 +820,7 @@
 }
 
 .trip-history-card.border-warning {
-  border-left-color: #ffc107;
+  border-left-color: #201658;
 }
 
 /* Route Display Styles */
@@ -846,7 +869,7 @@
 }
 
 .driver-info:hover {
-  border-color: #007bff;
+  border-color: #201658;
   background-color: #f8f9fa !important;
 }
 
@@ -909,10 +932,20 @@
   border-radius: 25px;
   margin: 0 5px;
   transition: all 0.3s ease;
+  color: #6c757d;
+  border: 2px solid transparent;
 }
 
 .nav-pills .nav-link:hover {
   transform: translateY(-2px);
+  background-color: #f8f9fa;
+  color: #201658;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #201658 !important;
+  color: white !important;
+  border-color: #201658;
 }
 
 .card {
@@ -1003,7 +1036,7 @@
 }
 
 .trip-history-card .card-header.bg-warning {
-  background: linear-gradient(135deg, #ffc107, #f39c12) !important;
-  color: #212529 !important;
+  background: linear-gradient(135deg, #201658, #2a1b6b) !important;
+  color: #ffffff !important;
 }
 </style>
