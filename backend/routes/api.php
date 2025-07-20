@@ -11,6 +11,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\DriverRideController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\MessagingController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RideController;
@@ -206,6 +207,26 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Update order status (e.g., assigned → on the way → delivered)
     Route::post('/orders/{id}/status', [DriverRideController::class, 'updateOrderStatus']);
+});
+
+// Messaging routes
+Route::middleware('auth:sanctum')->group(function () {
+    // Messages
+    Route::post('/messages', [MessagingController::class, 'sendMessage']);
+    Route::get('/conversations/{participantId}', [MessagingController::class, 'getConversation']);
+    
+    // Calls
+    Route::post('/calls/make', [MessagingController::class, 'makeCall']);
+    Route::post('/calls/answer', [MessagingController::class, 'answerCall']);
+    Route::post('/calls/end', [MessagingController::class, 'endCall']);
+});
+
+// Driver profile routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/drivers/{id}/profile', [DriverController::class, 'getProfile']);
+    Route::put('/drivers/{id}/profile', [DriverController::class, 'updateProfile']);
+    Route::post('/drivers/{id}/profile-picture', [DriverController::class, 'uploadProfilePicture']);
+    Route::delete('/drivers/{id}/profile-picture', [DriverController::class, 'removeProfilePicture']);
 });
 
 Route::post('/driver/accept-ride', [RideController::class, 'driverAcceptRide']);

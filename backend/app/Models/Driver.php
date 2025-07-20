@@ -25,7 +25,8 @@ class Driver extends Authenticatable
         'account_name',
         'account_number',
         'bank_name',
-        'payout_method'
+        'payout_method',
+        'profile_picture' // Added profile picture field
     ];
 
     protected $hidden = [

@@ -1,0 +1,76 @@
+<div class="messaging-container">
+  <div class="chat-header">
+    <div class="header-info">
+      <h3>Chat with Customer</h3>
+      <span class="online-status">Online</span>
+    </div>
+    <div class="call-controls">
+      <button 
+        class="call-btn" 
+        [disabled]="callStatus.isActive"
+        (click)="makeCall()"
+        title="Make Voice Call">
+        <i class="fas fa-phone"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Call Status -->
+  <div *ngIf="callStatus.isActive" class="call-status-container">
+    <div class="call-status" [ngClass]="callStatus.status">
+      <div class="call-info">
+        <i class="fas fa-phone"></i>
+        <span>{{ callStatus.status === 'ringing' ? 'Calling...' : 
+                  callStatus.status === 'connected' ? 'Connected' : 'Call Ended' }}</span>
+      </div>
+      <div class="call-actions">
+        <button 
+          *ngIf="callStatus.status === 'ringing' && callStatus.caller !== 'driver'" 
+          class="answer-btn"
+          (click)="answerCall()">
+          <i class="fas fa-phone"></i> Answer
+        </button>
+        <button 
+          class="end-call-btn"
+          (click)="endCall()">
+          <i class="fas fa-phone-slash"></i> End Call
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Messages -->
+  <div class="chat-messages" [class.loading]="isLoading">
+    <div *ngIf="isLoading" class="loading-indicator">
+      <i class="fas fa-spinner fa-spin"></i> Loading messages...
+    </div>
+    
+    <div *ngFor="let message of messages" 
+         class="message" 
+         [ngClass]="{'sent': message.sender_id === currentDriverId, 'received': message.sender_id !== currentDriverId}">
+      <div class="message-content">
+        <p>{{ message.content }}</p>
+        <span class="message-time">{{ message.created_at | date:'short' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Input -->
+  <div class="message-input-container">
+    <div class="input-group">
+      <textarea 
+        [(ngModel)]="newMessage"
+        (keypress)="onKeyPress($event)"
+        placeholder="Type your message..."
+        class="message-input"
+        rows="2">
+      </textarea>
+      <button 
+        class="send-btn"
+        [disabled]="!newMessage.trim()"
+        (click)="sendMessage()">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>

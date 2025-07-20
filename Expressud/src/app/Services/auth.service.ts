@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -35,5 +35,20 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem('authToken');
+  }
+
+  getCurrentUserId(): number {
+    const userId = localStorage.getItem('userId');
+    return userId ? parseInt(userId, 10) : 0;
+  }
+
+  getCurrentUser(): Observable<any> {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    
+    return this.http.get(`${this.apiUrl}/user`, { headers });
   }
 }
