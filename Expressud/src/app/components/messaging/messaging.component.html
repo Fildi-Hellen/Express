@@ -1,4 +1,24 @@
 <div class="messaging-container">
+  <!-- Debug Info -->
+  <div class="debug-info" style="background: #f0f8ff; padding: 10px; border-bottom: 1px solid #ddd; font-size: 12px;">
+    <strong>Debug:</strong> Driver ID: {{ driverId || 'Not loaded' }} | User ID: {{ currentUserId || 'Not set' }} | Messages: {{ messages.length }}
+  </div>
+  
+  <!-- Test Buttons Section -->
+  <div class="test-section" style="background: #fff3cd; padding: 15px; border-bottom: 1px solid #ddd;">
+    <h5 style="margin: 0 0 10px 0;"><i class="fas fa-flask"></i> Testing Tools</h5>
+    <div class="btn-group" role="group">
+      <button class="btn btn-warning btn-sm" (click)="loadTestData()">
+        <i class="fas fa-database"></i> Load Test Messages
+      </button>
+      <button class="btn btn-secondary btn-sm" (click)="clearMessages()">
+        <i class="fas fa-trash"></i> Clear Messages
+      </button>
+      <button class="btn btn-info btn-sm" (click)="loadTestCallScenario()">
+        <i class="fas fa-phone-alt"></i> Test Call
+      </button>
+    </div>
+  </div>
   <div class="chat-header">
     <div class="header-info">
       <h3>Chat with Driver</h3>

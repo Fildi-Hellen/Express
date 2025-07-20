@@ -186,3 +186,6 @@ export class DriverMessagingComponent implements OnInit, OnDestroy {
     }
   }
 }
+
+// Export with alias for backward compatibility
+export { DriverMessagingComponent as MessagingComponent };

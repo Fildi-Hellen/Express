@@ -104,6 +104,7 @@ import { HeadStartedComponent } from './Rides/head-started/head-started.componen
 import { FindDriverComponent } from './Rides/find-driver/find-driver.component';
 import { UserRidesComponent } from './Page/user-rides/user-rides.component';
 import { UserNotificationsComponent } from './Page/user-notifications/user-notifications.component';
+import { MessagingComponent } from './components/messaging/messaging.component';
 
 
 
@@ -215,14 +216,16 @@ const routes: Routes = [
   {path:'pharmacy',component:PharmacyComponent},
   {path:'pharmacy-item/:categoryId',component:PharmacyServingComponent},
   {path:'pharmacy-items/:pharmacyId/:categoryId',component:PharmacyItemsComponent},
-  { path: '**', redirectTo: 'home', pathMatch: 'full' },
   {path:'search',component:SearchComponent},
   {path:'vendor-login',component:VendorLoginComponent},
   {path:'vendor-forgot-password',component:VendorForgotPasswordComponent},
   {path:'tracking',component:TrackingComponent},
   { path: 'track-order', component: TrackingComponent },
   {path:'user-rides',component:UserRidesComponent},
-  {path:'user-notifications',component:UserNotificationsComponent}
+  {path:'user-notifications',component:UserNotificationsComponent},
+  {path:'messaging/:driverId', component:MessagingComponent},
+  // Wildcard route MUST be last
+  { path: '**', redirectTo: 'home', pathMatch: 'full' },
 
 
 

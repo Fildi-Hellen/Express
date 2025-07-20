@@ -397,6 +397,18 @@ export class TrackRideComponet implements OnInit, OnDestroy {
   }
 
   /**
+   * Message driver
+   */
+  messageDriver(driverId: number): void {
+    if (driverId) {
+      // Navigate to messaging component with driver ID
+      this.router.navigate(['/messaging', driverId]);
+    } else {
+      this.showErrorMessage('Driver information not available');
+    }
+  }
+
+  /**
    * View ride details
    */
   viewRideDetails(ride: Ride): void {

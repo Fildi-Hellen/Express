@@ -75,6 +75,11 @@
                           *ngIf="currentRide.driver">
                     <i class="fas fa-phone me-2"></i>Call Driver
                   </button>
+                  <button class="btn btn-outline-light mb-2" 
+                          (click)="messageDriver(currentRide.driver.id)"
+                          *ngIf="currentRide.driver">
+                    <i class="fas fa-comments me-2"></i>Message Driver
+                  </button>
                   <!-- <button class="btn btn-outline-danger" 
                           (click)="cancelRide(currentRide.id)"
                           *ngIf="currentRide.status === 'pending' || currentRide.status === 'confirmed'"
@@ -525,10 +530,14 @@
                                 (click)="trackRide(ride.id)">
                           <i class="fas fa-map me-1"></i>Live Track
                         </button>
-                        <button class="btn btn-outline-warning btn-sm" 
-                                (click)="contactDriver()" *ngIf="ride.driver">
-                          <i class="fas fa-phone me-1"></i>Call Driver
-                        </button>
+                            <button class="btn btn-outline-warning btn-sm" 
+                                    (click)="contactDriver()" *ngIf="ride.driver">
+                              <i class="fas fa-phone me-1"></i>Call Driver
+                            </button>
+                            <button class="btn btn-outline-info btn-sm" 
+                                    (click)="messageDriver(ride.driver.id)" *ngIf="ride.driver">
+                              <i class="fas fa-comments me-1"></i>Message
+                            </button>
                       </div>
                     </div>
                   </div>

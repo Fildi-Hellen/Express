@@ -257,32 +257,33 @@ import { MessagingComponent } from './components/messaging/messaging.component';
   imports: [
     NgbModule,
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     RouterModule,
     SlickCarouselModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    CommonModule,
     MatExpansionModule,
     FontAwesomeModule,
     ReactiveFormsModule,
+    FormsModule,
     GoogleMapsModule,
     MatDialogModule,
-    FormsModule,
     MatIconModule,
-    IonicModule.forRoot(),
-    ToastrModule.forRoot({
-        timeOut: 3000,
-        positionClass: 'toast-bottom-right',
-        preventDuplicates: true,
-        newestOnTop: false
-    }),MatFormFieldModule,
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
+    IonicModule.forRoot(),
+    ToastrModule.forRoot({
+        timeOut: 3000,
+        positionClass: 'toast-bottom-right',
+        preventDuplicates: true,
+        newestOnTop: false
+    }),
     
  
 ],
