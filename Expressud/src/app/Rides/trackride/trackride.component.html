@@ -458,9 +458,13 @@
                           <i class="fas fa-eye me-1"></i>Details
                         </button>
                         <button class="btn btn-outline-success btn-sm" 
-                                (click)="trackRide(ride.id)">
-                          <i class="fas fa-map me-1"></i>Track
+                        (click)="trackRide(ride.id)">
+                        <i class="fas fa-map me-1"></i>Track
                         </button>
+                      <button class="btn btn-outline-info btn-sm" 
+                              (click)="messageCustomer(ride.user_id)">
+                        <i class="fas fa-comments me-1"></i>Message
+                      </button>
                       </div>
                     </div>
                   </div>

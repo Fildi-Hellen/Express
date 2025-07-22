@@ -17,8 +17,12 @@
       <button class="btn btn-info btn-sm" (click)="loadTestCallScenario()">
         <i class="fas fa-phone-alt"></i> Test Call
       </button>
+      <button class="btn btn-success btn-sm" (click)="toggleDebugInfo()">
+        <i class="fas fa-bug"></i> Toggle Debug
+      </button>
     </div>
   </div>
+  
   <div class="chat-header">
     <div class="header-info">
       <h3>Chat with Driver</h3>
@@ -27,7 +31,7 @@
     <div class="call-controls">
       <button 
         class="call-btn" 
-        [disabled]="callStatus.isActive"
+        [disabled]="callStatus?.isActive"
         (click)="makeCall()"
         title="Make Voice Call">
         <i class="fas fa-phone"></i>
@@ -36,16 +40,16 @@
   </div>
 
   <!-- Call Status -->
-  <div *ngIf="callStatus.isActive" class="call-status-container">
-    <div class="call-status" [ngClass]="callStatus.status">
+  <div *ngIf="callStatus?.isActive" class="call-status-container">
+    <div class="call-status" [ngClass]="callStatus?.status">
       <div class="call-info">
         <i class="fas fa-phone"></i>
-        <span>{{ callStatus.status === 'ringing' ? 'Calling...' : 
-                  callStatus.status === 'connected' ? 'Connected' : 'Call Ended' }}</span>
+        <span>{{ callStatus?.status === 'ringing' ? 'Calling...' : 
+                  callStatus?.status === 'connected' ? 'Connected' : 'Call Ended' }}</span>
       </div>
       <div class="call-actions">
         <button 
-          *ngIf="callStatus.status === 'ringing' && callStatus.caller !== 'user'" 
+          *ngIf="callStatus?.status === 'ringing' && callStatus?.caller !== 'user'" 
           class="answer-btn"
           (click)="answerCall()">
           <i class="fas fa-phone"></i> Answer
@@ -60,17 +64,39 @@
   </div>
 
   <!-- Chat Messages -->
-  <div class="chat-messages" [class.loading]="isLoading">
+  <div class="chat-messages" [class.loading]="isLoading" #chatContainer>
     <div *ngIf="isLoading" class="loading-indicator">
       <i class="fas fa-spinner fa-spin"></i> Loading messages...
     </div>
     
-    <div *ngFor="let message of messages" 
-         class="message" 
-         [ngClass]="{'sent': message.sender_id === currentUserId, 'received': message.sender_id !== currentUserId}">
-      <div class="message-content">
-        <p>{{ message.content }}</p>
-        <span class="message-time">{{ message.created_at | date:'short' }}</span>
+    <!-- Debug: Show messages data -->
+    <div *ngIf="messages.length === 0 && !isLoading" class="empty-state">
+      <div class="empty-icon">💬</div>
+      <p>No messages yet. Start the conversation!</p>
+      <small>Click "Load Test Messages" to see the interface in action</small>
+    </div>
+    
+    <!-- Message Bubbles - iMessage Style -->
+    <div *ngFor="let message of messages; let i = index" 
+         class="message-wrapper" 
+         [ngClass]="getMessageClass(message)">
+      
+      <!-- Message Bubble -->
+      <div class="message-bubble">
+        <!-- Message Content -->
+        <div class="message-text">
+          {{ getMessageContent(message) }}
+        </div>
+        
+        <!-- Message Time -->
+        <div class="message-time">
+          {{ formatMessageTime(message.created_at) }}
+        </div>
+      </div>
+      
+      <!-- Debug info for development (remove in production) -->
+      <div class="debug-message-info" *ngIf="showDebugInfo">
+        <small>From: {{message.sender_id}} | To: {{message.recipient_id}} | Type: {{message.sender_type || 'unknown'}}</small>
       </div>
     </div>
   </div>
@@ -83,7 +109,8 @@
         (keypress)="onKeyPress($event)"
         placeholder="Type your message..."
         class="message-input"
-        rows="2">
+        rows="1"
+        #messageInput>
       </textarea>
       <button 
         class="send-btn"

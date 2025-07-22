@@ -25,6 +25,9 @@ class SecureDriverTripController extends Controller
                 ->get(['id','user_id','pickup_location','destination','eta','fare','created_at'])
                 ->map(fn($r) => [
                     'id'             => $r->id,
+                    'user_id'        => $r->user_id, // Include customer ID
+                    'customer_id'    => $r->user_id, // Alternative field name
+                    'customerId'     => $r->user_id, // Another alternative
                     'passengerName'  => $r->user->name,
                     'pickupLocation' => $r->pickup_location,
                     'destination'    => $r->destination,
@@ -64,6 +67,9 @@ class SecureDriverTripController extends Controller
                 ->get(['id','user_id','pickup_location','destination','fare','status','created_at'])
                 ->map(fn($r) => [
                     'id'             => $r->id,
+                    'user_id'        => $r->user_id, // Include customer ID
+                    'customer_id'    => $r->user_id, // Alternative field name
+                    'customerId'     => $r->user_id, // Another alternative
                     'passengerName'  => $r->user->name,
                     'pickupLocation' => $r->pickup_location,
                     'destination'    => $r->destination,
@@ -103,6 +109,7 @@ class SecureDriverTripController extends Controller
                 ->get(['id','user_id','pickup_location','destination','fare','status','created_at','completed_at'])
                 ->map(fn($r) => [
                     'id' => $r->id,
+                    'user_id' => $r->user_id, // Include customer ID
                     'passengerName' => $r->user->name,
                     'pickupLocation' => $r->pickup_location,
                     'destination' => $r->destination,

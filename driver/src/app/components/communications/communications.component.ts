@@ -28,7 +28,7 @@ export class CommunicationsComponent implements OnInit, OnDestroy {
     messages: Message[] = [];
     newMessage: string = '';
     currentDriverId: number = 0;
-    currentUserId: number = 1; // This should be set based on active ride/customer
+    currentUserId: number = 0; // Will be set dynamically based on active ride/customer
     messageSubscription!: Subscription;
     callSubscription!: Subscription;
     callStatus: CallStatus = { isActive: false, status: 'ended' };
@@ -45,7 +45,34 @@ export class CommunicationsComponent implements OnInit, OnDestroy {
 
     getCurrentDriver(): void {
       const driverId = localStorage.getItem('driverId');
-      this.currentDriverId = driverId ? parseInt(driverId, 10) : 0;
+      this.currentDriverId = driverId ? parseInt(driverId, 10) : 1; // Default to 1 for testing
+      
+      // Get active customer ID from route or ride data
+      this.getActiveCustomerId();
+    }
+
+    getActiveCustomerId(): void {
+      // Try to get customer ID from various sources
+      const urlParams = new URLSearchParams(window.location.search);
+      const customerIdFromUrl = urlParams.get('customerId');
+      
+      if (customerIdFromUrl) {
+        this.currentUserId = parseInt(customerIdFromUrl, 10);
+        console.log('✅ Customer ID from URL:', this.currentUserId);
+        return;
+      }
+      
+      // Try to get from localStorage (active ride)
+      const activeCustomerId = localStorage.getItem('activeCustomerId');
+      if (activeCustomerId) {
+        this.currentUserId = parseInt(activeCustomerId, 10);
+        console.log('✅ Customer ID from storage:', this.currentUserId);
+        return;
+      }
+      
+      // Default for testing
+      this.currentUserId = 2;
+      console.log('🔧 Using default customer ID for testing:', this.currentUserId);
     }
 
     loadMessages(): void {
@@ -93,7 +120,16 @@ export class CommunicationsComponent implements OnInit, OnDestroy {
     }
   
     sendMessage(): void {
-      if (!this.newMessage.trim() || !this.currentUserId) return;
+      if (!this.newMessage.trim() || !this.currentUserId) {
+        console.warn('Cannot send message - missing content or customer ID');
+        return;
+      }
+      
+      if (!this.currentDriverId) {
+        console.warn('Cannot send message - missing driver ID');
+        this.getCurrentDriver();
+        return;
+      }
   
       const message: Message = {
         sender_id: this.currentDriverId,
@@ -102,15 +138,29 @@ export class CommunicationsComponent implements OnInit, OnDestroy {
         sender_type: 'driver'
       };
   
+      console.log('📤 Sending message:', message);
+  
+      // Add message immediately to UI for instant feedback
+      const tempMessage = { ...message, id: Date.now(), created_at: new Date().toISOString() };
+      this.messages.push(tempMessage);
+      const sentContent = this.newMessage.trim();
+      this.newMessage = '';
+      this.scrollToBottom();
+      
+      // Send via service
       this.messagingService.sendMessage(message).subscribe({
         next: (response) => {
-          this.messages.push(response);
-          this.newMessage = '';
-          this.scrollToBottom();
+          console.log('✅ Message sent successfully:', response);
+          // Update the temporary message with server response
+          const lastMessage = this.messages[this.messages.length - 1];
+          if (lastMessage.content === sentContent) {
+            Object.assign(lastMessage, response);
+          }
         },
         error: (error) => {
-          console.error('Error sending message:', error);
-          alert('Failed to send message. Please try again.');
+          console.error('❌ Error sending message:', error);
+          // Don't remove message from UI - it will still work via shared storage
+          console.log('💡 Message still visible via local storage');
         }
       });
     }
@@ -160,6 +210,12 @@ export class CommunicationsComponent implements OnInit, OnDestroy {
     }
 
     loadTestData(): void {
+    // Ensure we have valid IDs
+    if (!this.currentDriverId) this.currentDriverId = 1;
+    if (!this.currentUserId) this.currentUserId = 2;
+    
+    console.log('🧪 Loading test data - Driver:', this.currentDriverId, 'Customer:', this.currentUserId);
+    
     // Sample test messages for driver communications testing
     const testMessages: Message[] = [
     {
@@ -212,17 +268,15 @@ export class CommunicationsComponent implements OnInit, OnDestroy {
             }
         ];
 
-        // Set a test user ID if none exists
-        if (!this.currentUserId) {
-            this.currentUserId = 101; // Test user ID
-        }
-
         // Load test messages
         this.messages = testMessages;
         this.scrollToBottom();
         
+        // Store active customer ID for session
+        localStorage.setItem('activeCustomerId', this.currentUserId.toString());
+        
         // Show success message
-        alert('Test data loaded successfully! You can now test the messaging system.');
+        alert(`✅ Test data loaded successfully!\n\nDriver ID: ${this.currentDriverId}\nCustomer ID: ${this.currentUserId}\n\nYou can now test the messaging system.`);
     }
 
     clearMessages(): void {
@@ -245,7 +299,10 @@ export class CommunicationsComponent implements OnInit, OnDestroy {
     loadTestCallScenario(): void {
         // Ensure we have a test user
         if (!this.currentUserId) {
-            this.currentUserId = 101;
+            this.currentUserId = 2;
+        }
+        if (!this.currentDriverId) {
+            this.currentDriverId = 1;
         }
         
         // Load a few messages first

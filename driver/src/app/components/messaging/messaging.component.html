@@ -1,76 +1,488 @@
 <div class="messaging-container">
-  <div class="chat-header">
-    <div class="header-info">
-      <h3>Chat with Customer</h3>
-      <span class="online-status">Online</span>
-    </div>
-    <div class="call-controls">
-      <button 
-        class="call-btn" 
-        [disabled]="callStatus.isActive"
-        (click)="makeCall()"
-        title="Make Voice Call">
-        <i class="fas fa-phone"></i>
-      </button>
-    </div>
+  <!-- Connection Status Bar -->
+  <div class="connection-status" [ngClass]="{
+    'status-connected': connectionStatus.includes('Connected'),
+    'status-connecting': connectionStatus.includes('Connecting') || connectionStatus.includes('Loading'),
+    'status-error': connectionStatus.includes('error')
+  }">
+    <div class="status-indicator"></div>
+    <span>{{ connectionStatus }}</span>
+    <button class="btn btn-sm btn-outline-secondary" (click)="refreshConnection()" title="Refresh Connection">
+      <i class="fas fa-sync-alt"></i>
+    </button>
   </div>
 
-  <!-- Call Status -->
-  <div *ngIf="callStatus.isActive" class="call-status-container">
-    <div class="call-status" [ngClass]="callStatus.status">
-      <div class="call-info">
-        <i class="fas fa-phone"></i>
-        <span>{{ callStatus.status === 'ringing' ? 'Calling...' : 
-                  callStatus.status === 'connected' ? 'Connected' : 'Call Ended' }}</span>
-      </div>
-      <div class="call-actions">
-        <button 
-          *ngIf="callStatus.status === 'ringing' && callStatus.caller !== 'driver'" 
-          class="answer-btn"
-          (click)="answerCall()">
-          <i class="fas fa-phone"></i> Answer
-        </button>
-        <button 
-          class="end-call-btn"
-          (click)="endCall()">
-          <i class="fas fa-phone-slash"></i> End Call
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Chat Messages -->
-  <div class="chat-messages" [class.loading]="isLoading">
-    <div *ngIf="isLoading" class="loading-indicator">
-      <i class="fas fa-spinner fa-spin"></i> Loading messages...
+  <!-- Customer Selection (when no customer is selected) -->
+  <div *ngIf="!userId || userId === 0" class="customer-selection">
+    <div class="selection-header">
+      <h4><i class="fas fa-users"></i> Select a Customer to Chat With</h4>
+      <p class="text-muted">Choose from available customers or create test data</p>
     </div>
     
-    <div *ngFor="let message of messages" 
-         class="message" 
-         [ngClass]="{'sent': message.sender_id === currentDriverId, 'received': message.sender_id !== currentDriverId}">
-      <div class="message-content">
-        <p>{{ message.content }}</p>
-        <span class="message-time">{{ message.created_at | date:'short' }}</span>
+    <div class="customer-list">
+      <div *ngFor="let customer of availableCustomers" 
+           class="customer-card" 
+           (click)="selectCustomer(customer.id)">
+        <div class="customer-info">
+          <div class="customer-name">{{ customer.name }}</div>
+          <div class="customer-details">ID: {{ customer.id }} • {{ customer.phone }}</div>
+        </div>
+        <div class="customer-status">
+          <span class="status-badge" [ngClass]="'status-' + customer.status">{{ customer.status }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-actions">
+      <h5>Testing Tools</h5>
+      <div class="btn-group" role="group">
+        <button class="btn btn-primary" (click)="createBackendTestData()">
+          <i class="fas fa-database"></i> Create Test Data
+        </button>
+        <button class="btn btn-info" (click)="selectCustomer(2)">
+          <i class="fas fa-user"></i> Chat with Test Customer (ID: 2)
+        </button>
+        <button class="btn btn-warning" (click)="clearMessages()">
+          <i class="fas fa-trash"></i> Clear All Messages
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Message Input -->
-  <div class="message-input-container">
-    <div class="input-group">
-      <textarea 
-        [(ngModel)]="newMessage"
-        (keypress)="onKeyPress($event)"
-        placeholder="Type your message..."
-        class="message-input"
-        rows="2">
-      </textarea>
-      <button 
-        class="send-btn"
-        [disabled]="!newMessage.trim()"
-        (click)="sendMessage()">
-        <i class="fas fa-paper-plane"></i>
-      </button>
+  <!-- Active Chat Interface (when customer is selected) -->
+  <div *ngIf="userId && userId > 0" class="active-chat">
+    <!-- Debug Info -->
+    <div *ngIf="showDebugInfo" class="debug-info">
+      <strong>🚗 Driver Chat Debug:</strong> 
+      Driver ID: {{ currentDriverId }} | 
+      Customer ID: {{ userId }} | 
+      Messages: {{ messages.length }} |
+      Conversation: {{ getConversationId() }}
+      <button class="btn btn-sm btn-link" (click)="toggleDebugInfo()">Hide</button>
+    </div>
+    
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="header-left">
+        <button class="btn btn-sm btn-outline-secondary" (click)="goToCustomerSelection()" title="Back to Customer Selection">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+      <div class="customer-info">
+        <h5 class="mb-0">{{ getCustomerDisplayName() }}</h5>
+        <small class="text-muted">Customer ID: {{ userId }} • {{ messages.length }} messages</small>
+      </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-sm btn-success" (click)="makeCall()" [disabled]="callStatus?.isActive" title="Call Customer">
+          <i class="fas fa-phone"></i> Call
+        </button>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="fas fa-cog"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><button class="dropdown-item" (click)="loadTestData()"><i class="fas fa-flask"></i> Load Test Messages</button></li>
+            <li><button class="dropdown-item" (click)="simulateCustomerCall()"><i class="fas fa-phone-alt"></i> Simulate Call</button></li>
+            <li><button class="dropdown-item" (click)="toggleDebugInfo()"><i class="fas fa-bug"></i> Toggle Debug</button></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item text-danger" (click)="clearMessages()"><i class="fas fa-trash"></i> Clear Messages</button></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Call Status -->
+    <div *ngIf="callStatus?.isActive" class="call-status-container">
+      <div class="call-status" [ngClass]="'call-' + callStatus?.status">
+        <div class="call-info">
+          <i class="fas fa-phone" [ngClass]="{
+            'fa-phone-alt': callStatus?.status === 'ringing',
+            'fa-phone': callStatus?.status === 'connected'
+          }"></i>
+          <span>
+            {{ callStatus?.status === 'ringing' ? 'Calling Customer...' : 
+               callStatus?.status === 'connected' ? 'Call Connected' : 'Call Ended' }}
+          </span>
+        </div>
+        <div class="call-actions">
+          <button *ngIf="callStatus?.status === 'ringing' && callStatus?.caller !== 'driver'" 
+                  class="btn btn-success btn-sm"
+                  (click)="answerCall()">
+            <i class="fas fa-phone"></i> Answer
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="endCall()">
+            <i class="fas fa-phone-slash"></i> {{ callStatus?.status === 'ringing' ? 'Cancel' : 'End Call' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chat-messages" [class.loading]="isLoading">
+      <!-- Loading Indicator -->
+      <div *ngIf="isLoading" class="loading-indicator">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+        <span class="ms-2">Loading messages...</span>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="messages.length === 0 && !isLoading" class="empty-state">
+        <div class="empty-icon">🚗💬</div>
+        <h6>No messages yet</h6>
+        <p class="text-muted">Start the conversation with {{ getCustomerDisplayName() }}</p>
+        <button class="btn btn-outline-primary btn-sm" (click)="loadTestData()">
+          <i class="fas fa-flask"></i> Load Test Messages
+        </button>
+      </div>
+      
+      <!-- Message List -->
+      <div class="messages-list">
+        <div *ngFor="let message of messages; let i = index" 
+             class="message-wrapper" 
+             [ngClass]="getMessageClass(message)">
+          
+          <!-- Message Bubble -->
+          <div class="message-bubble">
+            <div class="message-text">
+              {{ getMessageContent(message) }}
+            </div>
+            <div class="message-meta">
+              <small class="message-time">{{ formatMessageTime(message.created_at) }}</small>
+              <span *ngIf="showDebugInfo" class="debug-info">
+                <small class="text-muted">({{ message.sender_type }} | {{ message.sender_id }} → {{ message.recipient_id }})</small>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="message-input-container">
+      <div class="input-wrapper">
+        <textarea 
+          [(ngModel)]="newMessage"
+          (keypress)="onKeyPress($event)"
+          placeholder="Type your message to customer..."
+          class="message-input"
+          rows="1"
+          maxlength="1000"
+          [disabled]="!userId"
+          #messageInput>
+        </textarea>
+        <button 
+          class="send-btn"
+          [disabled]="!newMessage.trim() || !userId"
+          (click)="sendMessage()"
+          title="Send Message">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      <div class="input-footer">
+        <small class="text-muted">
+          Press Enter to send • {{ newMessage.length }}/1000 characters
+        </small>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Custom Styles -->
+<style>
+.messaging-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+}
+
+.connection-status {
+  padding: 8px 16px;
+  background: #e9ecef;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.connection-status .status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6c757d;
+  margin-right: 8px;
+}
+
+.status-connected .status-indicator { background: #28a745; }
+.status-connecting .status-indicator { background: #ffc107; animation: pulse 1s infinite; }
+.status-error .status-indicator { background: #dc3545; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.customer-selection {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.selection-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.customer-list {
+  max-width: 600px;
+  margin: 0 auto 32px;
+}
+
+.customer-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.customer-card:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.customer-name {
+  font-weight: 600;
+  color: #212529;
+}
+
+.customer-details {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-active { background: #d1ecf1; color: #0c5460; }
+
+.test-actions {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid #dee2e6;
+}
+
+.active-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.debug-info {
+  background: #e8f5e8;
+  padding: 8px 16px;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.75rem;
+  font-family: monospace;
+}
+
+.chat-header {
+  padding: 16px;
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.call-status-container {
+  background: #fff3cd;
+  border-bottom: 1px solid #ffeaa7;
+}
+
+.call-status {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.call-ringing { background: #fff3cd; }
+.call-connected { background: #d4edda; }
+
+.call-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.call-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f8f9fa;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #6c757d;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message-wrapper {
+  display: flex;
+  max-width: 70%;
+}
+
+.message-wrapper.message-sent {
+  align-self: flex-end;
+  justify-content: flex-end;
+}
+
+.message-wrapper.message-received {
+  align-self: flex-start;
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 18px;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.message-sent .message-bubble {
+  background: #0d6efd;
+  color: white;
+  border-bottom-right-radius: 6px;
+}
+
+.message-received .message-bubble {
+  background: #e9ecef;
+  color: #212529;
+  border-bottom-left-radius: 6px;
+}
+
+.message-text {
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.message-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.message-time {
+  opacity: 0.7;
+  font-size: 0.75rem;
+}
+
+.message-input-container {
+  padding: 16px;
+  background: white;
+  border-top: 1px solid #dee2e6;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 24px;
+  padding: 8px 16px;
+}
+
+.message-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  padding: 8px 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  max-height: 120px;
+}
+
+.send-btn {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: #0b5ed7;
+}
+
+.send-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.input-footer {
+  margin-top: 8px;
+  text-align: center;
+}
+</style>

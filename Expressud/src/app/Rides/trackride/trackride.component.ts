@@ -907,6 +907,18 @@ For support: support@expressud.com
   }
 
   /**
+   * Message customer
+   */
+  messageCustomer(customerId: number): void {
+    if (customerId) {
+      // Navigate to messaging component with customer ID
+      this.router.navigate(['/messaging', customerId]);
+    } else {
+      this.showErrorMessage('Customer information not available');
+    }
+  }
+
+  /**
    * Get trip history count for debugging
    */
   getTripHistoryCount(): number {

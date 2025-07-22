@@ -46,7 +46,7 @@ const routes: Routes = [
   { path: 'trip-history', component: TripHistoryComponent },
   { path: 'trip-requests', component: TripRequestsComponent },
   { path: 'driver-auth', component: DriverAuthComponent },
-  { path: 'messaging/:driverId', component: MessagingComponent }
+  { path: 'messaging/:userId', component: MessagingComponent }
 ];
 
 @NgModule({
