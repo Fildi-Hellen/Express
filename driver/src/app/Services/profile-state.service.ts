@@ -1,1 +1,26 @@
-import { Injectable } from '@angular/core';\nimport { BehaviorSubject } from 'rxjs';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class ProfileStateService {\n  \n  private profileDataSubject = new BehaviorSubject<any>({\n    name: '',\n    profile_picture_url: null\n  });\n  \n  profileData$ = this.profileDataSubject.asObservable();\n  \n  updateProfileData(profileData: any): void {\n    this.profileDataSubject.next({\n      name: profileData.name || '',\n      profile_picture_url: profileData.profile_picture_url || null\n    });\n  }\n  \n  getCurrentProfileData(): any {\n    return this.profileDataSubject.value;\n  }\n}\n
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProfileStateService {
+  
+  private profileDataSubject = new BehaviorSubject<any>({
+    name: '',
+    profile_picture_url: null
+  });
+  
+  profileData$ = this.profileDataSubject.asObservable();
+  
+  updateProfileData(profileData: any): void {
+    this.profileDataSubject.next({
+      name: profileData.name || '',
+      profile_picture_url: profileData.profile_picture_url || null
+    });
+  }
+  
+  getCurrentProfileData(): any {
+    return this.profileDataSubject.value;
+  }
+}

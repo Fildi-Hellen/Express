@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { DriverService } from '../../Services/driver.service';
-import { ProfileStateService } from '../../services/profile-state.service';
+import { ProfileStateService } from '../../Services/profile-state.service';
 import { Subscription } from 'rxjs';
 
 @Component({
