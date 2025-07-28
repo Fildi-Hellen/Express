@@ -1,5 +1,11 @@
 /* Enhanced Booking Modal Styles with Map Integration */
 
+/* Loading Spinner Animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Modal Overlay */
 .booking-modal-overlay {
   position: fixed;

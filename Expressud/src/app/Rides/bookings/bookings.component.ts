@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -71,16 +71,30 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   pickerMarkerPosition: any = null;
   
   // Map properties
-  map: any;
+  map!: google.maps.Map;
+  geocoder!: google.maps.Geocoder;
+  directionsService!: google.maps.DirectionsService;
+  directionsRenderer!: google.maps.DirectionsRenderer;
+  distanceService!: google.maps.DistanceMatrixService;
   mapInitialized = false;
   showMapView = false;
   mapMode: 'pickup' | 'destination' | null = null;
   isLoadingMap = false;
   
   // Map markers
-  private pickupMarker: any = null;
-  private destinationMarker: any = null;
-  private geocoder: any = null;
+  private pickupMarker: google.maps.Marker | null = null;
+  private destinationMarker: google.maps.Marker | null = null;
+  private allMarkers: google.maps.Marker[] = [];
+  
+  // Map options
+  options: google.maps.MapOptions = {
+    center: { lat: -1.9441, lng: 30.0619 }, // Kigali, Rwanda
+    zoom: 13,
+    mapTypeControl: true,
+    streetViewControl: true,
+    fullscreenControl: false,
+    zoomControl: true
+  };
   
   // Navigation component integration
   selectedLocationFromNav: string = '';
@@ -123,13 +137,16 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private ngZone: NgZone
   ) {
     this.initializeForm();
   }
 
   ngOnInit(): void {
     this.setupFormWatchers();
+    // Log Google Maps API availability on component init
+    console.log('Component initialized. Google Maps available:', this.isGoogleMapsApiAvailable());
   }
 
   ngAfterViewInit(): void {
@@ -144,6 +161,7 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.clearAllMarkers();
   }
 
   private initializeForm(): void {
@@ -243,18 +261,24 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
       
       // Only calculate if we don't have an estimated fare yet, or if locations have changed significantly
       if (this.estimatedFare === 0 || this.shouldRecalculateFare()) {
-        const mockDistance = Math.random() * 20 + 2;
-        const mockDuration = Math.random() * 30 + 10;
-        
-        this.estimatedFare = selectedRideType.baseFare + (mockDistance * selectedRideType.perKmRate * selectedRideType.multiplier);
-        
-        // Store the calculation details to avoid recalculation
-        this.routeInfo = {
-          distance: `${mockDistance.toFixed(1)} km`,
-          duration: `${mockDuration.toFixed(0)} min`,
-          via: 'Via Main Roads',
-          polyline: ''
-        };
+        // If we have real coordinates, calculate real distance
+        if (this.pickupCoordinates && this.destinationCoordinates) {
+          this.calculateRealDistance();
+        } else {
+          // Fallback to mock calculation
+          const mockDistance = Math.random() * 20 + 2;
+          const mockDuration = Math.random() * 30 + 10;
+          
+          this.estimatedFare = selectedRideType.baseFare + (mockDistance * selectedRideType.perKmRate * selectedRideType.multiplier);
+          
+          // Store the calculation details to avoid recalculation
+          this.routeInfo = {
+            distance: `${mockDistance.toFixed(1)} km`,
+            duration: `${mockDuration.toFixed(0)} min`,
+            via: 'Via Main Roads',
+            polyline: ''
+          };
+        }
         
         // Update the fare form control with the estimated fare if it's empty or less than estimated
         const currentFare = this.rideForm.get('fare')?.value;
@@ -269,6 +293,46 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.routeInfo = null;
       this.estimatedFare = 0;
     }
+  }
+
+  private calculateRealDistance(): void {
+    if (!this.distanceService || !this.pickupCoordinates || !this.destinationCoordinates) {
+      return;
+    }
+
+    this.distanceService.getDistanceMatrix(
+      {
+        origins: [this.pickupCoordinates],
+        destinations: [this.destinationCoordinates],
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === 'OK' && response) {
+          const info = response.rows[0].elements[0];
+          if (info.status === 'OK') {
+            const selectedRideType = this.getSelectedRideType();
+            if (selectedRideType) {
+              const distanceInKm = info.distance.value / 1000; // Convert meters to kilometers
+              this.estimatedFare = selectedRideType.baseFare + (distanceInKm * selectedRideType.perKmRate * selectedRideType.multiplier);
+              
+              this.routeInfo = {
+                distance: info.distance.text,
+                duration: info.duration.text,
+                via: 'Via Google Maps',
+                polyline: ''
+              };
+
+              // Update the fare form control
+              const currentFare = this.rideForm.get('fare')?.value;
+              if (!currentFare || currentFare < this.estimatedFare) {
+                this.rideForm.get('fare')?.setValue(this.estimatedFare);
+              }
+              this.rideForm.get('fare')?.updateValueAndValidity();
+            }
+          }
+        }
+      }
+    );
   }
 
   private createRideAndFindDrivers(): void {
@@ -467,38 +531,67 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   toggleMapView(): void {
     this.showMapView = !this.showMapView;
     if (this.showMapView && !this.mapInitialized) {
-      setTimeout(() => {
-        this.initializeMap();
-      }, 100);
+      // Check if Google Maps API is available
+      if (this.isGoogleMapsApiAvailable()) {
+        setTimeout(() => {
+          this.initializeMap();
+        }, 100);
+      } else {
+        // Wait for Google Maps API to load
+        this.waitForGoogleMapsApi();
+      }
     }
   }
 
+  private isGoogleMapsApiAvailable(): boolean {
+    return typeof google !== 'undefined' && 
+           typeof google.maps !== 'undefined' && 
+           typeof google.maps.Map !== 'undefined';
+  }
+
+  private waitForGoogleMapsApi(): void {
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds timeout
+    
+    const checkForGoogleMaps = () => {
+      attempts++;
+      
+      if (this.isGoogleMapsApiAvailable()) {
+        console.log('✅ Google Maps API loaded successfully');
+        this.initializeMap();
+      } else if (attempts < maxAttempts) {
+        setTimeout(checkForGoogleMaps, 100);
+      } else {
+        console.error('❌ Google Maps API failed to load after 5 seconds');
+        this.showErrorMessage('Google Maps failed to load. Please check your internet connection and refresh the page.');
+      }
+    };
+    
+    checkForGoogleMaps();
+  }
+
   private initializeMap(): void {
-    if (typeof google === 'undefined' || !this.mapContainer) {
-      console.log('Google Maps not available or container not found');
+    if (!this.isGoogleMapsApiAvailable() || !this.mapContainer) {
+      console.error('Google Maps API not loaded or container not found');
+      // Show error message to user
+      this.showErrorMessage('Google Maps is not available. Please check your internet connection.');
       return;
     }
 
     try {
       const mapElement = this.mapContainer.nativeElement;
       
-      // Default center (Kigali, Rwanda)
-      const center = { lat: -1.9441, lng: 30.0619 };
+      // Initialize map with Kigali, Rwanda center
+      this.map = new google.maps.Map(mapElement, this.options);
       
-      this.map = new google.maps.Map(mapElement, {
-        zoom: 13,
-        center: center,
-        mapTypeControl: true,
-        streetViewControl: true,
-        fullscreenControl: false,
-        zoomControl: true
-      });
-      
-      // Initialize geocoder
+      // Initialize Google Maps services
       this.geocoder = new google.maps.Geocoder();
+      this.directionsService = new google.maps.DirectionsService();
+      this.directionsRenderer = new google.maps.DirectionsRenderer({ map: this.map });
+      this.distanceService = new google.maps.DistanceMatrixService();
       
       this.mapInitialized = true;
-      console.log('Map initialized successfully');
+      console.log('✅ Map initialized successfully');
       
       // Add click listener for location selection with address lookup
       this.map.addListener('click', (event: any) => {
@@ -511,16 +604,20 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       
     } catch (error) {
-      console.error('Error initializing map:', error);
+      console.error('❌ Error initializing map:', error);
+      this.showErrorMessage('Failed to initialize map. Please refresh the page and try again.');
     }
   }
 
   setMapMode(mode: 'pickup' | 'destination'): void {
     this.mapMode = mode;
+    console.log(`Map mode set to: ${mode}`);
   }
 
   private handleMapClick(lat: number, lng: number): void {
-    if (!this.mapMode) return;
+    if (!this.mapMode || !this.map) return;
+    
+    console.log(`Map clicked: ${lat}, ${lng} for ${this.mapMode}`);
     
     // Show loading indicator
     this.isLoadingMap = true;
@@ -544,6 +641,8 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.destinationMarker = marker;
     }
     
+    this.allMarkers.push(marker);
+    
     // Reverse geocode to get address
     this.reverseGeocode(lat, lng, this.mapMode);
   }
@@ -558,20 +657,22 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
     const latLng = { lat, lng };
     
     this.geocoder.geocode({ location: latLng }, (results: any, status: any) => {
-      this.isLoadingMap = false;
-      
-      if (status === 'OK' && results[0]) {
-        const address = results[0].formatted_address;
-        this.updateLocationField(mode, address, { lat, lng });
+      this.ngZone.run(() => {
+        this.isLoadingMap = false;
         
-        // Add info window to marker
-        this.addMarkerInfoWindow(mode, address);
-        
-        console.log(`Address found for ${mode}:`, address);
-      } else {
-        console.warn('Geocoder failed:', status);
-        this.handleGeocodeError(lat, lng, mode);
-      }
+        if (status === 'OK' && results && results[0]) {
+          const address = results[0].formatted_address;
+          this.updateLocationField(mode, address, { lat, lng });
+          
+          // Add info window to marker
+          this.addMarkerInfoWindow(mode, address);
+          
+          console.log(`✅ Address found for ${mode}:`, address);
+        } else {
+          console.warn('Geocoder failed:', status);
+          this.handleGeocodeError(lat, lng, mode);
+        }
+      });
     });
   }
   
@@ -594,17 +695,62 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
     // Trigger fare calculation
     this.calculateEstimatedFare();
     
+    // Draw route if both locations are set
+    if (this.pickupCoordinates && this.destinationCoordinates) {
+      this.drawRoute();
+    }
+    
     // Show success feedback
     this.showLocationSelectedFeedback(mode, address);
+  }
+  
+  private drawRoute(): void {
+    if (!this.directionsService || !this.directionsRenderer || !this.pickupCoordinates || !this.destinationCoordinates) {
+      return;
+    }
+
+    this.directionsService.route(
+      {
+        origin: this.pickupCoordinates,
+        destination: this.destinationCoordinates,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === 'OK' && result) {
+          this.directionsRenderer.setDirections(result);
+          console.log('✅ Route drawn successfully');
+        } else {
+          console.warn('Directions service failed:', status);
+        }
+      }
+    );
   }
   
   private clearMarker(mode: 'pickup' | 'destination'): void {
     if (mode === 'pickup' && this.pickupMarker) {
       this.pickupMarker.setMap(null);
+      this.removeFromAllMarkers(this.pickupMarker);
       this.pickupMarker = null;
     } else if (mode === 'destination' && this.destinationMarker) {
       this.destinationMarker.setMap(null);
+      this.removeFromAllMarkers(this.destinationMarker);
       this.destinationMarker = null;
+    }
+  }
+
+  private clearAllMarkers(): void {
+    this.allMarkers.forEach(marker => {
+      marker.setMap(null);
+    });
+    this.allMarkers = [];
+    this.pickupMarker = null;
+    this.destinationMarker = null;
+  }
+
+  private removeFromAllMarkers(marker: google.maps.Marker): void {
+    const index = this.allMarkers.indexOf(marker);
+    if (index > -1) {
+      this.allMarkers.splice(index, 1);
     }
   }
   
@@ -718,42 +864,62 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   
   private reverseGeocodeCurrentLocation(coords: { lat: number, lng: number }, type: 'pickup' | 'destination'): void {
-    // Initialize geocoder if not already done
-    if (!this.geocoder) {
+    // Initialize geocoder if not already done or if Google Maps is now available
+    if (!this.geocoder && this.isGoogleMapsApiAvailable()) {
       this.geocoder = new google.maps.Geocoder();
     }
     
-    this.geocoder.geocode({ location: coords }, (results: any, status: any) => {
-      this.isLoadingMap = false;
+    if (!this.geocoder) {
+      console.error('Geocoder not available');
+      // Fallback to coordinates if geocoding is not available
+      const fallbackAddress = `Current Location (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)})`;
       
-      if (status === 'OK' && results[0]) {
-        const address = results[0].formatted_address;
-        
-        if (type === 'pickup') {
-          this.rideForm.get('pickupLocation')?.setValue(address);
-          this.pickupCoordinates = coords;
-        } else {
-          this.rideForm.get('destination')?.setValue(address);
-          this.destinationCoordinates = coords;
-        }
-        
-        this.calculateEstimatedFare();
-        console.log(`✅ Current location set for ${type}: ${address}`);
+      if (type === 'pickup') {
+        this.rideForm.get('pickupLocation')?.setValue(fallbackAddress);
+        this.pickupCoordinates = coords;
       } else {
-        // Fallback to coordinates if geocoding fails
-        const fallbackAddress = `Current Location (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)})`;
-        
-        if (type === 'pickup') {
-          this.rideForm.get('pickupLocation')?.setValue(fallbackAddress);
-          this.pickupCoordinates = coords;
-        } else {
-          this.rideForm.get('destination')?.setValue(fallbackAddress);
-          this.destinationCoordinates = coords;
-        }
-        
-        this.calculateEstimatedFare();
-        console.warn('Geocoding failed, using coordinates:', status);
+        this.rideForm.get('destination')?.setValue(fallbackAddress);
+        this.destinationCoordinates = coords;
       }
+      
+      this.calculateEstimatedFare();
+      this.isLoadingMap = false;
+      return;
+    }
+    
+    this.geocoder.geocode({ location: coords }, (results: any, status: any) => {
+      this.ngZone.run(() => {
+        this.isLoadingMap = false;
+        
+        if (status === 'OK' && results && results[0]) {
+          const address = results[0].formatted_address;
+          
+          if (type === 'pickup') {
+            this.rideForm.get('pickupLocation')?.setValue(address);
+            this.pickupCoordinates = coords;
+          } else {
+            this.rideForm.get('destination')?.setValue(address);
+            this.destinationCoordinates = coords;
+          }
+          
+          this.calculateEstimatedFare();
+          console.log(`✅ Current location set for ${type}: ${address}`);
+        } else {
+          // Fallback to coordinates if geocoding fails
+          const fallbackAddress = `Current Location (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)})`;
+          
+          if (type === 'pickup') {
+            this.rideForm.get('pickupLocation')?.setValue(fallbackAddress);
+            this.pickupCoordinates = coords;
+          } else {
+            this.rideForm.get('destination')?.setValue(fallbackAddress);
+            this.destinationCoordinates = coords;
+          }
+          
+          this.calculateEstimatedFare();
+          console.warn('Geocoding failed, using coordinates:', status);
+        }
+      });
     });
   }
 
