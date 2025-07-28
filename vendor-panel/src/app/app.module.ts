@@ -33,6 +33,7 @@ import { FeedbackComponent } from './Components/feedback/feedback.component';
 import { LanguageComponent } from './Components/language/language.component';
 import { ProfileSettingComponent } from './Components/profile-setting/profile-setting.component';
 import { AccountSettingComponent } from './Components/account-setting/account-setting.component';
+import { VendorloginComponent } from './Components/vendorlogin/vendorlogin.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,9 @@ import { AccountSettingComponent } from './Components/account-setting/account-se
     FeedbackComponent,
     LanguageComponent,
     ProfileSettingComponent,
-    AccountSettingComponent
+    AccountSettingComponent,
+    VendorloginComponent
+   
   ],
   imports: [
     BrowserModule,

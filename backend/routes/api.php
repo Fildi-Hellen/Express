@@ -54,10 +54,21 @@ Route::middleware('auth:sanctum')->get('/checkout', function () {
 Route::post('/api/address', [AddressController::class, 'store']);
 
 Route::post('/vendor/register', [VendorController::class, 'register']);
-Route::post('/vendor/forgot-password', [VendorLoginController::class, 'sendResetLink']);
+// Route::post('/vendor/forgot-password', [VendorLoginController::class, 'sendResetLink']);
 
-Route::post('/vendor/forgot-password', [VendorLoginController::class, 'sendResetLink']);
-Route::post('/vendor/reset-password', [VendorLoginController::class, 'resetPassword']);
+// Route::post('/vendor/forgot-password', [VendorLoginController::class, 'sendResetLink']);
+// Route::post('/vendor/reset-password', [VendorLoginController::class, 'resetPassword']);
+
+
+Route::prefix('vendor')->group(function () {
+    Route::post('register', [VendorLoginController::class, 'register']);
+    Route::post('login', [VendorLoginController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('profile', [VendorLoginController::class, 'profile']);
+        Route::post('logout', [VendorLoginController::class, 'logout']);
+    });
+});
 
 Route::post('/contact', [ContactController::class, 'store']);
 

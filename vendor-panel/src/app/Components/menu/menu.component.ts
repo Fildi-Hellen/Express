@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MenuService } from '../../Services/menu.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrl: './menu.component.css'
+  styleUrls:['./menu.component.css'] 
 })
-export class MenuComponent {
+export class MenuComponent  implements OnInit{
 
   menuForm!: FormGroup;
   selectedCategory!: string;
@@ -15,9 +16,14 @@ export class MenuComponent {
   message!: string;
   menus: any[] = [];
 
-  constructor(private fb: FormBuilder, private menuService: MenuService) {}
+  constructor(private fb: FormBuilder, private menuService: MenuService,private router: Router) {}
+    ngOnInit(): void {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      this.router.navigate(['/vendor/auth']);
+      return;
+    }
 
-  ngOnInit(): void {
     this.initializeForm();
   }
 

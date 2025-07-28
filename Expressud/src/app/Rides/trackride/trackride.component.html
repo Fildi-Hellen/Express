@@ -376,22 +376,22 @@
                 <div class="card-body">
                   <div class="row text-center">
                     <div class="col-6 border-end">
-                      <h4 class="mb-0">{{userStats?.totalRides || 0}}</h4>
+                      <h4 class="mb-0">{{userStats.totalRides || 0}}</h4>
                       <small class="text-muted">Total Rides</small>
                     </div>
                     <div class="col-6">
-                      <h4 class="text-success mb-0">{{formatCurrency(userStats?.totalSpent || 0)}}</h4>
+                      <h4 class="text-success mb-0">{{formatCurrency(userStats.totalSpent || 0)}}</h4>
                       <small class="text-muted">Total Spent</small>
                     </div>
                   </div>
                   <hr>
                   <div class="row text-center">
                     <div class="col-6 border-end">
-                      <h5 class="text-warning mb-0">{{userStats?.averageRating || 0}}</h5>
+                      <h5 class="text-warning mb-0">{{userStats.averageRating || 0}}</h5>
                       <small class="text-muted">Avg Rating</small>
                     </div>
                     <div class="col-6">
-                      <h5 class="text-info mb-0">{{userStats?.favoriteDriver || 'N/A'}}</h5>
+                      <h5 class="text-info mb-0">{{userStats.favoriteDriver || 'N/A'}}</h5>
                       <small class="text-muted">Favorite Driver</small>
                     </div>
                   </div>
