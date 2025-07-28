@@ -11,6 +11,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\DriverRideController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\MessagingController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RideController;
@@ -18,9 +19,12 @@ use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorLoginController;
+use App\Http\Controllers\SecureDriverTripController;
+use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -158,12 +162,34 @@ Route::get('/blogs/{id}/comments', [BlogController::class, 'viewComments']);
 
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/driver/trip-history', [TripController::class, 'getTripHistory']);
-        Route::get('/driver/current-trips', [TripController::class, 'getCurrentTrips']);
-        Route::get('/driver/trip-requests', [TripController::class, 'getTripRequests']);
-        Route::post('/driver/trip-accept', [TripController::class, 'acceptTrip']);
-        Route::post('/driver/trip-decline', [TripController::class, 'declineTrip']);
+        // Use SecureDriverTripController for proper customer ID handling
+        Route::get('/driver/trip-history', [SecureDriverTripController::class, 'getMyTripHistory']);
+        Route::get('/driver/current-trips', [SecureDriverTripController::class, 'getMyCurrentRides']);
+        Route::get('/driver/trip-requests', [SecureDriverTripController::class, 'getAvailableRideRequests']);
+        Route::post('/driver/trip-accept/{rideId}', [SecureDriverTripController::class, 'acceptRide']);
+        Route::post('/driver/trip-cancel/{rideId}', [SecureDriverTripController::class, 'cancelMyRide']);
+        Route::post('/driver/trip-start/{rideId}', [SecureDriverTripController::class, 'startMyTrip']);
+        Route::post('/driver/trip-complete/{rideId}', [SecureDriverTripController::class, 'completeMyTrip']);
+        Route::get('/driver/earnings', [SecureDriverTripController::class, 'getMyEarnings']);
     });
+
+// Debug route for storage issues
+Route::get('/debug/storage', function() {
+    $publicPath = public_path('storage/profile_pictures');
+    $storagePath = storage_path('app/public/profile_pictures');
+    
+    return response()->json([
+        'public_path_exists' => is_dir($publicPath),
+        'storage_path_exists' => is_dir($storagePath),
+        'public_files' => is_dir($publicPath) ? array_diff(scandir($publicPath), ['.', '..']) : [],
+        'storage_files' => is_dir($storagePath) ? array_diff(scandir($storagePath), ['.', '..']) : [],
+        'symlink_exists' => is_link(public_path('storage')),
+        'symlink_target' => is_link(public_path('storage')) ? readlink(public_path('storage')) : null,
+        'app_url' => config('app.url'),
+        'asset_url' => asset('storage/profile_pictures/driver_7_1753608290.png'),
+        'url_helper' => url('storage/profile_pictures/driver_7_1753608290.png'),
+    ]);
+});
 
     Route::middleware('auth:sanctum')->get('/user/notifications', function () {
     return response()->json(Auth::user()->notifications);
@@ -219,12 +245,86 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders/{id}/status', [DriverRideController::class, 'updateOrderStatus']);
 });
 
+// Messaging routes
+Route::middleware('auth:sanctum')->group(function () {
+    // Messages
+    Route::post('/messages', [MessagingController::class, 'sendMessage']);
+    Route::get('/conversations/{participantId}', [MessagingController::class, 'getConversation']);
+    Route::get('/driver/conversations/{customerId}', [MessagingController::class, 'getDriverConversation']);
+    Route::get('/user/current', [MessagingController::class, 'getCurrentUser']);
+    
+    // Calls
+    Route::post('/calls/make', [MessagingController::class, 'makeCall']);
+    Route::post('/calls/answer', [MessagingController::class, 'answerCall']);
+    Route::post('/calls/end', [MessagingController::class, 'endCall']);
+});
+
+// Driver profile routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/drivers/{id}/profile', [DriverController::class, 'getProfile']);
+    Route::put('/drivers/{id}/profile', [DriverController::class, 'updateProfile']);
+    Route::post('/drivers/{id}/profile-picture', [DriverController::class, 'uploadProfilePicture']);
+    Route::delete('/drivers/{id}/profile-picture', [DriverController::class, 'removeProfilePicture']);
+});
+
 Route::post('/driver/accept-ride', [RideController::class, 'driverAcceptRide']);
 Route::post('/driver/cancel-ride/{id}', [RideController::class, 'driverCancelRide']);
 
+// File serving route for profile pictures
+Route::get('/files/profile-pictures/{filename}', [FileController::class, 'serveProfilePicture']);
 
+// Test route to verify routing works
+Route::get('/test-route', function() {
+    return response()->json(['message' => 'Route is working!']);
+});
 
+// Testing routes for messaging (remove in production)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/messaging/test-data', [MessagingController::class, 'createTestData']);
+    Route::get('/messaging/conversations', [MessagingController::class, 'getAllConversations']);
+    Route::delete('/messaging/clear', [MessagingController::class, 'clearAllMessages']);
     
-
-
-
+    // Debug route to check trip data structure
+    Route::get('/debug/trip-structure', function() {
+        $user = Auth::user();
+        $driverId = $user->id;
+        
+        // Get a sample ride to check structure
+        $ride = \App\Models\Ride::with('user:id,name')
+            ->where('driver_id', $driverId)
+            ->orWhere('driver_id', null)
+            ->first();
+            
+        if (!$ride) {
+            // Create a test ride
+            $testUser = \App\Models\User::first();
+            $ride = \App\Models\Ride::create([
+                'user_id' => $testUser->id,
+                'pickup_location' => 'Test Pickup',
+                'destination' => 'Test Destination',
+                'fare' => 1500,
+                'status' => 'confirmed',
+                'driver_id' => $driverId
+            ]);
+            $ride->load('user:id,name');
+        }
+        
+        return response()->json([
+            'raw_ride' => $ride->toArray(),
+            'mapped_current_trip' => [
+                'id' => $ride->id,
+                'user_id' => $ride->user_id,
+                'customer_id' => $ride->user_id,
+                'customerId' => $ride->user_id,
+                'passengerName' => $ride->user->name,
+                'pickupLocation' => $ride->pickup_location,
+                'destination' => $ride->destination,
+                'fare' => $ride->fare,
+                'status' => $ride->status,
+                'assignedAt' => $ride->created_at->format('Y-m-d H:i'),
+            ],
+            'available_fields' => array_keys($ride->toArray()),
+            'user_data' => $ride->user ? $ride->user->toArray() : null
+        ]);
+    });
+});

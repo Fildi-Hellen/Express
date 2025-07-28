@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 
 export interface TripRequest {
   id: number;
+  user_id?: number;        // Add customer ID field
+  customer_id?: number;    // Alternative customer ID field
   passengerName: string;
   pickupLocation: string;
   destination: string;
@@ -19,6 +21,8 @@ export interface TripRequest {
 
 export interface CurrentTrip {
   id: number;
+  user_id?: number;        // Add customer ID field
+  customer_id?: number;    // Alternative customer ID field
   passengerName: string;
   pickupLocation: string;
   destination: string;
@@ -191,7 +195,7 @@ export class TripService {
     }
     
     return this.http.get<any>(
-      `${this.apiUrl}/driver/rides/requests`,
+      `${this.apiUrl}/driver/trip-requests`,
       { 
         headers: this.getAuthHeaders(),
         params: params
@@ -231,7 +235,7 @@ export class TripService {
     console.log(`📥 Getting current trips for driver ${this.currentDriverId}`);
     
     return this.http.get<any>(
-      `${this.apiUrl}/driver/rides/current`,
+      `${this.apiUrl}/driver/current-trips`,
       { headers: this.getAuthHeaders() }
     ).pipe(
       map(response => {
@@ -261,7 +265,7 @@ export class TripService {
     console.log(`📥 Getting trip history for driver ${this.currentDriverId}`);
     
     return this.http.get<any>(
-      `${this.apiUrl}/driver/rides/history`,
+      `${this.apiUrl}/driver/trip-history`,
       { headers: this.getAuthHeaders() }
     ).pipe(
       map(response => {
@@ -291,7 +295,7 @@ export class TripService {
     console.log(`🚗 Driver ${this.currentDriverId} accepting trip ${request.id}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/rides/${request.id}/accept`,
+      `${this.apiUrl}/driver/trip-accept/${request.id}`,
       {},
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -322,7 +326,7 @@ export class TripService {
     console.log(`❌ Driver ${this.currentDriverId} cancelling trip ${tripId} - Reason: ${reason}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/rides/${tripId}/cancel`,
+      `${this.apiUrl}/driver/trip-cancel/${tripId}`,
       { reason },
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -363,7 +367,7 @@ export class TripService {
     console.log(`🏁 Driver ${this.currentDriverId} starting trip ${tripId}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/rides/${tripId}/start`,
+      `${this.apiUrl}/driver/trip-start/${tripId}`,
       {},
       { headers: this.getAuthHeaders() }
     ).pipe(

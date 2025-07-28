@@ -70,12 +70,55 @@ export class RideService {
   }
 
   /**
-   * Create a new ride and find available drivers
+   * Round fare to the nearest whole number
+   */
+  roundFare(fare: number): number {
+    return Math.round(fare);
+  }
+
+  /**
+   * Calculate and round fare based on distance and ride type
+   */
+  calculateRoundedFare(distance: number, rideType: string = 'standard'): number {
+    let baseFare = 1000; // Base fare in RWF
+    let perKmRate = 200; // Rate per kilometer
+    
+    // Adjust rates based on ride type
+    switch (rideType.toLowerCase()) {
+      case 'premium':
+        baseFare = 1500;
+        perKmRate = 300;
+        break;
+      case 'economy':
+        baseFare = 800;
+        perKmRate = 150;
+        break;
+      case 'shared':
+        baseFare = 600;
+        perKmRate = 100;
+        break;
+      default:
+        // standard rates already set
+        break;
+    }
+    
+    const calculatedFare = baseFare + (distance * perKmRate);
+    return this.roundFare(calculatedFare);
+  }
+
+  /**
+   * Create a new ride and find available drivers with rounded fare
    */
   createRideAndFindDrivers(rideRequest: RideRequest): Observable<{ride: Ride, drivers: Driver[]}> {
+    // Round the fare before sending the request
+    const roundedRequest = {
+      ...rideRequest,
+      fare: this.roundFare(rideRequest.fare)
+    };
+    
     return this.http.post<{ride: Ride, drivers: Driver[]}>(
       `${this.apiUrl}/create-and-find-drivers`,
-      rideRequest,
+      roundedRequest,
       { headers: this.getAuthHeaders() }
     );
   }
@@ -192,13 +235,18 @@ export class RideService {
   }
 
   /**
-   * Get ride fare estimation
+   * Get ride fare estimation with rounding
    */
   getFareEstimate(pickup: string, destination: string, rideType: string): Observable<{fare: number}> {
     return this.http.post<{fare: number}>(
       `${this.apiUrl}/rides/fare-estimate`,
       { pickup_location: pickup, destination, ride_type: rideType },
       { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(response => ({
+        ...response,
+        fare: this.roundFare(response.fare)
+      }))
     );
   }
 

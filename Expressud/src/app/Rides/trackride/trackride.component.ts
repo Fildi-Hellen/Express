@@ -397,6 +397,18 @@ export class TrackRideComponet implements OnInit, OnDestroy {
   }
 
   /**
+   * Message driver
+   */
+  messageDriver(driverId: number): void {
+    if (driverId) {
+      // Navigate to messaging component with driver ID
+      this.router.navigate(['/messaging', driverId]);
+    } else {
+      this.showErrorMessage('Driver information not available');
+    }
+  }
+
+  /**
    * View ride details
    */
   viewRideDetails(ride: Ride): void {
@@ -892,6 +904,18 @@ For support: support@expressud.com
     const token = localStorage.getItem('authToken');
     const userId = localStorage.getItem('userId');
     return `Token: ${token ? 'Present' : 'Missing'}, UserID: ${userId || 'Not set'}`;
+  }
+
+  /**
+   * Message customer
+   */
+  messageCustomer(customerId: number): void {
+    if (customerId) {
+      // Navigate to messaging component with customer ID
+      this.router.navigate(['/messaging', customerId]);
+    } else {
+      this.showErrorMessage('Customer information not available');
+    }
   }
 
   /**

@@ -101,6 +101,15 @@
             <i class="fas fa-bell me-2"></i>Available Trip Requests
           </h4>
           <div class="d-flex align-items-center gap-3">
+            <!-- Debug Controls -->
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm btn-warning" (click)="debugTripData()" title="Debug trip data structure">
+                <i class="fas fa-bug"></i> Debug
+              </button>
+              <button class="btn btn-sm btn-info" (click)="createTestTripData()" title="Create test trip with customer ID">
+                <i class="fas fa-flask"></i> Test Data
+              </button>
+            </div>
             <!-- Filter Controls -->
             <div class="d-flex align-items-center gap-2">
               <div class="form-check form-switch">
@@ -242,6 +251,10 @@
                           (click)="openPriceModal(request)">
                     <i class="fas fa-dollar-sign me-1"></i>Adjust Price
                   </button>
+                  <button class="btn btn-outline-info me-2" 
+                          (click)="messageCustomer(getCustomerIdFromRequest(request))">
+                    <i class="fas fa-comments me-1"></i>Message
+                  </button>
                   <button class="btn btn-outline-secondary" 
                           (click)="decline(request)">
                     <i class="fas fa-times me-1"></i>Skip
@@ -291,12 +304,7 @@
                [class.bg-info]="trip.status === 'in_progress'"
                [class.bg-opacity-25]="true">
             
-            <!-- Trip assigned indicator -->
-            <div class="position-absolute top-0 end-0 mt-2 me-2">
-              <span class="badge bg-info small">
-                <i class="fas fa-user-check me-1"></i>Assigned to You
-              </span>
-            </div>
+          cd expr
 
             <div class="row align-items-center">
               <!-- Trip Details -->
@@ -353,6 +361,11 @@
                           class="btn btn-primary" 
                           (click)="completeTrip(trip)">
                     <i class="fas fa-flag-checkered me-1"></i>Complete Trip
+                  </button>
+
+                  <button class="btn btn-outline-info btn-sm mb-2" 
+                          (click)="messageCustomer(getCustomerIdFromTrip(trip))">
+                    <i class="fas fa-comments me-1"></i>Message Customer
                   </button>
 
                   <button class="btn btn-outline-danger btn-sm" 

@@ -132,6 +132,7 @@ import { MatListModule } from '@angular/material/list';
 import { FindDriverComponent } from './Rides/find-driver/find-driver.component';
 import { UserNotificationsComponent } from './Page/user-notifications/user-notifications.component';
 import { UserRidesComponent } from './Page/user-rides/user-rides.component';
+import { MessagingComponent } from './components/messaging/messaging.component';
 
 
 
@@ -246,7 +247,8 @@ import { UserRidesComponent } from './Page/user-rides/user-rides.component';
     HeadStartedComponent,
     FindDriverComponent,
     UserNotificationsComponent,
-    UserRidesComponent
+    UserRidesComponent,
+    MessagingComponent
   
 
     
@@ -255,32 +257,33 @@ import { UserRidesComponent } from './Page/user-rides/user-rides.component';
   imports: [
     NgbModule,
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     RouterModule,
     SlickCarouselModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    CommonModule,
     MatExpansionModule,
     FontAwesomeModule,
     ReactiveFormsModule,
+    FormsModule,
     GoogleMapsModule,
     MatDialogModule,
-    FormsModule,
     MatIconModule,
-    IonicModule.forRoot(),
-    ToastrModule.forRoot({
-        timeOut: 3000,
-        positionClass: 'toast-bottom-right',
-        preventDuplicates: true,
-        newestOnTop: false
-    }),MatFormFieldModule,
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
+    IonicModule.forRoot(),
+    ToastrModule.forRoot({
+        timeOut: 3000,
+        positionClass: 'toast-bottom-right',
+        preventDuplicates: true,
+        newestOnTop: false
+    }),
     
  
 ],

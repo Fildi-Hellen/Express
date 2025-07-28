@@ -96,7 +96,21 @@
         <span class="num">8</span>
       </a>
       <a routerLink="/profile" class="profile">
-        <img src="https://secure.gravatar.com/avatar/d09eaad01aea86c51b4f892b4f8abf6f?s=100&d=wavatar&r=g">
+        <!-- Show actual profile picture if available, otherwise show initials -->
+        <div class="profile-picture-container">
+          <img 
+            *ngIf="driverProfile.profile_picture_url"
+            [src]="getProfilePictureUrl()" 
+            alt="Profile Picture"
+            class="profile-picture"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+          
+          <div 
+            *ngIf="!driverProfile.profile_picture_url"
+            class="profile-initials">
+            {{ getProfileInitials() }}
+          </div>
+        </div>
       </a>
     </nav>
     <!-- NAVBAR -->

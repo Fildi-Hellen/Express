@@ -89,9 +89,44 @@ export class DriverService {
   }
   
   
-  getDriverProfile(): Observable<any> {
+  // Get driver profile by ID
+  getDriverProfile(driverId?: number): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get<any>(`${this.baseUrl}/drivers/profile`, { headers });
+    const id = driverId || localStorage.getItem('driverId');
+    return this.http.get<any>(`${this.baseUrl}/drivers/${id}/profile`, { headers });
+  }
+  
+  // Update driver profile
+  updateDriverProfile(profileData: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const driverId = localStorage.getItem('driverId');
+    return this.http.put<any>(`${this.baseUrl}/drivers/${driverId}/profile`, profileData, { headers });
+  }
+
+  // Upload profile picture
+  uploadProfilePicture(file: File): Observable<any> {
+    const headers = this.getAuthHeaders();
+    // Remove Content-Type header to let browser set it with boundary for FormData
+    const authHeaders = new HttpHeaders({
+      'Authorization': headers.get('Authorization') || ''
+    });
+    
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    
+    const driverId = localStorage.getItem('driverId');
+    return this.http.post<any>(
+      `${this.baseUrl}/drivers/${driverId}/profile-picture`, 
+      formData, 
+      { headers: authHeaders }
+    );
+  }
+
+  // Remove profile picture
+  removeProfilePicture(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const driverId = localStorage.getItem('driverId');
+    return this.http.delete<any>(`${this.baseUrl}/drivers/${driverId}/profile-picture`, { headers });
   }
   
   updateOrderStatus(orderId: number, status: string): Observable<any> {

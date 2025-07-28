@@ -1,0 +1,123 @@
+<div class="messaging-container">
+  <!-- Debug Info -->
+  <div class="debug-info" style="background: #f0f8ff; padding: 10px; border-bottom: 1px solid #ddd; font-size: 12px;">
+    <strong>Debug:</strong> Driver ID: {{ driverId || 'Not loaded' }} | User ID: {{ currentUserId || 'Not set' }} | Messages: {{ messages.length }}
+  </div>
+  
+  <!-- Test Buttons Section -->
+  <div class="test-section" style="background: #fff3cd; padding: 15px; border-bottom: 1px solid #ddd;">
+    <h5 style="margin: 0 0 10px 0;"><i class="fas fa-flask"></i> Testing Tools</h5>
+    <div class="btn-group" role="group">
+      <button class="btn btn-warning btn-sm" (click)="loadTestData()">
+        <i class="fas fa-database"></i> Load Test Messages
+      </button>
+      <button class="btn btn-secondary btn-sm" (click)="clearMessages()">
+        <i class="fas fa-trash"></i> Clear Messages
+      </button>
+      <button class="btn btn-info btn-sm" (click)="loadTestCallScenario()">
+        <i class="fas fa-phone-alt"></i> Test Call
+      </button>
+      <button class="btn btn-success btn-sm" (click)="toggleDebugInfo()">
+        <i class="fas fa-bug"></i> Toggle Debug
+      </button>
+    </div>
+  </div>
+  
+  <div class="chat-header">
+    <div class="header-info">
+      <h3>Chat with Driver</h3>
+      <span class="online-status">Online</span>
+    </div>
+    <div class="call-controls">
+      <button 
+        class="call-btn" 
+        [disabled]="callStatus?.isActive"
+        (click)="makeCall()"
+        title="Make Voice Call">
+        <i class="fas fa-phone"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Call Status -->
+  <div *ngIf="callStatus?.isActive" class="call-status-container">
+    <div class="call-status" [ngClass]="callStatus?.status">
+      <div class="call-info">
+        <i class="fas fa-phone"></i>
+        <span>{{ callStatus?.status === 'ringing' ? 'Calling...' : 
+                  callStatus?.status === 'connected' ? 'Connected' : 'Call Ended' }}</span>
+      </div>
+      <div class="call-actions">
+        <button 
+          *ngIf="callStatus?.status === 'ringing' && callStatus?.caller !== 'user'" 
+          class="answer-btn"
+          (click)="answerCall()">
+          <i class="fas fa-phone"></i> Answer
+        </button>
+        <button 
+          class="end-call-btn"
+          (click)="endCall()">
+          <i class="fas fa-phone-slash"></i> End Call
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Messages -->
+  <div class="chat-messages" [class.loading]="isLoading" #chatContainer>
+    <div *ngIf="isLoading" class="loading-indicator">
+      <i class="fas fa-spinner fa-spin"></i> Loading messages...
+    </div>
+    
+    <!-- Debug: Show messages data -->
+    <div *ngIf="messages.length === 0 && !isLoading" class="empty-state">
+      <div class="empty-icon">💬</div>
+      <p>No messages yet. Start the conversation!</p>
+      <small>Click "Load Test Messages" to see the interface in action</small>
+    </div>
+    
+    <!-- Message Bubbles - iMessage Style -->
+    <div *ngFor="let message of messages; let i = index" 
+         class="message-wrapper" 
+         [ngClass]="getMessageClass(message)">
+      
+      <!-- Message Bubble -->
+      <div class="message-bubble">
+        <!-- Message Content -->
+        <div class="message-text">
+          {{ getMessageContent(message) }}
+        </div>
+        
+        <!-- Message Time -->
+        <div class="message-time">
+          {{ formatMessageTime(message.created_at) }}
+        </div>
+      </div>
+      
+      <!-- Debug info for development (remove in production) -->
+      <div class="debug-message-info" *ngIf="showDebugInfo">
+        <small>From: {{message.sender_id}} | To: {{message.recipient_id}} | Type: {{message.sender_type || 'unknown'}}</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Input -->
+  <div class="message-input-container">
+    <div class="input-group">
+      <textarea 
+        [(ngModel)]="newMessage"
+        (keypress)="onKeyPress($event)"
+        placeholder="Type your message..."
+        class="message-input"
+        rows="1"
+        #messageInput>
+      </textarea>
+      <button 
+        class="send-btn"
+        [disabled]="!newMessage.trim()"
+        (click)="sendMessage()">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>

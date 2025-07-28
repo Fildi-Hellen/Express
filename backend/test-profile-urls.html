@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Profile Picture URLs</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; background: #f9f9f9; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        pre { background: #eee; padding: 10px; overflow: auto; max-height: 300px; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; cursor: pointer; }
+        img { max-width: 200px; border: 1px solid #ccc; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Profile Picture URL Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Current URLs</h2>
+        <p>Testing the current profile picture URLs from your responses:</p>
+        
+        <h3>Upload Response URL:</h3>
+        <p><code>http://localhost:8000/api/files/profile-pictures/driver_7_1753710175.png</code></p>
+        <img src="http://localhost:8000/api/files/profile-pictures/driver_7_1753710175.png" alt="From Upload Response" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display:none; color:red;">❌ Upload response URL failed to load</div>
+        
+        <h3>Profile Response URL (should be same after fix):</h3>
+        <p id="profile-url-display">Click "Get Profile" to see the current URL format</p>
+        <img id="profile-image" style="display:none;" alt="From Profile Response" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div id="profile-error" style="display:none; color:red;">❌ Profile response URL failed to load</div>
+        
+        <button onclick="testProfileAPI()">Get Profile & Test URL</button>
+        <div id="profile-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Manual Test Links</h2>
+        <p>Click these to test manually:</p>
+        <ul>
+            <li><a href="http://localhost:8000/api/files/profile-pictures/driver_7_1753710175.png" target="_blank">Direct File URL</a></li>
+            <li><a href="http://localhost:8000/api/drivers/7/profile" target="_blank">Profile API (JSON)</a></li>
+        </ul>
+    </div>
+
+    <script>
+        async function testProfileAPI() {
+            const result = document.getElementById('profile-result');
+            const urlDisplay = document.getElementById('profile-url-display');
+            const profileImage = document.getElementById('profile-image');
+            const profileError = document.getElementById('profile-error');
+            
+            result.innerHTML = '<p class="info">Fetching profile...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/drivers/7/profile');
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const driver = data.data;
+                    const profilePictureUrl = driver.profile_picture_url;
+                    
+                    result.innerHTML = `<p class="success">✅ Profile API works!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    
+                    if (profilePictureUrl) {
+                        urlDisplay.innerHTML = `<code>${profilePictureUrl}</code>`;
+                        profileImage.src = profilePictureUrl;
+                        profileImage.style.display = 'block';
+                        profileError.style.display = 'none';
+                        
+                        // Test if URL has escaped slashes
+                        if (profilePictureUrl.includes('\\/')) {
+                            result.innerHTML += '<p class="error">⚠️ URL still has escaped slashes!</p>';
+                        } else {
+                            result.innerHTML += '<p class="success">✅ URL format is clean!</p>';
+                        }
+                    } else {
+                        result.innerHTML += '<p class="error">❌ No profile_picture_url in response</p>';
+                    }
+                } else {
+                    result.innerHTML = `<p class="error">❌ API Error ${response.status}</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Network error: ${error.message}</p>`;
+            }
+        }
+        
+        // Auto-test when page loads
+        window.onload = function() {
+            setTimeout(testProfileAPI, 1000);
+        };
+    </script>
+</body>
+</html>

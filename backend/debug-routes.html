@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Laravel Routes - Step by Step</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; background: #f9f9f9; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        pre { background: #eee; padding: 10px; overflow: auto; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Debug Laravel Routes - Step by Step</h1>
+    
+    <div class="test-section">
+        <h2>Step 1: Test Basic API Route</h2>
+        <p>First, let's verify that Laravel routing is working:</p>
+        <button onclick="testBasicRoute()">Test Basic Route</button>
+        <div id="basic-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Step 2: Test Debug Storage Endpoint</h2>
+        <p>Check storage configuration and file existence:</p>
+        <button onclick="testDebugStorage()">Test Debug Storage</button>
+        <div id="debug-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Step 3: Test File Controller</h2>
+        <p>Test the file serving controller:</p>
+        <button onclick="testFileController()">Test File Controller</button>
+        <div id="file-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Step 4: Manual Links</h2>
+        <p>Click these links manually to test:</p>
+        <ul>
+            <li><a href="http://localhost:8000/api/test-route" target="_blank">Basic Test Route</a></li>
+            <li><a href="http://localhost:8000/api/debug/storage" target="_blank">Debug Storage Info</a></li>
+            <li><a href="http://localhost:8000/api/files/profile-pictures/driver_7_1753608290.png" target="_blank">File Controller</a></li>
+            <li><a href="http://localhost:8000/storage/profile_pictures/driver_7_1753608290.png" target="_blank">Traditional Storage (for comparison)</a></li>
+        </ul>
+    </div>
+
+    <script>
+        async function testBasicRoute() {
+            const result = document.getElementById('basic-result');
+            result.innerHTML = '<p class="info">Testing...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/test-route');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<p class="success">✅ Basic routing works!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    result.innerHTML = `<p class="error">❌ Error ${response.status}</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Network error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testDebugStorage() {
+            const result = document.getElementById('debug-result');
+            result.innerHTML = '<p class="info">Testing...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/debug/storage');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<p class="success">✅ Debug endpoint works!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    result.innerHTML = `<p class="error">❌ Error ${response.status}</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Network error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testFileController() {
+            const result = document.getElementById('file-result');
+            result.innerHTML = '<p class="info">Testing...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/files/profile-pictures/driver_7_1753608290.png');
+                
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.startsWith('image/')) {
+                        result.innerHTML = `<p class="success">✅ File controller works! Content-Type: ${contentType}</p>`;
+                    } else {
+                        const text = await response.text();
+                        result.innerHTML = `<p class="error">❌ Unexpected response</p><pre>${text}</pre>`;
+                    }
+                } else {
+                    const text = await response.text();
+                    result.innerHTML = `<p class="error">❌ Error ${response.status}</p><pre>${text}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Network error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

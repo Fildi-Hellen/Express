@@ -102,6 +102,11 @@ export class TripRequestsComponent implements OnInit, OnDestroy {
     }, 20000);
 
     console.log('🔄 Auto-refresh started (every 20 seconds)');
+    
+    // Add debugging after data loads
+    setTimeout(() => {
+      this.debugTripData();
+    }, 3000);
   }
 
   ngOnDestroy(): void {
@@ -122,6 +127,22 @@ export class TripRequestsComponent implements OnInit, OnDestroy {
         this.currentTrips = Array.isArray(data) ? data : [];
         this.isLoadingCurrent = false;
         console.log(`✅ Loaded ${this.currentTrips.length} current trips for driver ${this.driverId}`);
+        
+        // Enhanced debugging for customer ID issues
+        if (this.currentTrips.length > 0) {
+          console.log('🔍 DETAILED CURRENT TRIPS ANALYSIS:');
+          this.currentTrips.forEach((trip, index) => {
+            console.log(`Trip ${index + 1}:`, {
+              id: trip.id,
+              passengerName: trip.passengerName,
+              user_id: trip.user_id,
+              customer_id: trip.customer_id,
+              userId: trip.userId,
+              customerId: trip.customerId,
+              all_fields: Object.keys(trip)
+            });
+          });
+        }
       },
       error: err => {
         console.error('❌ Error loading current trips:', err);
@@ -532,5 +553,131 @@ export class TripRequestsComponent implements OnInit, OnDestroy {
     return '+1 (555) 123-4567'; // Example phone number
   }
 
+  // Message customer functionality
+  messageCustomer(userId: number): void {
+    if (!userId || userId === 0) {
+      this.showErrorMessage('Customer information not available. Cannot send message.');
+      return;
+    }
+    
+    console.log(`💬 Navigating to messaging with customer ID: ${userId}`);
+    // Navigate to messaging component with customer ID
+    this.router.navigate(['/messaging', userId]);
+  }
+
+  // Helper method to get customer ID from trip request
+  getCustomerIdFromRequest(request: any): number {
+    // Try different possible property names for customer ID
+    const customerId = request.user_id || request.customer_id || request.userId || request.customerId;
+    
+    if (customerId) {
+      console.log(`✅ Found customer ID ${customerId} for request:`, request.passengerName || 'Unknown');
+      return customerId;
+    }
+    
+    // Log warning if no customer ID found
+    console.warn('⚠️ No customer ID found in request:', request);
+    this.showErrorMessage('Customer information not available for this request');
+    return 0; // Return 0 instead of defaulting to 2
+  }
+
+  // Helper method to get customer ID from current trip
+  getCustomerIdFromTrip(trip: any): number {
+    // Try different possible property names for customer ID
+    const customerId = trip.user_id || trip.customer_id || trip.userId || trip.customerId || trip.passenger_id || trip.passengerId;
+    
+    if (customerId) {
+      console.log(`✅ Found customer ID ${customerId} for trip:`, trip.passengerName || 'Unknown');
+      return customerId;
+    }
+    
+    // Log warning if no customer ID found
+    console.warn('⚠️ No customer ID found in trip:', trip);
+    this.showErrorMessage('Customer information not available for this trip');
+    return 0; // Return 0 instead of defaulting to 2
+  }
+
+  // Debug method to analyze trip data structure
+  debugTripData(): void {
+    console.log('\n=== 🐛 DEBUGGING TRIP DATA STRUCTURE ===');
+    console.log('Driver ID:', this.driverId);
+    console.log('Driver Name:', this.driverName);
+    
+    console.log('\n📊 CURRENT TRIPS (' + this.currentTrips.length + '):', this.currentTrips);
+    if (this.currentTrips.length > 0) {
+      console.log('First current trip fields:', Object.keys(this.currentTrips[0]));
+      console.log('First current trip data:', this.currentTrips[0]);
+      
+      const testTrip = this.currentTrips[0];
+      console.log('Testing customer ID extraction for current trip:');
+      console.log('- user_id:', testTrip.user_id);
+      console.log('- customer_id:', testTrip.customer_id);
+      console.log('- userId:', testTrip.userId);
+      console.log('- customerId:', testTrip.customerId);
+      console.log('- passenger_id:', testTrip.passenger_id);
+      console.log('- passengerId:', testTrip.passengerId);
+      
+      const extractedId = this.getCustomerIdFromTrip(testTrip);
+      console.log('Extracted customer ID:', extractedId);
+    }
+    
+    console.log('\n📋 TRIP REQUESTS (' + this.tripRequests.length + '):', this.tripRequests);
+    if (this.tripRequests.length > 0) {
+      console.log('First trip request fields:', Object.keys(this.tripRequests[0]));
+      console.log('First trip request data:', this.tripRequests[0]);
+      
+      const testRequest = this.tripRequests[0];
+      console.log('Testing customer ID extraction for trip request:');
+      console.log('- user_id:', testRequest.user_id);
+      console.log('- customer_id:', testRequest.customer_id);
+      console.log('- userId:', testRequest.userId);
+      console.log('- customerId:', testRequest.customerId);
+      
+      const extractedId = this.getCustomerIdFromRequest(testRequest);
+      console.log('Extracted customer ID:', extractedId);
+    }
+    
+    console.log('\n📜 TRIP HISTORY (' + this.tripHistory.length + '):', this.tripHistory);
+    if (this.tripHistory.length > 0) {
+      console.log('First trip history fields:', Object.keys(this.tripHistory[0]));
+      console.log('First trip history data:', this.tripHistory[0]);
+    }
+    
+    console.log('\n=== END DEBUGGING ===\n');
+  }
+
+  // Test method to create sample trip data with proper customer ID
+  createTestTripData(): void {
+    console.log('🧪 Creating test trip data with proper customer ID...');
+    
+    // Create test current trip with proper customer ID
+    const testCurrentTrip = {
+      id: 999,
+      user_id: 5, // Proper customer ID
+      customerId: 5, // Alternative field
+      passengerName: 'Test Customer',
+      pickupLocation: 'Test Pickup Location',
+      destination: 'Test Destination',
+      fare: 1500,
+      status: 'confirmed',
+      assignedAt: new Date().toISOString()
+    };
+    
+    // Add to current trips if not already there
+    if (!this.currentTrips.find(trip => trip.id === 999)) {
+      this.currentTrips.unshift(testCurrentTrip);
+      console.log('✅ Test trip added to current trips');
+    }
+    
+    // Test customer ID extraction
+    const extractedId = this.getCustomerIdFromTrip(testCurrentTrip);
+    console.log('Test customer ID extraction result:', extractedId);
+    
+    if (extractedId > 0) {
+      console.log('✅ Customer ID extraction working correctly!');
+    } else {
+      console.error('❌ Customer ID extraction failed!');
+    }
+  }
 
 }

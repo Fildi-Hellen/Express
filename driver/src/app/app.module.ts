@@ -20,9 +20,10 @@ import { NavigationsComponent } from './components/navigations/navigations.compo
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { OrderComponent } from './components/order/order.component';
 import { DriverAuthComponent } from './components/driver-auth/driver-auth.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { DriverMessagingComponent } from './components/messaging/messaging.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-// import { ProfileComponent } from './components/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -43,9 +44,10 @@ import { HttpClientModule } from '@angular/common/http';
     CommunicationsComponent,
     NavigationsComponent,
     FeedbackComponent,
-    // ProfileComponent,
+    ProfileComponent,
     OrderComponent,
-    DriverAuthComponent
+    DriverAuthComponent,
+    DriverMessagingComponent
   ],
   imports: [
     BrowserModule,
