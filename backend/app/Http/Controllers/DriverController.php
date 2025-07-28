@@ -146,10 +146,16 @@ class DriverController extends Controller
             // Remove sensitive information
             $driver->makeHidden(['password', 'remember_token']);
             
+            // Update profile picture URL if exists
+            if ($driver->profile_picture) {
+                $fileName = basename($driver->profile_picture);
+                $driver->profile_picture_url = url('api/files/profile-pictures/' . $fileName);
+            }
+            
             return response()->json([
                 'success' => true,
                 'data' => $driver
-            ]);
+            ], 200, [], JSON_UNESCAPED_SLASHES);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -189,7 +195,7 @@ class DriverController extends Controller
                 'success' => true,
                 'message' => 'Profile updated successfully',
                 'data' => $driver
-            ]);
+            ], 200, [], JSON_UNESCAPED_SLASHES);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -237,8 +243,8 @@ class DriverController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Profile picture uploaded successfully',
-                    'profile_picture_url' => asset('storage/' . $path)
-                ]);
+                    'profile_picture_url' => url('api/files/profile-pictures/' . $fileName)
+                ], 200, [], JSON_UNESCAPED_SLASHES);
             }
             
             return response()->json([
@@ -280,7 +286,7 @@ class DriverController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Profile picture removed successfully'
-            ]);
+            ], 200, [], JSON_UNESCAPED_SLASHES);
             
         } catch (\Exception $e) {
             return response()->json([

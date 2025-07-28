@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DriverService } from '../../Services/driver.service';
+import { ProfileStateService } from '../../services/profile-state.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -60,6 +61,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private driverService: DriverService,
+    private profileStateService: ProfileStateService,
     private router: Router
   ) {}
 
@@ -124,10 +126,18 @@ export class ProfileComponent implements OnInit {
             account_number: profileData.account_number || '',
             bank_name: profileData.bank_name || '',
             rating: profileData.rating || null,
-            profile_picture: profileData.profile_picture || null
+            profile_picture: profileData.profile_picture || null,
+            profile_picture_url: profileData.profile_picture_url || null
           };
           
           console.log('Driver profile loaded:', this.driverProfile); // Debug log
+          
+          // Update shared state for navbar
+          this.profileStateService.updateProfileData({
+            name: this.driverProfile.name,
+            profile_picture_url: this.driverProfile.profile_picture_url
+          });
+          
           this.isLoading = false;
         },
         error: (error) => {
@@ -347,10 +357,23 @@ export class ProfileComponent implements OnInit {
     
     this.driverService.uploadProfilePicture(this.selectedFile).subscribe({
       next: (response) => {
-        this.driverProfile.profile_picture = response.profile_picture_url;
-        this.isUploading = false;
-        alert('Profile picture uploaded successfully!');
+        console.log('Upload response:', response); // Debug log
+        
+        // Store both the URL and clear the temporary uploaded picture
+        this.driverProfile.profile_picture_url = response.profile_picture_url;
+        
+        // Update shared state for navbar
+        this.profileStateService.updateProfileData({
+          name: this.driverProfile.name,
+          profile_picture_url: this.driverProfile.profile_picture_url
+        });
+        
+        // Clear temporary upload state
+        this.uploadedPicture = null;
         this.selectedFile = null;
+        this.isUploading = false;
+        
+        alert('Profile picture uploaded successfully!');
       },
       error: (error) => {
         console.error('Error uploading picture:', error);
@@ -365,8 +388,16 @@ export class ProfileComponent implements OnInit {
       this.driverService.removeProfilePicture().subscribe({
         next: () => {
           this.driverProfile.profile_picture = null;
+          this.driverProfile.profile_picture_url = null;
           this.uploadedPicture = null;
           this.selectedFile = null;
+          
+          // Update shared state for navbar
+          this.profileStateService.updateProfileData({
+            name: this.driverProfile.name,
+            profile_picture_url: null
+          });
+          
           alert('Profile picture removed successfully!');
         },
         error: (error) => {
@@ -397,6 +428,11 @@ export class ProfileComponent implements OnInit {
     if (this.uploadedPicture) {
       return this.uploadedPicture as string;
     }
+    // Check for profile_picture_url first (from API response)
+    if (this.driverProfile.profile_picture_url) {
+      return this.driverProfile.profile_picture_url;
+    }
+    // Fallback to profile_picture field
     if (this.driverProfile.profile_picture) {
       return this.driverProfile.profile_picture;
     }

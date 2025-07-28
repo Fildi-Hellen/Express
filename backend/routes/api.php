@@ -20,9 +20,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorLoginController;
 use App\Http\Controllers\SecureDriverTripController;
+use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -160,6 +162,24 @@ Route::get('/blogs/{id}/comments', [BlogController::class, 'viewComments']);
         Route::get('/driver/earnings', [SecureDriverTripController::class, 'getMyEarnings']);
     });
 
+// Debug route for storage issues
+Route::get('/debug/storage', function() {
+    $publicPath = public_path('storage/profile_pictures');
+    $storagePath = storage_path('app/public/profile_pictures');
+    
+    return response()->json([
+        'public_path_exists' => is_dir($publicPath),
+        'storage_path_exists' => is_dir($storagePath),
+        'public_files' => is_dir($publicPath) ? array_diff(scandir($publicPath), ['.', '..']) : [],
+        'storage_files' => is_dir($storagePath) ? array_diff(scandir($storagePath), ['.', '..']) : [],
+        'symlink_exists' => is_link(public_path('storage')),
+        'symlink_target' => is_link(public_path('storage')) ? readlink(public_path('storage')) : null,
+        'app_url' => config('app.url'),
+        'asset_url' => asset('storage/profile_pictures/driver_7_1753608290.png'),
+        'url_helper' => url('storage/profile_pictures/driver_7_1753608290.png'),
+    ]);
+});
+
     Route::middleware('auth:sanctum')->get('/user/notifications', function () {
     return response()->json(Auth::user()->notifications);
 });
@@ -238,6 +258,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/driver/accept-ride', [RideController::class, 'driverAcceptRide']);
 Route::post('/driver/cancel-ride/{id}', [RideController::class, 'driverCancelRide']);
+
+// File serving route for profile pictures
+Route::get('/files/profile-pictures/{filename}', [FileController::class, 'serveProfilePicture']);
+
+// Test route to verify routing works
+Route::get('/test-route', function() {
+    return response()->json(['message' => 'Route is working!']);
+});
 
 // Testing routes for messaging (remove in production)
 Route::middleware('auth:sanctum')->group(function () {

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Driver Profile Picture API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; background: #f9f9f9; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; cursor: pointer; }
+        pre { background: #eee; padding: 10px; overflow: auto; max-height: 300px; }
+        img { max-width: 200px; border: 1px solid #ccc; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Test Driver Profile Picture API</h1>
+    
+    <div class="test-section">
+        <h2>Test Profile API Response</h2>
+        <p>This will test if the API returns profile_picture_url correctly:</p>
+        <button onclick="testProfileAPI()">Test Driver Profile API</button>
+        <div id="profile-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Expected Frontend Behavior</h2>
+        <p>After the frontend updates:</p>
+        <ul>
+            <li>✅ Frontend should look for <code>profile_picture_url</code> field</li>
+            <li>✅ Image should display when URL is available</li>
+            <li>✅ Placeholder should show when no image</li>
+            <li>✅ Remove button should appear when image exists</li>
+        </ul>
+    </div>
+
+    <script>
+        async function testProfileAPI() {
+            const result = document.getElementById('profile-result');
+            result.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/drivers/7/profile');
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const driver = data.data;
+                    const hasProfilePicture = !!(driver.profile_picture_url || driver.profile_picture);
+                    
+                    result.innerHTML = `
+                        <div class="success">✅ API Response Success!</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <div>
+                            <strong>Profile Picture Status:</strong> ${hasProfilePicture ? 'Available' : 'Not Available'}<br>
+                            <strong>profile_picture_url:</strong> ${driver.profile_picture_url || 'null'}<br>
+                            <strong>profile_picture:</strong> ${driver.profile_picture || 'null'}
+                        </div>
+                        ${driver.profile_picture_url ? `
+                            <div>
+                                <strong>Image Test:</strong><br>
+                                <img src="${driver.profile_picture_url}" alt="Profile Picture" 
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div style="display:none; color:red;">❌ Image failed to load</div>
+                            </div>
+                        ` : ''}
+                    `;
+                } else {
+                    result.innerHTML = `<div class="error">❌ API Error ${response.status}</div><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

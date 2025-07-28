@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Navbar Profile Picture Test Preview</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar-preview { background: #007cba; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; color: white; }
+        .navbar-left { display: flex; align-items: center; }
+        .navbar-right { display: flex; align-items: center; gap: 15px; }
+        .profile-picture-container { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #007cba; color: white; font-weight: 600; font-size: 14px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .profile-picture { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .profile-initials { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: linear-gradient(135deg, #007cba, #0056b3); color: white; font-weight: 600; font-size: 14px; }
+        .notification { position: relative; color: white; text-decoration: none; }
+        .notification .num { position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; }
+        .test-cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .test-case { padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
+        h3 { margin-top: 0; color: #333; }
+        .success { color: #28a745; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <h1>Navbar Profile Picture Feature Preview</h1>
+    
+    <div class="test-section">
+        <h2>Navbar Preview - Different States</h2>
+        
+        <div class="test-cases">
+            <div class="test-case">
+                <h3>With Profile Picture</h3>
+                <div class="navbar-preview">
+                    <div class="navbar-left">
+                        <span>ExpressUD Driver</span>
+                    </div>
+                    <div class="navbar-right">
+                        <a href="#" class="notification">
+                            🔔
+                            <span class="num">8</span>
+                        </a>
+                        <div class="profile-picture-container">
+                            <img src="https://via.placeholder.com/100/007cba/ffffff?text=JD" alt="Profile Picture" class="profile-picture">
+                        </div>
+                    </div>
+                </div>
+                <p class="success">✅ Shows actual profile picture when available</p>
+            </div>
+            
+            <div class="test-case">
+                <h3>With Initials (No Picture)</h3>
+                <div class="navbar-preview">
+                    <div class="navbar-left">
+                        <span>ExpressUD Driver</span>
+                    </div>
+                    <div class="navbar-right">
+                        <a href="#" class="notification">
+                            🔔
+                            <span class="num">8</span>
+                        </a>
+                        <div class="profile-picture-container">
+                            <div class="profile-initials">JD</div>
+                        </div>
+                    </div>
+                </div>
+                <p class="info">ℹ️ Shows initials when no profile picture uploaded</p>
+            </div>
+            
+            <div class="test-case">
+                <h3>Not Logged In</h3>
+                <div class="navbar-preview">
+                    <div class="navbar-left">
+                        <span>ExpressUD Driver</span>
+                    </div>
+                    <div class="navbar-right">
+                        <a href="#" class="notification">
+                            🔔
+                            <span class="num">8</span>
+                        </a>
+                        <div class="profile-picture-container">
+                            <div class="profile-initials">DR</div>
+                        </div>
+                    </div>
+                </div>
+                <p class="info">ℹ️ Shows default "DR" initials when not logged in</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Implementation Features</h2>
+        
+        <div class="test-cases">
+            <div class="test-case">
+                <h3>✅ Real-time Updates</h3>
+                <ul>
+                    <li>Navbar updates immediately when profile picture is uploaded</li>
+                    <li>Shows initials when profile picture is removed</li>
+                    <li>Syncs across all page navigations</li>
+                </ul>
+            </div>
+            
+            <div class="test-case">
+                <h3>✅ Smart Fallbacks</h3>
+                <ul>
+                    <li>Shows profile picture when available</li>
+                    <li>Falls back to user initials (first and last name)</li>
+                    <li>Default "DR" when no name available</li>
+                </ul>
+            </div>
+            
+            <div class="test-case">
+                <h3>✅ Responsive Design</h3>
+                <ul>
+                    <li>36px circular container</li>
+                    <li>Hover effects for better UX</li>
+                    <li>Proper image scaling and cropping</li>
+                </ul>
+            </div>
+            
+            <div class="test-case">
+                <h3>✅ State Management</h3>
+                <ul>
+                    <li>Shared service for profile state</li>
+                    <li>Updates from profile component sync to navbar</li>
+                    <li>Persistent across page refreshes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Testing Checklist</h2>
+        <ul>
+            <li>☐ Login and verify initials appear in navbar</li>
+            <li>☐ Upload profile picture and see it appear in navbar immediately</li>
+            <li>☐ Navigate to different pages and verify picture persists</li>
+            <li>☐ Remove profile picture and verify initials return</li>
+            <li>☐ Refresh page and verify profile picture persists</li>
+            <li>☐ Test hover effects on navbar profile picture</li>
+        </ul>
+    </div>
+</body>
+</html>

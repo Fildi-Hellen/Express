@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Storage Test - Updated</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { color: green; }
+        .error { color: red; }
+        img { max-width: 200px; border: 1px solid #ccc; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Laravel Storage Test - Updated Solution</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Debug Storage Info</h2>
+        <p>Check storage configuration: <a href="http://localhost:8000/api/debug/storage" target="_blank">http://localhost:8000/api/debug/storage</a></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: File Serving via PHP Controller</h2>
+        <p>New approach - serves files through Laravel controller:</p>
+        <p><a href="http://localhost:8000/api/files/profile-pictures/driver_7_1753608290.png" target="_blank">http://localhost:8000/api/files/profile-pictures/driver_7_1753608290.png</a></p>
+        <img src="http://localhost:8000/api/files/profile-pictures/driver_7_1753608290.png" alt="Profile Picture (New Method)" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display:none; color:red;">❌ Image failed to load via new method</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Traditional Storage URL (for comparison)</h2>
+        <p>Traditional symlink approach:</p>
+        <p><a href="http://localhost:8000/storage/profile_pictures/driver_7_1753608290.png" target="_blank">http://localhost:8000/storage/profile_pictures/driver_7_1753608290.png</a></p>
+        <img src="http://localhost:8000/storage/profile_pictures/driver_7_1753608290.png" alt="Profile Picture (Traditional)" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display:none; color:red;">❌ Image failed to load via traditional method</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Instructions</h2>
+        <ol>
+            <li>Run the batch script: <code>complete-restart.bat</code></li>
+            <li>Wait for the server to start</li>
+            <li>Test the debug endpoint first</li>
+            <li>Then test the image URLs above</li>
+            <li>Upload a new profile picture and verify the new URL format works</li>
+        </ol>
+    </div>
+    
+    <script>
+        // Auto-refresh every 30 seconds to test after server restart
+        setTimeout(() => {
+            console.log('Auto-refreshing to test images...');
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

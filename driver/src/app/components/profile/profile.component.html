@@ -232,7 +232,7 @@
           </button>
           
           <button 
-            *ngIf="driverProfile.profile_picture"
+            *ngIf="driverProfile.profile_picture || driverProfile.profile_picture_url"
             class="btn btn-outline-danger"
             (click)="removeProfilePicture()"
             [disabled]="isUploading">

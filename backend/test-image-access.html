@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Image Access</title>
+</head>
+<body>
+    <h1>Testing Image Access</h1>
+    <h2>Using localhost:8000</h2>
+    <img src="http://localhost:8000/storage/profile_pictures/driver_7_1753607449.png" alt="Driver Profile Picture" style="max-width: 200px;">
+    
+    <h2>Direct file path test</h2>
+    <p>File exists at: C:\Users\fab\Documents\Express\backend\storage\app\public\profile_pictures\driver_7_1753607449.png</p>
+    <p>Symlink exists at: C:\Users\fab\Documents\Express\backend\public\storage\profile_pictures\driver_7_1753607449.png</p>
+    
+    <h2>Test different URLs</h2>
+    <ul>
+        <li><a href="http://localhost:8000/storage/profile_pictures/driver_7_1753607449.png" target="_blank">http://localhost:8000/storage/profile_pictures/driver_7_1753607449.png</a></li>
+        <li><a href="http://localhost/storage/profile_pictures/driver_7_1753607449.png" target="_blank">http://localhost/storage/profile_pictures/driver_7_1753607449.png</a></li>
+    </ul>
+</body>
+</html>
