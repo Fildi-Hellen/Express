@@ -22,6 +22,12 @@ export interface RouteInfo {
   polyline: string;
 }
 
+export interface LocationSuggestion {
+  name: string;
+  address: string;
+  category?: string;
+}
+
 @Component({
   selector: 'app-bookings',
   templateUrl: './bookings.component.html',
@@ -80,6 +86,7 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   showMapView = false;
   mapMode: 'pickup' | 'destination' | null = null;
   isLoadingMap = false;
+  isMobile = false;
   
   // Map markers
   private pickupMarker: google.maps.Marker | null = null;
@@ -100,7 +107,7 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedLocationFromNav: string = '';
   
   // Location suggestions
-  locationSuggestions: any[] = [];
+  locationSuggestions: LocationSuggestion[] = [];
   
   // Payment methods
   paymentMethods = ['Card', 'Cash', 'Mobile Money'];
@@ -144,9 +151,11 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.detectMobileDevice();
     this.setupFormWatchers();
     // Log Google Maps API availability on component init
     console.log('Component initialized. Google Maps available:', this.isGoogleMapsApiAvailable());
+    console.log('Mobile device detected:', this.isMobile);
   }
 
   ngAfterViewInit(): void {
@@ -489,7 +498,7 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // Location picker methods - simplified since using app-navigation
+  // Location picker methods - enhanced for mobile
   openLocationPicker(inputType: 'pickup' | 'destination'): void {
     this.activeLocationInput = inputType;
     this.showLocationPicker = true;
@@ -525,6 +534,29 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   selectRideType(value: string): void {
     this.rideForm.get('rideType')?.setValue(value);
     this.calculateEstimatedFare();
+  }
+
+  // Mobile detection method
+  private detectMobileDevice(): void {
+    this.isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Listen for window resize to update mobile status
+    window.addEventListener('resize', () => {
+      const wasMobile = this.isMobile;
+      this.isMobile = window.innerWidth <= 768;
+      
+      // If switching between mobile and desktop, adapt the layout
+      if (wasMobile !== this.isMobile) {
+        console.log(`Device type changed: ${this.isMobile ? 'Mobile' : 'Desktop'}`);
+        
+        // If map is showing and we switched to mobile, we might want to adjust its size
+        if (this.showMapView && this.mapInitialized && this.map) {
+          setTimeout(() => {
+            google.maps.event.trigger(this.map, 'resize');
+          }, 300);
+        }
+      }
+    });
   }
 
   // Map methods
@@ -809,14 +841,30 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
   onLocationInputChange(type: 'pickup' | 'destination', event: any): void {
     const query = event.target.value;
     if (query.length > 2) {
-      this.locationSuggestions = [
-        { name: 'City Center', address: 'Downtown, Kigali, Rwanda' },
-        { name: 'Airport', address: 'Kigali International Airport, Bugesera' },
-        { name: 'University', address: 'University of Rwanda, Kigali' }
-      ].filter(suggestion => 
-        suggestion.name.toLowerCase().includes(query.toLowerCase()) ||
-        suggestion.address.toLowerCase().includes(query.toLowerCase())
-      );
+      if (this.isMobile) {
+        // Enhanced mobile suggestions with local Kigali places
+        this.locationSuggestions = [
+          { name: 'City Center', address: 'Downtown, Kigali, Rwanda', category: 'Business' },
+          { name: 'Airport', address: 'Kigali International Airport, Bugesera', category: 'Transport' },
+          { name: 'University', address: 'University of Rwanda, Kigali', category: 'Education' },
+          { name: 'Nyamirambo', address: 'Nyamirambo, Nyarugenge, Kigali', category: 'Residential' },
+          { name: 'Kimihurura', address: 'Kimihurura, Gasabo, Kigali', category: 'Upscale' },
+          { name: 'Remera', address: 'Remera, Gasabo, Kigali', category: 'Commercial' }
+        ].filter(suggestion => 
+          suggestion.name.toLowerCase().includes(query.toLowerCase()) ||
+          suggestion.address.toLowerCase().includes(query.toLowerCase())
+        );
+      } else {
+        // Desktop suggestions (simpler for now)
+        this.locationSuggestions = [
+          { name: 'City Center', address: 'Downtown, Kigali, Rwanda' },
+          { name: 'Airport', address: 'Kigali International Airport, Bugesera' },
+          { name: 'University', address: 'University of Rwanda, Kigali' }
+        ].filter(suggestion => 
+          suggestion.name.toLowerCase().includes(query.toLowerCase()) ||
+          suggestion.address.toLowerCase().includes(query.toLowerCase())
+        );
+      }
     } else {
       this.locationSuggestions = [];
     }
@@ -942,6 +990,40 @@ export class BookingsComponent implements OnInit, OnDestroy, AfterViewInit {
     const newValue = Math.max(1, Math.min(6, current + delta));
     this.rideForm.get('passengers')?.setValue(newValue);
     this.calculateEstimatedFare();
+  }
+
+  // Mobile-specific method for searching nearby places
+  searchNearbyPlaces(type: 'pickup' | 'destination'): void {
+    if (!this.isMobile) return;
+    
+    // Enhanced location suggestions for mobile
+    this.activeLocationInput = type;
+    this.locationSuggestions = [
+      { name: 'Kigali City Center', address: 'Downtown, Kigali, Rwanda', category: 'Business District' },
+      { name: 'Kigali International Airport', address: 'Bugesera District, Rwanda', category: 'Airport' },
+      { name: 'University of Rwanda', address: 'Gikondo, Kicukiro, Kigali', category: 'Education' },
+      { name: 'Kigali Convention Centre', address: 'Kimihurura, Gasabo, Kigali', category: 'Event Venue' },
+      { name: 'Nyamirambo', address: 'Nyamirambo, Nyarugenge, Kigali', category: 'Residential' },
+      { name: 'Kimisagara', address: 'Kimisagara, Nyarugenge, Kigali', category: 'Commercial' },
+      { name: 'Remera', address: 'Remera, Gasabo, Kigali', category: 'Mixed Use' },
+      { name: 'Gikondo', address: 'Gikondo, Kicukiro, Kigali', category: 'Industrial' }
+    ];
+    
+    // Show popular destinations based on time of day
+    const currentHour = new Date().getHours();
+    if (currentHour >= 7 && currentHour <= 9) {
+      // Morning rush hour - add business locations
+      this.locationSuggestions.unshift(
+        { name: 'CBD - Business District', address: 'Central Business District, Kigali', category: 'Popular Now' }
+      );
+    } else if (currentHour >= 17 && currentHour <= 19) {
+      // Evening rush hour - add residential areas
+      this.locationSuggestions.unshift(
+        { name: 'Popular Residential Areas', address: 'Kacyiru, Kimihurura, Kigali', category: 'Popular Now' }
+      );
+    }
+    
+    console.log(`Mobile location search activated for ${type}`);
   }
 
   onPaymentSuccess(event: any): void {

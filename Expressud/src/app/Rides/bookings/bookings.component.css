@@ -349,6 +349,17 @@
   margin-top: 0.25rem;
 }
 
+.suggestion-category {
+  font-size: 0.75rem;
+  color: #2c1958;
+  background: rgba(44, 25, 88, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  display: inline-block;
+  font-weight: 600;
+}
+
 /* Route Information */
 .route-info {
   background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
@@ -798,23 +809,9 @@
   cursor: not-allowed;
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .modal-content-with-map {
-    flex-direction: column;
-  }
-  
-  .map-section {
-    border-left: none;
-    border-top: 2px solid #e9ecef;
-    max-height: 400px;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-}
+/* Enhanced Mobile-First Responsive Design */
 
+/* Mobile devices (up to 768px) - Show map with mobile optimization */
 @media (max-width: 768px) {
   .booking-modal-expanded {
     width: 98vw;
@@ -823,69 +820,595 @@
   
   .modal-header {
     padding: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  
+  .header-content {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
   }
   
   .form-section-container {
     padding: 1rem;
+    max-height: none; /* Remove height restriction on mobile */
+  }
+  
+  /* Show map section on mobile but with mobile-optimized layout */
+  .map-section {
+    border-left: none;
+    border-top: 2px solid #e9ecef;
+    max-height: 300px; /* Limit height on mobile */
+    min-height: 250px;
+  }
+  
+  /* Show map toggle button on mobile */
+  .map-toggle-btn {
+    display: flex !important;
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+  
+  /* Ensure form takes full width */
+  .modal-content-with-map {
+    flex-direction: column;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
   
   .ride-type-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .ride-type-option {
+    padding: 0.75rem;
   }
   
   .route-summary {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
   
   .route-item {
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
   }
   
   .modal-footer {
     padding: 1rem;
     flex-direction: column;
+    gap: 0.75rem;
   }
   
   .cancel-btn, .book-btn {
     width: 100%;
     justify-content: center;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+  
+  /* Enhanced input styling for mobile */
+  .input-group {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  
+  .location-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 0.75rem 0;
+  }
+  
+  .location-pin-btn {
+    padding: 0.75rem;
+    min-width: 44px; /* Touch target size */
+    min-height: 44px;
+  }
+  
+  /* Enhanced passenger and fare sections */
+  .passenger-selector {
+    padding: 1rem;
+    justify-content: space-between;
+  }
+  
+  .count-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+  
+  .passenger-count {
+    font-size: 1.4rem;
+    min-width: 3rem;
+  }
+  
+  .fare-display {
+    padding: 1rem;
+    justify-content: space-between;
+  }
+  
+  .fare-input {
+    font-size: 1.2rem;
+    text-align: center;
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+  }
+  
+  .currency {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  
+  /* Enhanced form sections for mobile */
+  .form-section {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .section-label {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  /* Location suggestions mobile optimization */
+  .location-suggestions {
+    max-height: 250px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  .suggestion-item {
+    padding: 1.25rem;
+    min-height: 60px;
+  }
+  
+  .suggestion-name {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .suggestion-address {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* Mobile-specific map optimizations */
+  .map-header {
+    padding: 1rem;
+  }
+  
+  .map-header h4 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .map-controls {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .map-control-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .map-container {
+    border-radius: 8px;
+  }
+  
+  #bookingMap {
+    border-radius: 8px;
+  }
+  
+  .map-instructions {
+    padding: 0.75rem 1rem;
+  }
+  
+  .instruction-card {
+    padding: 0.75rem;
+    font-size: 0.85rem;
   }
 }
 
+/* Small mobile devices (up to 480px) */
 @media (max-width: 480px) {
-  .header-content {
-    gap: 0.5rem;
+  .booking-modal-expanded {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    margin: 0;
+  }
+  
+  .modal-header {
+    padding: 1rem 0.75rem;
+    border-radius: 0;
   }
   
   .header-icon {
     font-size: 1.5rem;
-    padding: 0.25rem;
+    padding: 0.5rem;
   }
   
   .header-text h2 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   
   .header-text p {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+  }
+  
+  .form-section-container {
+    padding: 0.75rem;
+  }
+  
+  .form-section {
+    padding: 1rem;
+    border-radius: 10px;
   }
   
   .ride-type-grid {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    gap: 0.75rem;
+  }
+  
+  .ride-type-option {
+    padding: 1rem;
+    border-radius: 10px;
   }
   
   .location-inputs {
-    gap: 0.75rem;
+    gap: 1rem;
   }
   
   .swap-btn {
     position: static;
     align-self: center;
-    margin: 0.5rem 0;
+    margin: 0.75rem 0;
     transform: rotate(90deg);
+    width: 44px;
+    height: 44px;
+  }
+  
+  .input-group {
+    padding: 1rem 0.75rem;
+  }
+  
+  .location-pin-btn {
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+  
+  /* Compact map on small mobile */
+  .map-section {
+    max-height: 250px;
+    min-height: 200px;
+  }
+  
+  .map-header {
+    padding: 0.75rem;
+  }
+  
+  .map-header h4 {
+    font-size: 0.9rem;
+  }
+  
+  .map-control-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    min-width: 100px;
+  }
+  
+  .map-toggle-btn {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  /* Fullscreen modal footer */
+  .modal-footer {
+    padding: 1rem 0.75rem;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    position: sticky;
+    bottom: 0;
+  }
+  
+  .payment-section {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+}
+
+/* Tablet devices (769px to 1024px) - Show map but make it optional */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .modal-content-with-map {
+    flex-direction: column;
+  }
+  
+  .map-section {
+    border-left: none;
+    border-top: 2px solid #e9ecef;
+    max-height: 350px;
+    min-height: 300px;
+  }
+  
+  .map-toggle-btn {
+    display: flex; /* Show map toggle on tablets */
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  
+  .booking-modal-expanded {
+    width: 95vw;
+    max-height: 90vh;
+  }
+}
+
+/* Desktop devices (1025px and up) - Full map functionality */
+@media (min-width: 1025px) {
+  .modal-content-with-map {
+    flex-direction: row;
+  }
+  
+  .map-section {
+    border-left: 2px solid #e9ecef;
+    border-top: none;
+    max-height: none;
+    flex: 1;
+  }
+  
+  .form-section-container {
+    flex: 1;
+    max-height: calc(90vh - 160px);
+  }
+  
+  .map-toggle-btn {
+    display: flex; /* Show map toggle on desktop */
+  }
+}
+
+/* Location picker modal mobile optimization */
+@media (max-width: 768px) {
+  .location-picker-modal {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .picker-header {
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .picker-map-container {
+    height: calc(100vh - 140px);
+  }
+  
+  .picker-footer {
+    padding: 1rem;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    border-top: 2px solid #e9ecef;
+  }
+  
+  .cancel-picker-btn,
+  .confirm-picker-btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+}
+
+/* Enhanced touch targets for mobile */
+@media (max-width: 768px) {
+  .close-btn,
+  .location-pin-btn,
+  .count-btn,
+  .swap-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  /* Improve text readability on mobile */
+  .section-label,
+  .input-label {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  /* Better spacing for mobile */
+  .route-info {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+  
+  .error-messages {
+    padding: 1.25rem;
+    margin-top: 1rem;
+    border-radius: 10px;
+  }
+  
+  .error-message {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Remove the previous hide map elements rule */
+@media (max-width: 768px) {
+  /* Keep payment section visible and well-spaced on mobile */
+  .payment-section {
+    border: 2px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+}
+
+/* Special styling for mobile category tags */
+@media (max-width: 768px) {
+  .suggestion-category {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    margin-top: 0.4rem;
+  }
+  
+  .suggestion-category[title*="Popular"] {
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    color: white;
+  }
+  
+  .suggestion-category[title*="Business"],
+  .suggestion-category[title*="Commercial"] {
+    background: linear-gradient(135deg, #2196f3, #1565c0);
+    color: white;
+  }
+  
+  .suggestion-category[title*="Transport"],
+  .suggestion-category[title*="Airport"] {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: white;
+  }
+}
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  /* Reduce animations for better performance on mobile */
+  .ride-type-option,
+  .input-group,
+  .suggestion-item {
+    transition: all 0.2s ease;
+  }
+  
+  /* Optimize scrolling */
+  .form-section-container {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .location-suggestions {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Better touch feedback */
+  .suggestion-item:active {
+    background-color: #e3f2fd;
+    transform: scale(0.98);
+  }
+  
+  .count-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .location-pin-btn:active {
+    transform: scale(0.95);
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .location-input,
+  .fare-input {
+    font-size: 16px !important; /* Prevent zoom on focus */
+  }
+  
+  /* Fix iOS safari viewport issues */
+  @media (max-width: 480px) {
+    .booking-modal-expanded {
+      height: 100vh;
+      height: -webkit-fill-available;
+    }
+  }
+}
+
+/* Mobile map interaction enhancements */
+@media (max-width: 768px) {
+  /* Make map more touch-friendly */
+  .map-section {
+    transition: max-height 0.3s ease-in-out;
+  }
+  
+  .map-section.hidden {
+    max-height: 0;
+    overflow: hidden;
+    border: none;
+  }
+  
+  /* Enhanced map toggle button for mobile */
+  .map-toggle-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .map-toggle-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+  }
+  
+  .map-toggle-btn:active::before {
+    left: 100%;
+  }
+  
+  /* Mobile map controls optimization */
+  .map-control-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Mobile map container optimization */
+  #bookingMap {
+    touch-action: pan-x pan-y zoom-in zoom-out;
+  }
+  
+  /* Map loading overlay mobile optimization */
+  .map-loading {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+  }
+  
+  /* Map instructions for mobile */
+  .instruction-card {
+    animation: fadeInUp 0.5s ease-out;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
