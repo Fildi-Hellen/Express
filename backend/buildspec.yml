@@ -3,90 +3,35 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      php: 8.3
+      php: 8.1
     commands:
-      - echo "Installing system dependencies..."
-      - sudo dnf update -y
-      - sudo yum install -y git unzip jq nmap-ncat
+      - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - mv composer.phar /usr/local/bin/composer
-      - echo "Dependencies installed successfully."
-
+      - echo "Composer installed"
+      
   pre_build:
     commands:
-      - echo "Fetching database credentials from AWS Secrets Manager..."
-      - set +x  # Disable logging of sensitive information
-      - SECRET=$(aws secretsmanager get-secret-value --secret-id rds!db-3b364449-a25b-4d2a-9c10-e5f1bf691a12 --query SecretString --output text)
-      - export DB_HOST=$(echo $SECRET | jq -r '.db_host')
-      - export DB_PORT=$(echo $SECRET | jq -r '.db_port')
-      - export DB_DATABASE=$(echo $SECRET | jq -r '.db_name')
-      - export DB_USERNAME=$(echo $SECRET | jq -r '.db_user')
-      - export DB_PASSWORD=$(echo $SECRET | jq -r '.db_password')
-      - set -x  # Re-enable logging
-      - echo "Database credentials loaded successfully."
-
-      - echo "Validating database environment variables..."
-      - |
-        if [ -z "$DB_HOST" ] || [ -z "$DB_PORT" ] || [ -z "$DB_DATABASE" ] || [ -z "$DB_USERNAME" ] || [ -z "$DB_PASSWORD" ]; then
-          echo "One or more database environment variables are missing:"
-          echo "DB_HOST=$DB_HOST, DB_PORT=$DB_PORT, DB_DATABASE=$DB_DATABASE, DB_USERNAME=$DB_USERNAME"
-          exit 1
-        fi
-      - echo "Database environment variables validated successfully."
-
-      - echo "Configuring Laravel environment..."
-      - cp "$CODEBUILD_SRC_DIR/backend/.env.example" "$CODEBUILD_SRC_DIR/backend/.env"
-      - sed -i "s|DB_HOST=.*|DB_HOST=$DB_HOST|" "$CODEBUILD_SRC_DIR/backend/.env"
-      - sed -i "s|DB_PORT=.*|DB_PORT=$DB_PORT|" "$CODEBUILD_SRC_DIR/backend/.env"
-      - sed -i "s|DB_DATABASE=.*|DB_DATABASE=$DB_DATABASE|" "$CODEBUILD_SRC_DIR/backend/.env"
-      - sed -i "s|DB_USERNAME=.*|DB_USERNAME=$DB_USERNAME|" "$CODEBUILD_SRC_DIR/backend/.env"
-      - sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|" "$CODEBUILD_SRC_DIR/backend/.env"
-      - echo "Laravel environment configured successfully."
+      - echo "Installing project dependencies..."
+      - composer install --no-interaction --prefer-dist --optimize-autoloader
+      - echo "Dependencies installed"
 
   build:
     commands:
-      - echo "Installing Laravel dependencies..."
-      - cd "$CODEBUILD_SRC_DIR/backend"
-      - composer install --no-dev --optimize-autoloader
-      - echo "Building optimized application..."
+      - echo "Running Laravel optimizations..."
+      - php artisan config:clear
       - php artisan config:cache
       - php artisan route:cache
       - php artisan view:cache
-      - echo "Application build completed."
+      # Optional: Uncomment to run DB migrations automatically
+      # - php artisan migrate --force
 
   post_build:
     commands:
-      - echo "Testing database connectivity..."
-      - |
-        # Retry logic for database connectivity
-        RETRY_COUNT=5
-        RETRY_DELAY=5
-        SUCCESS=0
-        for i in $(seq 1 $RETRY_COUNT); do
-          echo "Attempt $i: Checking connectivity to $DB_HOST:$DB_PORT..."
-          nc -zv "$DB_HOST" "$DB_PORT" && SUCCESS=1 && break || echo "Failed to connect. Retrying in $RETRY_DELAY seconds..."
-          sleep $RETRY_DELAY
-        done
-
-        # If all retries failed, exit with error
-        if [ $SUCCESS -eq 0 ]; then
-          echo "Database connection failed after $RETRY_COUNT attempts."
-          echo "DB_HOST=$DB_HOST, DB_PORT=$DB_PORT"
-          exit 1
-        fi
-
-      - echo "Database connection successful."
-
-      - echo "Running database migrations..."
-      - php artisan migrate --force
-      - echo "Post-build steps completed successfully."
+      - echo "Build complete on `date`"
+      - echo "Artifacts ready for deployment"
 
 artifacts:
   files:
     - '**/*'
-  base-directory: backend
-  discard-paths: no
-
-cache:
-  paths:
-    - '/root/.composer/cache'
+  base-directory: .
