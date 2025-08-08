@@ -1,8 +1,9 @@
 version: 0.0
 os: linux
 files:
-  - source: /
-    destination: /var/www/backend
+  - source: .
+    destination: /var/www/expressud
+
 hooks:
   AfterInstall:
     - location: scripts/install.sh
