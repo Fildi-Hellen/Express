@@ -5,10 +5,16 @@ files:
     destination: /var/www/expressud
 
 hooks:
+  BeforeInstall:
+    - location: scripts/setup_php.sh
+      timeout: 600
+      runas: ubuntu
+
   AfterInstall:
     - location: scripts/install.sh
-      timeout: 300
+      timeout: 600
       runas: ubuntu
+
   ApplicationStart:
     - location: scripts/start.sh
       timeout: 300
