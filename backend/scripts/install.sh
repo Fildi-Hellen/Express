@@ -56,7 +56,7 @@ DB_PASSWORD=$(getp /expressud/DB_PASSWORD)
   echo "DB_PORT=3306"
   echo "DB_DATABASE=expressud-db"
   echo "DB_USERNAME=$DB_USERNAME"
-  echo "DB_PASSWORD=$DB_PASSWORD"
+  echo "DB_PASSWORD=\"$DB_PASSWORD\"" 
 } | tee .env >/dev/null
 
 # Composer (install if missing)
