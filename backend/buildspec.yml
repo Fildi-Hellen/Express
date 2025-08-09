@@ -5,17 +5,26 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Server deploy build: no Laravel commands here."
+      - echo Installing dependencies...
+      - cd $CODEBUILD_SRC_DIR/backend
+      - composer install --no-dev --optimize-autoloader
+      - npm install
+  pre_build:
+    commands:
+      - echo Preparing Laravel...
+      - cp .env.example .env || true
+      - php artisan config:clear || true
   build:
     commands:
-      - echo "Packaging backend for CodeDeploy"
+      - echo Building the Laravel app...
+      - php artisan config:cache
+      - php artisan route:cache
+      - php artisan view:cache
   post_build:
     commands:
-      - chmod +x scripts/setup_system.sh
-      - chmod +x scripts/install.sh
-      - chmod +x scripts/start.sh
+      - echo Build completed on `date`
 
 artifacts:
   files:
     - '**/*'
-  base-directory: backend
+  base-directory: 'backend'
