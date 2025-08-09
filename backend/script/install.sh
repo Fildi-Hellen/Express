@@ -22,3 +22,4 @@ echo "DB_PASSWORD=$(aws ssm get-parameter --name /expressud/DB_PASSWORD --with-d
 php artisan config:clear
 php artisan config:cache
 php artisan migrate --force
+
