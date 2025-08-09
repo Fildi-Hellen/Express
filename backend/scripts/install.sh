@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+REGION="af-south-1"
+
 cd /var/www/expressud
 
 # Ensure we can write here (CodeDeploy copies as root)
@@ -20,19 +22,41 @@ if ! command -v aws >/dev/null 2>&1; then
   sudo apt-get install -y awscli -o Acquire::ForceIPv4=true
 fi
 
+# Helper to fetch a parameter value
+getp() {
+  aws ssm get-parameter \
+    --name "$1" \
+    --with-decryption \
+    --query 'Parameter.Value' \
+    --output text \
+    --region "$REGION"
+}
+
+APP_ENV=$(getp /expressud/APP_ENV)
+APP_DEBUG=$(getp /expressud/APP_DEBUG)
+APP_URL=$(getp /expressud/APP_URL)
+DB_HOST=$(getp /expressud/DB_HOST)
+DB_USERNAME=$(getp /expressud/DB_USERNAME)
+DB_PASSWORD=$(getp /expressud/DB_PASSWORD)
+
+# Validate critical ones
+[ -n "$DB_HOST" ]     || { echo "ERROR: /expressud/DB_HOST is empty"; exit 1; }
+[ -n "$DB_USERNAME" ] || { echo "ERROR: /expressud/DB_USERNAME is empty"; exit 1; }
+[ -n "$DB_PASSWORD" ] || { echo "ERROR: /expressud/DB_PASSWORD is empty"; exit 1; }
+
 # Build .env from SSM (use tee to avoid redirection perms)
 {
   echo "APP_NAME=Expressud"
-  echo "APP_ENV=$(aws ssm get-parameter --name /expressud/APP_ENV --with-decryption --query 'Parameter.Value' --output text)"
-  echo "APP_DEBUG=$(aws ssm get-parameter --name /expressud/APP_DEBUG --with-decryption --query 'Parameter.Value' --output text)"
-  echo "APP_URL=$(aws ssm get-parameter --name /expressud/APP_URL --with-decryption --query 'Parameter.Value' --output text)"
+  echo "APP_ENV=${APP_ENV:-production}"
+  echo "APP_DEBUG=${APP_DEBUG:-false}"
+  echo "APP_URL=${APP_URL:-https://api.expressud.com}"
   echo "LOG_CHANNEL=stack"
   echo "DB_CONNECTION=mysql"
-  echo "DB_HOST=$(aws ssm get-parameter --name /expressud/DB_HOST --with-decryption --query 'Parameter.Value' --output text)"
+  echo "DB_HOST=$DB_HOST"
   echo "DB_PORT=3306"
   echo "DB_DATABASE=expressud-db"
-  echo "DB_USERNAME=$(aws ssm get-parameter --name /expressud/DB_USERNAME --with-decryption --query 'Parameter.Value' --output text)"
-  echo "DB_PASSWORD=$(aws ssm get-parameter --name /expressud/DB_PASSWORD --with-decryption --query 'Parameter.Value' --output text)"
+  echo "DB_USERNAME=$DB_USERNAME"
+  echo "DB_PASSWORD=$DB_PASSWORD"
 } | tee .env >/dev/null
 
 # Composer (install if missing)
@@ -53,7 +77,7 @@ php artisan config:clear
 php artisan route:clear || true
 php artisan view:clear || true
 
-# Generate APP_KEY once if missing (or load from SSM if you prefer)
+# Generate APP_KEY once if missing (or store in SSM if you prefer)
 if ! grep -q "^APP_KEY=" .env || [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2-)" ]; then
   KEY=$(php artisan key:generate --show || true)
   if [ -n "${KEY:-}" ]; then
@@ -65,4 +89,5 @@ php artisan config:cache
 php artisan route:cache || true
 php artisan view:cache || true
 
+# Run migrations (will now use the RDS host)
 php artisan migrate --force
