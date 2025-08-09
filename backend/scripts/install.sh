@@ -3,7 +3,24 @@ set -euo pipefail
 
 cd /var/www/expressud
 
-# Build a new .env from SSM (use tee to avoid shell redirection permission pitfalls)
+# Ensure we can write here (CodeDeploy copies as root)
+sudo chown -R ubuntu:www-data /var/www/expressud
+sudo chmod -R 775 /var/www/expressud
+
+# Make sure storage/cache exist and are writable
+mkdir -p storage/logs bootstrap/cache
+chmod -R ug+rw storage bootstrap/cache
+
+# Remove any stale compiled caches that may point to /codebuild paths
+rm -f bootstrap/cache/*.php || true
+
+# Ensure AWS CLI exists (safety if not installed yet)
+if ! command -v aws >/dev/null 2>&1; then
+  sudo apt-get update -o Acquire::ForceIPv4=true
+  sudo apt-get install -y awscli -o Acquire::ForceIPv4=true
+fi
+
+# Build .env from SSM (use tee to avoid redirection perms)
 {
   echo "APP_NAME=Expressud"
   echo "APP_ENV=$(aws ssm get-parameter --name /expressud/APP_ENV --with-decryption --query 'Parameter.Value' --output text)"
@@ -18,11 +35,7 @@ cd /var/www/expressud
   echo "DB_PASSWORD=$(aws ssm get-parameter --name /expressud/DB_PASSWORD --with-decryption --query 'Parameter.Value' --output text)"
 } | tee .env >/dev/null
 
-# Ensure storage/cache perms
-mkdir -p storage bootstrap/cache
-chmod -R ug+rw storage bootstrap/cache
-
-# Install Composer if missing (safety)
+# Composer (install if missing)
 if ! command -v composer >/dev/null 2>&1; then
   cd ~
   php -r "copy('https://getcomposer.org/installer','composer-setup.php');"
@@ -32,15 +45,15 @@ if ! command -v composer >/dev/null 2>&1; then
   cd - >/dev/null
 fi
 
-# Install PHP dependencies on the instance (best for env‑specific builds)
+# Install dependencies on the instance (matches runtime PHP)
 composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Don’t use config cache from CodeBuild; refresh here so paths/env are correct
+# Clear any build-time cache and rebuild on EC2
 php artisan config:clear
 php artisan route:clear || true
 php artisan view:clear || true
 
-# If APP_KEY isn’t present, generate once (idempotent)
+# Generate APP_KEY once if missing (or load from SSM if you prefer)
 if ! grep -q "^APP_KEY=" .env || [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2-)" ]; then
   KEY=$(php artisan key:generate --show || true)
   if [ -n "${KEY:-}" ]; then
@@ -48,10 +61,8 @@ if ! grep -q "^APP_KEY=" .env || [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2-)" 
   fi
 fi
 
-# Now cache config with correct paths
 php artisan config:cache
 php artisan route:cache || true
 php artisan view:cache || true
 
-# Run migrations
 php artisan migrate --force
