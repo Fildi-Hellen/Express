@@ -278,6 +278,212 @@ Route::get('/test-route', function() {
     return response()->json(['message' => 'Route is working!']);
 });
 
+// Debug route for ride creation issues
+Route::middleware('auth:sanctum')->get('/debug/user-check', function() {
+    $userId = Auth::id();
+    $user = \App\Models\User::find($userId);
+    $userCount = \App\Models\User::where('id', $userId)->count();
+    $allUsers = \App\Models\User::select('id', 'name', 'email')->get();
+    
+    return response()->json([
+        'auth_user_id' => $userId,
+        'user_found' => $user ? true : false,
+        'user_count' => $userCount,
+        'user_data' => $user,
+        'all_users_sample' => $allUsers->take(5),
+        'total_users_count' => $allUsers->count()
+    ]);
+});
+
+// Debug route for database foreign key constraints
+Route::get('/debug/database-check', function() {
+    try {
+        // Check current database driver
+        $connection = \DB::connection();
+        $driver = $connection->getDriverName();
+        $database = $connection->getDatabaseName();
+        
+        // Get all users
+        $allUsers = \App\Models\User::select('id', 'name', 'email')->get();
+        
+        // Check if user ID 7 exists specifically
+        $user7 = \App\Models\User::find(7);
+        $user7Count = \App\Models\User::where('id', 7)->count();
+        
+        // Check recent rides
+        $recentRides = \App\Models\Ride::latest()->take(3)->get();
+        
+        // Try to execute a simple raw query to check foreign key constraints
+        $foreignKeyInfo = null;
+        if ($driver === 'sqlite') {
+            try {
+                $foreignKeyInfo = \DB::select('PRAGMA foreign_key_check');
+            } catch (\Exception $e) {
+                $foreignKeyInfo = 'Error checking foreign keys: ' . $e->getMessage();
+            }
+        }
+        
+        return response()->json([
+            'database_driver' => $driver,
+            'database_name' => $database,
+            'all_users_count' => $allUsers->count(),
+            'all_users' => $allUsers,
+            'user_7_exists' => $user7 ? true : false,
+            'user_7_count' => $user7Count,
+            'user_7_data' => $user7,
+            'recent_rides' => $recentRides,
+            'foreign_key_constraints' => $foreignKeyInfo
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Database check failed',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// DANGER: Clear all database data (remove in production)
+Route::get('/admin/clear-database/{confirm}', function($confirm) {
+    if ($confirm !== 'yes-clear-everything') {
+        return response()->json([
+            'error' => 'Invalid confirmation. Use: /admin/clear-database/yes-clear-everything'
+        ], 400);
+    }
+    
+    try {
+        // Get all table names
+        $tables = \DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+        
+        $clearedTables = [];
+        
+        // Disable foreign key constraints temporarily
+        \DB::statement('PRAGMA foreign_keys = OFF');
+        
+        foreach ($tables as $table) {
+            $tableName = $table->name;
+            
+            // Skip migrations table to keep schema
+            if ($tableName === 'migrations') {
+                continue;
+            }
+            
+            // Clear the table data but keep structure
+            \DB::table($tableName)->delete();
+            $clearedTables[] = $tableName;
+        }
+        
+        // Re-enable foreign key constraints
+        \DB::statement('PRAGMA foreign_keys = ON');
+        
+        // Reset auto-increment counters
+        \DB::statement("DELETE FROM sqlite_sequence");
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Database cleared successfully',
+            'cleared_tables' => $clearedTables,
+            'total_tables_cleared' => count($clearedTables)
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Failed to clear database',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// Fix missing tables by running migrations
+Route::get('/admin/fix-database', function() {
+    try {
+        // Check if personal_access_tokens table exists
+        $hasPersonalAccessTokens = \Schema::hasTable('personal_access_tokens');
+        $hasUsers = \Schema::hasTable('users');
+        $hasRides = \Schema::hasTable('rides');
+        $hasDrivers = \Schema::hasTable('drivers');
+        
+        $fixedTables = [];
+        
+        // Run migrations to ensure all tables exist
+        \Artisan::call('migrate', ['--force' => true]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Database structure fixed',
+            'tables_before_fix' => [
+                'personal_access_tokens' => $hasPersonalAccessTokens,
+                'users' => $hasUsers,
+                'rides' => $hasRides,
+                'drivers' => $hasDrivers
+            ],
+            'migration_output' => \Artisan::output()
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Failed to fix database',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// Complete database reset and fix
+Route::get('/admin/complete-fix-database/{confirm}', function($confirm) {
+    if ($confirm !== 'yes-reset-everything') {
+        return response()->json([
+            'error' => 'Invalid confirmation. Use: /admin/complete-fix-database/yes-reset-everything'
+        ], 400);
+    }
+    
+    try {
+        // Step 1: Drop all tables except migrations
+        $tables = \DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+        
+        \DB::statement('PRAGMA foreign_keys = OFF');
+        
+        $droppedTables = [];
+        foreach ($tables as $table) {
+            $tableName = $table->name;
+            if ($tableName !== 'migrations') {
+                \DB::statement("DROP TABLE IF EXISTS {$tableName}");
+                $droppedTables[] = $tableName;
+            }
+        }
+        
+        \DB::statement('PRAGMA foreign_keys = ON');
+        
+        // Step 2: Reset migrations table
+        \DB::table('migrations')->delete();
+        
+        // Step 3: Run fresh migrations
+        \Artisan::call('migrate', ['--force' => true]);
+        $migrationOutput = \Artisan::output();
+        
+        // Step 4: Verify tables were created
+        $requiredTables = ['users', 'personal_access_tokens', 'rides', 'drivers'];
+        $tableStatus = [];
+        
+        foreach ($requiredTables as $table) {
+            $tableStatus[$table] = \Schema::hasTable($table);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Database completely reset and fixed',
+            'dropped_tables' => $droppedTables,
+            'table_status' => $tableStatus,
+            'migration_output' => $migrationOutput
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Failed to complete database fix',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
 // Testing routes for messaging (remove in production)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/messaging/test-data', [MessagingController::class, 'createTestData']);

@@ -11,155 +11,319 @@
 .contact {
     position: relative;
     min-height: 100vh;
-    padding: 50px 100px;
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     background-image: url('/assets/img/bg.jpg');
     background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .contact .content {
     text-align: center;
-    max-width: 800px;
+    max-width: 900px;
+    margin-bottom: 30px;
+    padding: 0 15px;
 }
 
 .contact .content h2 {
-    font-size: 36px;
+    font-size: clamp(24px, 5vw, 36px);
     font-weight: 500;
     color: #fff;
+    margin-bottom: 15px;
 }
 
 .contact .content p {
     font-weight: 300;
     color: #fff;
+    font-size: clamp(14px, 2.5vw, 16px);
+    line-height: 1.6;
 }
 
 .container {
-    align-items: center;
-    justify-content: flex-start;
+    align-items: flex-start;
+    justify-content: center;
     display: flex;
     width: 100%;
+    max-width: 1200px;
     margin-top: 30px;
+    gap: 30px;
 }
 
 .container .contactInfo {
     width: 50%;
     display: flex;
     flex-direction: column;
+    min-width: 280px;
 }
 
 .container .contactInfo .box {
     position: relative;
-    padding: 20px 0;
+    padding: 15px 0;
     display: flex;
+    align-items: flex-start;
 }
+
 h3{
-  font-size: 20px;
+    font-size: clamp(16px, 2.5vw, 20px);
 }
 
 .container .contactInfo .box .icon {
-    min-width: 60px;
-    height: 60px;
+    min-width: 50px;
+    width: 50px;
+    height: 50px;
     background: #fff;
     justify-content: center;
     align-items: center;
     display: flex;
     border-radius: 50%;
-    font-size: 22px;
+    font-size: clamp(18px, 2.5vw, 22px);
+    flex-shrink: 0;
 }
 
 .container .contactInfo .box .text {
     display: flex;
-    margin-left: 20px;
-    font-size: 16px;
+    margin-left: 15px;
+    font-size: clamp(14px, 2vw, 16px);
     color: #fff;
     flex-direction: column;
     font-weight: 300;
+    word-break: break-word;
 }
 
 .container .contactInfo .box .text h3 {
     font-weight: 500;
     color: #00bcd4;
+    margin-bottom: 8px;
 }
 
 .container .contactInfo .box a, 
 .container .contactInfo .box address {
     color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.container .contactInfo .box a:hover {
+    color: #00bcd4;
 }
 
 .contactForm {
-    width: 40%;
-    padding: 80px;
+    width: 50%;
+    max-width: 500px;
+    min-width: 300px;
+    padding: clamp(30px, 5vw, 50px);
     background: #fff;
-    box-sizing: border-box; /* Ensure padding is included in the width calculation */
-    overflow: hidden; /* Prevent the form from expanding */
+    box-sizing: border-box;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .contactForm h2 {
-    font-size: 30px;
+    font-size: clamp(24px, 4vw, 30px);
     color: #333;
     font-weight: 500;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    text-align: center;
 }
 
 input {
     position: relative;
     width: 100%;
-    font-size: 16px;
-    margin-top: 10px;
-    padding-bottom: 10px;
+    font-size: clamp(14px, 2vw, 16px);
+    margin-top: 8px;
+    padding-bottom: 8px;
 }
 
 .contactForm input,
 textarea {
-    padding: 5px 0;
-    margin: 10px 0;
+    padding: 8px 0;
+    margin: 8px 0 15px 0;
     width: 100%;
-    font-size: 16px;
+    font-size: clamp(14px, 2vw, 16px);
     border: none;
     border-bottom: 2px solid #333;
     outline: none;
-    resize: none;
+    resize: vertical;
     box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.contactForm input:focus,
+.contactForm textarea:focus {
+    border-bottom-color: #00bcd4;
+}
+
+.contactForm textarea {
+    min-height: 80px;
+    max-height: 120px;
 }
 
 label{
-  font-size: 20px;
+    font-size: clamp(16px, 2.5vw, 18px);
+    font-weight: 500;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
 }
 
 .error-message {
-  color: red;
-  font-size: 0.9rem; /* Adjust font size to fit within the form */
-  margin-top: 4px;
-  height: 1.2rem; /* Fixed height to prevent layout shift */
+    color: red;
+    font-size: clamp(12px, 1.5vw, 14px);
+    margin-top: 4px;
+    min-height: 1.2rem;
+    display: block;
 }
 
 .success-message {
-  color: green;
-  font-size: 1rem;
-  margin-top: 20px;
+    color: green;
+    font-size: clamp(14px, 2vw, 16px);
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+#btn {
+    width: 100%;
+    padding: 12px 20px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #00bcd4, #0097a7);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: clamp(16px, 2.5vw, 18px);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#btn:hover {
+    background: linear-gradient(135deg, #0097a7, #00796b);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+}
+
+#btn:active {
+    transform: translateY(0);
 }
 
 
 
 
 
-@media (max-width: 991px) {
+/* Large tablets and small desktops */
+@media (max-width: 1024px) {
     .contact {
-        padding: 50px;
+        padding: 30px 20px;
+    }
+    
+    .container {
+        gap: 20px;
+    }
+    
+    .contactForm {
+        padding: clamp(25px, 4vw, 40px);
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    .contact {
+        padding: 20px 15px;
+        background-attachment: scroll;
     }
 
     .container {
         flex-direction: column;
+        gap: 30px;
+        align-items: center;
     }
 
     .container .contactInfo {
-        margin-bottom: 40px;
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 0;
     }
 
-    .container .contactInfo, .contactForm {
+    .contactForm {
         width: 100%;
+        max-width: 500px;
+        min-width: unset;
+    }
+    
+    .contact .content {
+        margin-bottom: 40px;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+    .contact {
+        padding: 15px 10px;
+        min-height: auto;
+    }
+    
+    .contact .content {
+        padding: 0 10px;
+        margin-bottom: 30px;
+    }
+    
+    .container {
+        gap: 25px;
+    }
+    
+    .container .contactInfo .box {
+        padding: 12px 0;
+    }
+    
+    .container .contactInfo .box .icon {
+        min-width: 45px;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .container .contactInfo .box .text {
+        margin-left: 12px;
+    }
+    
+    .contactForm {
+        padding: 20px 15px;
+    }
+    
+    .contactForm h2 {
+        margin-bottom: 20px;
+    }
+    
+    #btn {
+        padding: 14px 20px;
+        margin-top: 25px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 320px) {
+    .contact {
+        padding: 10px 5px;
+    }
+    
+    .contact .content {
+        padding: 0 5px;
+    }
+    
+    .contactForm {
+        padding: 15px 10px;
+    }
+    
+    .container .contactInfo .box .icon {
+        min-width: 40px;
+        width: 40px;
+        height: 40px;
     }
 }

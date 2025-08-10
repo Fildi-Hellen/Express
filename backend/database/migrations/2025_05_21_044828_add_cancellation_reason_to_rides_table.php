@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('rides', function (Blueprint $table) {
-
-        $table->text('cancellation_reason')->nullable()->after('status');
-
-        });
+        if (Schema::hasTable('rides')) {
+            Schema::table('rides', function (Blueprint $table) {
+                if (!Schema::hasColumn('rides', 'cancellation_reason')) {
+                    $table->text('cancellation_reason')->nullable()->after('status');
+                }
+            });
+        }
     }
 
     /**
@@ -23,9 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('rides', function (Blueprint $table) {
-        $table->dropColumn('cancellation_reason');
-
-        });
+        if (Schema::hasTable('rides') && Schema::hasColumn('rides', 'cancellation_reason')) {
+            Schema::table('rides', function (Blueprint $table) {
+                $table->dropColumn('cancellation_reason');
+            });
+        }
     }
 };

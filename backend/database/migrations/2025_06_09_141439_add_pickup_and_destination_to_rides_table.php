@@ -11,10 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('rides', function (Blueprint $table) {
-             $table->string('pickup_location')->after('driver_id');
-            $table->string('destination')->after('pickup_location');
-        });
+        if (Schema::hasTable('rides')) {
+            Schema::table('rides', function (Blueprint $table) {
+                if (!Schema::hasColumn('rides', 'pickup_location')) {
+                    $table->string('pickup_location')->after('driver_id');
+                }
+                if (!Schema::hasColumn('rides', 'destination')) {
+                    $table->string('destination')->after('pickup_location');
+                }
+            });
+        }
     }
 
     /**
@@ -22,8 +28,21 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('rides', function (Blueprint $table) {
-            $table->dropColumn(['pickup_location', 'destination']);
-        });
+        if (Schema::hasTable('rides')) {
+            Schema::table('rides', function (Blueprint $table) {
+                $columnsToCheck = ['pickup_location', 'destination'];
+                $columnsToDrop = [];
+                
+                foreach ($columnsToCheck as $column) {
+                    if (Schema::hasColumn('rides', $column)) {
+                        $columnsToDrop[] = $column;
+                    }
+                }
+                
+                if (!empty($columnsToDrop)) {
+                    $table->dropColumn($columnsToDrop);
+                }
+            });
+        }
     }
 };

@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('drivers', function (Blueprint $table) {
-            $table->string('profile_picture')->nullable()->after('payout_method');
-        });
+        // Check if drivers table exists before trying to modify it
+        if (Schema::hasTable('drivers')) {
+            Schema::table('drivers', function (Blueprint $table) {
+                if (!Schema::hasColumn('drivers', 'profile_picture')) {
+                    $table->string('profile_picture')->nullable()->after('payout_method');
+                }
+            });
+        }
     }
 
     /**
@@ -21,8 +26,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('drivers', function (Blueprint $table) {
-            $table->dropColumn('profile_picture');
-        });
+        if (Schema::hasTable('drivers') && Schema::hasColumn('drivers', 'profile_picture')) {
+            Schema::table('drivers', function (Blueprint $table) {
+                $table->dropColumn('profile_picture');
+            });
+        }
     }
 };

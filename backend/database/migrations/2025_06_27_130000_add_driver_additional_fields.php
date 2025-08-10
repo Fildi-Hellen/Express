@@ -11,11 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('drivers', function (Blueprint $table) {
-            $table->string('vehicle_model')->nullable()->after('vehicle_number');
-            $table->string('license_plate')->nullable()->after('vehicle_model');
-            $table->decimal('rating', 3, 2)->default(5.0)->after('license_plate');
-        });
+        if (Schema::hasTable('drivers')) {
+            Schema::table('drivers', function (Blueprint $table) {
+                if (!Schema::hasColumn('drivers', 'vehicle_model')) {
+                    $table->string('vehicle_model')->nullable()->after('vehicle_number');
+                }
+                if (!Schema::hasColumn('drivers', 'license_plate')) {
+                    $table->string('license_plate')->nullable()->after('vehicle_model');
+                }
+                if (!Schema::hasColumn('drivers', 'rating')) {
+                    $table->decimal('rating', 3, 2)->default(5.0)->after('license_plate');
+                }
+            });
+        }
     }
 
     /**
@@ -23,8 +31,21 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('drivers', function (Blueprint $table) {
-            $table->dropColumn(['vehicle_model', 'license_plate', 'rating']);
-        });
+        if (Schema::hasTable('drivers')) {
+            Schema::table('drivers', function (Blueprint $table) {
+                $columnsToCheck = ['vehicle_model', 'license_plate', 'rating'];
+                $columnsToDrop = [];
+                
+                foreach ($columnsToCheck as $column) {
+                    if (Schema::hasColumn('drivers', $column)) {
+                        $columnsToDrop[] = $column;
+                    }
+                }
+                
+                if (!empty($columnsToDrop)) {
+                    $table->dropColumn($columnsToDrop);
+                }
+            });
+        }
     }
 };

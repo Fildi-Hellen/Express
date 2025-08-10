@@ -31,16 +31,82 @@ class RideController extends Controller
         'passengers'      => 'required|integer|min:1|max:5',
     ]);
 
-    $ride = Ride::create([
-        'user_id'   => Auth::id(),
-        'ride_type' => $validated['ride_type'],
-        'fare'      => $validated['fare'],
-        'pickup_location' => $validated['pickup_location'],  
-        'destination'     => $validated['destination'],  
-        'currency'  => $validated['currency'],
-        'passengers'=> $validated['passengers'],
-        'status'    => 'pending',
-    ]);
+    // Get the authenticated user ID and validate it exists
+    $userId = Auth::id();
+    
+    // Check if user exists in database
+    if (!$userId) {
+        return response()->json([
+            'error' => 'User not authenticated'
+        ], 401);
+    }
+    
+    // Verify user exists in database
+    $user = \App\Models\User::find($userId);
+    if (!$user) {
+        return response()->json([
+            'error' => 'User not found in database. User ID: ' . $userId
+        ], 404);
+    }
+
+    // Debug: Check if user really exists
+    $userCount = \App\Models\User::where('id', $userId)->count();
+    
+    // Check if there are any drivers in the database (for foreign key constraint)
+    $driversCount = \App\Models\Driver::count();
+    
+    // Try a direct database insert to bypass Eloquent and see if that works
+    try {
+        // First, let's try with a direct database insert to bypass potential Eloquent issues
+        $rideId = \DB::table('rides')->insertGetId([
+            'user_id' => $userId,
+            'ride_type' => $validated['ride_type'],
+            'fare' => $validated['fare'],
+            'pickup_location' => $validated['pickup_location'],
+            'destination' => $validated['destination'],
+            'currency' => $validated['currency'],
+            'passengers' => $validated['passengers'],
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
+        // If that works, fetch the created ride
+        $ride = Ride::find($rideId);
+        
+    } catch (\Exception $e) {
+        // If direct insert fails, try with Eloquent without driver_id
+        try {
+            $rideData = [
+                'user_id' => $userId,
+                'ride_type' => $validated['ride_type'],
+                'fare' => (float) $validated['fare'],
+                'pickup_location' => $validated['pickup_location'],
+                'destination' => $validated['destination'],
+                'currency' => $validated['currency'],
+                'passengers' => (int) $validated['passengers'],
+                'status' => 'pending',
+            ];
+            
+            $ride = Ride::create($rideData);
+            
+        } catch (\Exception $e2) {
+            return response()->json([
+                'error' => 'Failed to create ride with both methods',
+                'direct_insert_error' => $e->getMessage(),
+                'eloquent_error' => $e2->getMessage(),
+                'user_id' => $userId,
+                'user_exists' => $user ? 'yes' : 'no',
+                'user_count_in_db' => $userCount,
+                'drivers_count' => $driversCount,
+                'debug_info' => [
+                    'validated_data' => $validated,
+                    'auth_user_id' => Auth::id(),
+                    'database_user_id' => $userId
+                ]
+            ], 500);
+        }
+    }
 
     $availableDrivers = Driver::where('is_available', true)
         ->where('is_available_for_ride', true)
