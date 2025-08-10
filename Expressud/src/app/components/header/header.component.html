@@ -55,7 +55,7 @@
                 </div>
               </div>
         </div>              
-        <button class="mobile-menu-toggle" *ngIf="isResponsive" (click)="toggleMenu()">
+        <button class="mobile-menu-toggle" [class.active]="isMenuOpen" *ngIf="isResponsive" (click)="toggleMenu()">
             <div class="line"></div>
             <div class="line"></div>
             <div class="line"></div>
@@ -113,7 +113,7 @@
                 </div>
             </div> -->
         </div>
-        <button class="mobile-menu-toggle" *ngIf="isResponsive" (click)="toggleMenu()">
+        <button class="mobile-menu-toggle" [class.active]="isMenuOpen" *ngIf="isResponsive" (click)="toggleMenu()">
             <div class="line"></div>
             <div class="line"></div>
             <div class="line"></div>
@@ -158,7 +158,7 @@
                 </nav>
             </div>
         </div>
-        <button class="mobile-menu-toggle" *ngIf="isResponsive" (click)="toggleMenu()">
+        <button class="mobile-menu-toggle" [class.active]="isMenuOpen" *ngIf="isResponsive" (click)="toggleMenu()">
             <div class="line"></div>
             <div class="line"></div>
             <div class="line"></div>
@@ -220,7 +220,7 @@
                 </div>
             </div>
         </div>
-        <button class="mobile-menu-toggle" *ngIf="isResponsive" (click)="toggleMenu()">
+        <button class="mobile-menu-toggle" [class.active]="isMenuOpen" *ngIf="isResponsive" (click)="toggleMenu()">
             <div class="line"></div>
             <div class="line"></div>
             <div class="line"></div>
