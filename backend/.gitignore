@@ -21,3 +21,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+git rm --cached .env
+git commit -m "Remove .env from repo"
+git push
+
