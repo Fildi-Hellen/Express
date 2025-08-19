@@ -88,7 +88,7 @@ TMP_ENV="$(mktemp)"
   echo "DB_DATABASE=${DB_NAME}"
   # wrap secrets that may include special chars
   echo "DB_USERNAME=${DB_USERNAME}"
-  echo "DB_PASSWORD=\"${DB_PASSWORD}\""
+  echo "DB_PASSWORD=${DB_PASSWORD}"
 
   echo "SESSION_DRIVER=database"
   echo "QUEUE_CONNECTION=database"
