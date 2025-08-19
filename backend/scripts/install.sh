@@ -99,11 +99,11 @@ TMP_ENV="$(mktemp)"
   [ -n "$MAIL_MAILER" ] && echo "MAIL_MAILER=${MAIL_MAILER}"
   [ -n "$MAIL_HOST" ] && echo "MAIL_HOST=${MAIL_HOST}"
   [ -n "$MAIL_PORT" ] && echo "MAIL_PORT=${MAIL_PORT}"
-  [ -n "$MAIL_USERNAME" ] && echo "MAIL_USERNAME=\"${MAIL_USERNAME}\""
-  [ -n "$MAIL_PASSWORD" ] && echo "MAIL_PASSWORD=\"${MAIL_PASSWORD}\""
+  [ -n "$MAIL_USERNAME" ] && echo "MAIL_USERNAME=${MAIL_USERNAME}"
+  [ -n "$MAIL_PASSWORD" ] && echo "MAIL_PASSWORD=${MAIL_PASSWORD}"
   [ -n "$MAIL_ENCRYPTION" ] && echo "MAIL_ENCRYPTION=${MAIL_ENCRYPTION}"
   [ -n "$MAIL_FROM_ADDRESS" ] && echo "MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}"
-  [ -n "$MAIL_FROM_NAME" ] && echo "MAIL_FROM_NAME=\"${MAIL_FROM_NAME}\""
+  [ -n "$MAIL_FROM_NAME" ] && echo "MAIL_FROM_NAME=${MAIL_FROM_NAME}"
 
   # Pusher (optional)
   [ -n "$PUSHER_APP_ID" ] && echo "PUSHER_APP_ID=${PUSHER_APP_ID}"
@@ -112,8 +112,8 @@ TMP_ENV="$(mktemp)"
   [ -n "$PUSHER_APP_CLUSTER" ] && echo "PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER}"
 
   # Flutterwave (optional)
-  [ -n "$FLW_SECRET_KEY" ] && echo "FLW_SECRET_KEY=\"${FLW_SECRET_KEY}\""
-  [ -n "$FLW_SECRET_HASH" ] && echo "FLW_SECRET_HASH=\"${FLW_SECRET_HASH}\""
+  [ -n "$FLW_SECRET_KEY" ] && echo "FLW_SECRET_KEY=${FLW_SECRET_KEY}"
+  [ -n "$FLW_SECRET_HASH" ] && echo "FLW_SECRET_HASH=${FLW_SECRET_HASH}"
 } > "$TMP_ENV"
 
 # Move into place and secure
