@@ -26,7 +26,7 @@ export class UserService {
   }
 
   login(userLogin: IUserLogin): Observable<User> {
-    return this.http.post<User>(`${environment.apiUrl}/login`, userLogin).pipe(
+    return this.http.post<User>(`${environment.apiBase}/login`, userLogin).pipe(
       tap({
         next: (user) => {
           this.setUserToLocalStorage(user);
@@ -41,7 +41,7 @@ export class UserService {
   }
 
   register(userRegiser: IUserRegister): Observable<User> {
-    return this.http.post<User>(`${environment.apiUrl}/register`, userRegiser).pipe(
+    return this.http.post<User>(`${environment.apiBase}/register`, userRegiser).pipe(
       tap({
         next: (user) => {
           this.setUserToLocalStorage(user);
@@ -56,7 +56,7 @@ export class UserService {
   }
 
   logout() {
-    return this.http.post(`${environment.apiUrl}/logout`, {}).pipe(
+    return this.http.post(`${environment.apiBase}/logout`, {}).pipe(
       tap(() => {
         const user = new User(); // Create a new empty user object
         this.setUserToLocalStorage(user); // Save empty user to local storage
