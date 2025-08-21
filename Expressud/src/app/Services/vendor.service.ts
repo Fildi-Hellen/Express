@@ -1,14 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VendorService {
 
-  private baseUrl = 'http://127.0.0.1:8000/api'; // replace with your backend URL
-
+private base = environment.apiBase;
   constructor(private http: HttpClient) { }
 
   
@@ -18,16 +18,16 @@ export class VendorService {
    * @returns Observable<any>
    */
   registerVendor(vendorData: any): Observable<any> {
-    const url = `${this.baseUrl}/vendor/register`;
+    const url = `${this.base}/vendor/register`;
     return this.http.post<any>(url, vendorData);
   }
 
   loginVendor(data: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/vendor/login`, data);
+    return this.http.post<any>(`${this.base}/vendor/login`, data);
   }
   
   resetPassword(data: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/vendor/forgot-password`, data);
+    return this.http.post<any>(`${this.base}/vendor/forgot-password`, data);
   }
   
 
@@ -36,7 +36,7 @@ export class VendorService {
    * @returns Observable<any>
    */
   getVendorProfile(): Observable<any> {
-    const url = `${this.baseUrl}/vendor/profile`;
+    const url = `${this.base}/vendor/profile`;
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.getToken()}`, // Assumes a token-based authentication
     });

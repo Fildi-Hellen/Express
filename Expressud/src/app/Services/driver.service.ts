@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DriverService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private base = environment.apiBase;
 
   constructor(private http: HttpClient) {}
   private getAuthHeaders() {
@@ -19,28 +20,28 @@ export class DriverService {
 }
 
   registerDriver(driverData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register-driver`, driverData);
+    return this.http.post(`${this.base}/register-driver`, driverData);
   }
 //   findDrivers(rideId: number): Observable<any> {
-//   return this.http.get(`${this.apiUrl}/find-drivers/${rideId}`, this.getAuthHeaders());
+//   return this.http.get(`${this.base}/find-drivers/${rideId}`, this.getAuthHeaders());
 // }
 
 
 createRideAndFetchDrivers(data: any): Observable<any> {
-  return this.http.post(`${this.apiUrl}/create-and-find-drivers`, data, this.getAuthHeaders());
+  return this.http.post(`${this.base}/create-and-find-drivers`, data, this.getAuthHeaders());
 }
 
 confirmRide(data: any): Observable<any> {
-  return this.http.post(`${this.apiUrl}/confirm-ride`, data, this.getAuthHeaders());
+  return this.http.post(`${this.base}/confirm-ride`, data, this.getAuthHeaders());
 }
 
 getUserRides(): Observable<any> {
-  return this.http.get(`${this.apiUrl}/user/rides`, this.getAuthHeaders());
+  return this.http.get(`${this.base}/user/rides`, this.getAuthHeaders());
 }
 
  cancelRide(rideId: number, reason: string): Observable<any> {
     return this.http.post(
-      `${this.apiUrl}/cancel-ride/${rideId}`,
+      `${this.base}/cancel-ride/${rideId}`,
       { reason },
       this.getAuthHeaders()
     );

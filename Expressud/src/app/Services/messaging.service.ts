@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, interval, of } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { environment } from 'src/environments/environment.prod';
 
 interface Message {
   id?: number;
@@ -23,7 +24,7 @@ interface CallData {
   providedIn: 'root'
 })
 export class MessagingService {
-  private apiUrl = 'http://localhost:8000/api';
+private base = environment.apiBase;
   private wsUrl = 'ws://localhost:8080';
   
   private socket$?: WebSocketSubject<any>;
@@ -193,7 +194,7 @@ export class MessagingService {
     };
 
     const headers = this.getHeaders();
-    const httpRequest = this.http.post<any>(`${this.apiUrl}/messages`, messageData, { headers });
+    const httpRequest = this.http.post<any>(`${this.base}/messages`, messageData, { headers });
     
     // Also send via WebSocket for real-time delivery
     if (this.socket$ && !this.socket$.closed) {
@@ -254,7 +255,7 @@ export class MessagingService {
 
   private getConversationFromAPI(driverId: number): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.get<any>(`${this.apiUrl}/conversations/${driverId}`, { headers });
+    return this.http.get<any>(`${this.base}/conversations/${driverId}`, { headers });
   }
 
   // Subscribe to live conversation updates
@@ -287,7 +288,7 @@ export class MessagingService {
       caller_type: 'user'
     };
 
-    const httpRequest = this.http.post(`${this.apiUrl}/calls/make`, callData, { headers });
+    const httpRequest = this.http.post(`${this.base}/calls/make`, callData, { headers });
     
     if (this.socket$ && !this.socket$.closed) {
       this.socket$.next({
@@ -306,7 +307,7 @@ export class MessagingService {
       action: 'answer'
     };
 
-    const httpRequest = this.http.post(`${this.apiUrl}/calls/answer`, answerData, { headers });
+    const httpRequest = this.http.post(`${this.base}/calls/answer`, answerData, { headers });
     
     if (this.socket$ && !this.socket$.closed) {
       this.socket$.next({
@@ -325,7 +326,7 @@ export class MessagingService {
       action: 'end'
     };
 
-    const httpRequest = this.http.post(`${this.apiUrl}/calls/end`, endData, { headers });
+    const httpRequest = this.http.post(`${this.base}/calls/end`, endData, { headers });
     
     if (this.socket$ && !this.socket$.closed) {
       this.socket$.next({
@@ -344,17 +345,17 @@ export class MessagingService {
   // Test and utility methods
   createTestData(): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.post(`${this.apiUrl}/messaging/test-data`, {}, { headers });
+    return this.http.post(`${this.base}/messaging/test-data`, {}, { headers });
   }
 
   getAllConversations(): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.get(`${this.apiUrl}/messaging/conversations`, { headers });
+    return this.http.get(`${this.base}/messaging/conversations`, { headers });
   }
 
   clearAllMessages(): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.delete(`${this.apiUrl}/messaging/clear`, { headers });
+    return this.http.delete(`${this.base}/messaging/clear`, { headers });
   }
 
   // Legacy methods for compatibility

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment.prod';
 
 export interface RideRequest {
   ride_type: string;
@@ -52,7 +53,7 @@ export interface Ride {
   providedIn: 'root'
 })
 export class RideService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+private base = environment.apiBase;
   private currentRideSubject = new BehaviorSubject<Ride | null>(null);
   public currentRide$ = this.currentRideSubject.asObservable();
 
@@ -117,7 +118,7 @@ export class RideService {
     };
     
     return this.http.post<{ride: Ride, drivers: Driver[]}>(
-      `${this.apiUrl}/create-and-find-drivers`,
+      `${this.base}/create-and-find-drivers`,
       roundedRequest,
       { headers: this.getAuthHeaders() }
     );
@@ -128,7 +129,7 @@ export class RideService {
    */
   confirmRide(rideId: number, driverId: number): Observable<{message: string, ride: Ride}> {
     return this.http.post<{message: string, ride: Ride}>(
-      `${this.apiUrl}/confirm-ride`,
+      `${this.base}/confirm-ride`,
       { ride_id: rideId, driver_id: driverId },
       { headers: this.getAuthHeaders() }
     );
@@ -141,7 +142,7 @@ export class RideService {
     console.log('🚗 Fetching user rides...');
     
     return this.http.get<any>(
-      `${this.apiUrl}/user/rides`,
+      `${this.base}/user/rides`,
       { headers: this.getAuthHeaders() }
     ).pipe(
       map(response => {
@@ -187,7 +188,7 @@ export class RideService {
    */
   getCreatedRides(): Observable<Ride[]> {
     return this.http.get<Ride[]>(
-      `${this.apiUrl}/rides/created`,
+      `${this.base}/rides/created`,
       { headers: this.getAuthHeaders() }
     );
   }
@@ -197,7 +198,7 @@ export class RideService {
    */
   cancelRide(rideId: number, reason: string): Observable<{message: string, reason: string}> {
     return this.http.post<{message: string, reason: string}>(
-      `${this.apiUrl}/cancel-ride/${rideId}`,
+      `${this.base}/cancel-ride/${rideId}`,
       { reason },
       { headers: this.getAuthHeaders() }
     );
@@ -208,7 +209,7 @@ export class RideService {
    */
   trackRide(rideId: number): Observable<Ride> {
     return this.http.get<Ride>(
-      `${this.apiUrl}/rides/${rideId}/track`,
+      `${this.base}/rides/${rideId}/track`,
       { headers: this.getAuthHeaders() }
     );
   }
@@ -218,7 +219,7 @@ export class RideService {
    */
   getRideUpdates(rideId: number): Observable<Ride> {
     return this.http.get<Ride>(
-      `${this.apiUrl}/rides/${rideId}/updates`,
+      `${this.base}/rides/${rideId}/updates`,
       { headers: this.getAuthHeaders() }
     );
   }
@@ -228,7 +229,7 @@ export class RideService {
    */
   rateRide(rideId: number, rating: number, comment?: string): Observable<any> {
     return this.http.post<any>(
-      `${this.apiUrl}/rides/${rideId}/rate`,
+      `${this.base}/rides/${rideId}/rate`,
       { rating, comment },
       { headers: this.getAuthHeaders() }
     );
@@ -239,7 +240,7 @@ export class RideService {
    */
   getFareEstimate(pickup: string, destination: string, rideType: string): Observable<{fare: number}> {
     return this.http.post<{fare: number}>(
-      `${this.apiUrl}/rides/fare-estimate`,
+      `${this.base}/rides/fare-estimate`,
       { pickup_location: pickup, destination, ride_type: rideType },
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -291,7 +292,7 @@ export class RideService {
     console.log('🔍 Debug: Checking raw database content...');
     
     return this.http.get<any>(
-      `${this.apiUrl}/user/rides/debug`,
+      `${this.base}/user/rides/debug`,
       { headers: this.getAuthHeaders() }
     ).pipe(
       map(response => {

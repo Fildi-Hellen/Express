@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 // import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -8,44 +9,43 @@ import { Observable } from 'rxjs';
 })
 export class MenuItemService {
 
-  private apiUrl = 'http://localhost:8000/api';
-
+private base = environment.apiBase;
   constructor(private http: HttpClient) {}
 
   getMenuItems(): Observable<any> {
-    return this.http.get(this.apiUrl);
+    return this.http.get(this.base);
   }
 
   createMenuItem(menuItem: any): Observable<any> {
-    return this.http.post(this.apiUrl, menuItem);
+    return this.http.post(this.base, menuItem);
   }
 
   updateMenuItem(id: number, menuItem: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, menuItem);
+    return this.http.put(`${this.base}/${id}`, menuItem);
   }
 
   deleteMenuItem(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.base}/${id}`);
   }
 
   approveMenuItem(id: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}/approve`, {});
+    return this.http.put(`${this.base}/${id}/approve`, {});
   }
   
   getCategories(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/categories`);
+    return this.http.get(`${this.base}/categories`);
   }
 
   getMenusByCategory(category: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/menus`, { params: { category } });
+    return this.http.get(`${this.base}/menus`, { params: { category } });
   }
 
   getEstablishmentsByCategory(category: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/establishments`, { params: { category } });
+    return this.http.get(`${this.base}/establishments`, { params: { category } });
   }
   
   getMenusByEstablishment(establishmentName: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/menus-by-establishment`, {
+    return this.http.get(`${this.base}/menus-by-establishment`, {
       params: { establishmentName },
     });
   }

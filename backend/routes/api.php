@@ -24,23 +24,28 @@ use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-
 
 Route::get('/health', function () {
-    try { DB::select('select 1'); $db = 'ok'; } catch (\Throwable $e) { $db = $e->getMessage(); }
+    $db = 'ok';
+    try {
+        DB::select('SELECT 1'); // lightweight ping
+    } catch (\Throwable $e) {
+        $db = 'fail';
+        Log::error('DB health check failed', ['err' => $e->getMessage()]);
+    }
+
     return response()->json([
-        'app' => 'ok',
-        'php' => PHP_VERSION,
-        'db'  => $db,
-        'time' => now()->toISOString(),
-    ]);
+        'status'   => 'ok',
+        'app'      => config('app.name'),
+        'env'      => config('app.env'),
+        'debug'    => (bool) config('app.debug'),
+        'url'      => config('app.url'),
+        'php'      => PHP_VERSION,
+        'db'       => $db,
+        'time'     => now()->toIso8601String(),
+    ], $db === 'ok' ? 200 : 500);
 });
 
 

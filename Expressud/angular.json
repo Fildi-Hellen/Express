@@ -43,6 +43,12 @@
           },
           "configurations": {
             "production": {
+               "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -73,6 +79,7 @@
           "configurations": {
             "production": {
               "buildTarget": "expressud:build:production"
+              
             },
             "development": {
               "buildTarget": "expressud:build:development"
@@ -111,4 +118,6 @@
   "cli": {
     "analytics": "6fe78071-2eb7-4045-8e30-1a2a5f9e12fc"
   }
+
+  
 }

@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['https://www.expressud.com/#/home','https://vendor.expressud.com/','https://admin.expressud.com/','https://driver.expressud.com/'],
 
     'allowed_origins_patterns' => [],
 

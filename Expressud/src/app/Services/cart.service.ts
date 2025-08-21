@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
@@ -8,7 +9,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class CartService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private base = environment.apiBase;;
   private cart: any[] = [];
   private cartItemCount = new BehaviorSubject<number>(0);
 
@@ -17,7 +18,7 @@ export class CartService {
   constructor(private http: HttpClient) {}
 
   confirmOrder(orderData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/confirm-order`, orderData);
+    return this.http.post(`${this.base}/confirm-order`, orderData);
   }
 
   
