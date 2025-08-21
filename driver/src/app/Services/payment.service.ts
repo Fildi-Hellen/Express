@@ -1,32 +1,33 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
 
-  private baseUrl = 'http://127.0.0.1:8000/api';
+private base = environment.apiBase;
 
   constructor(private http: HttpClient) {}
 
   getEarningsOverview() {
-    return this.http.get<any>(`${this.baseUrl}/earnings`);
+    return this.http.get<any>(`${this.base}/earnings`);
   }
 
   getPaymentHistory() {
-    return this.http.get<any[]>(`${this.baseUrl}/history`);
+    return this.http.get<any[]>(`${this.base}/history`);
   }
 
   getPayoutSettings() {
-    return this.http.get<any>(`${this.baseUrl}/settings`);
+    return this.http.get<any>(`${this.base}/settings`);
   }
 
   updatePayoutSettings(data: any) {
-    return this.http.post<any>(`${this.baseUrl}/settings`, data);
+    return this.http.post<any>(`${this.base}/settings`, data);
   }
 
   initiateWithdrawal(amount: number) {
-    return this.http.post<any>(`${this.baseUrl}/withdraw`, { amount });
+    return this.http.post<any>(`${this.base}/withdraw`, { amount });
   }
 }

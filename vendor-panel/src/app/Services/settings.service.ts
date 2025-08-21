@@ -1,46 +1,47 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
 
-  private apiUrl = 'http://your-api-url/api/vendor';
+private base = environment.apiBase;
 
   constructor(private http: HttpClient) { }
 
   updatePersonalInfo(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/personal-info`, data);
+    return this.http.put(`${this.base}/personal-info`, data);
   }
 
   updateBusinessInfo(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/business-info`, data);
+    return this.http.put(`${this.base}/business-info`, data);
   }
 
   changeLoginCredentials(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/login-credentials`, data);
+    return this.http.put(`${this.base}/login-credentials`, data);
   }
 
   updateNotificationPreferences(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/notification-preferences`, data);
+    return this.http.put(`${this.base}/notification-preferences`, data);
   }
 
   updatePaymentMethods(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/payment-methods`, data);
+    return this.http.post(`${this.base}/payment-methods`, data);
   }
 
   updateTaxSettings(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/tax-settings`, data);
+    return this.http.put(`${this.base}/tax-settings`, data);
   }
 
   manageSubscriptions(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/subscriptions`, data);
+    return this.http.put(`${this.base}/subscriptions`, data);
   }
 
   updateSecuritySettings(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/security-settings`, data);
+    return this.http.put(`${this.base}/security-settings`, data);
   }
 
   

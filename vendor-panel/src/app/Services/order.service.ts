@@ -1,13 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
 
-  private apiUrl =  'http://127.0.0.1:8000/api';
+private base = environment.apiBase;
 
   constructor(private http: HttpClient) { }
 
@@ -26,7 +27,7 @@ export class OrderService {
 
 
   getVendorOrders(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/vendor-orders`, {
+    return this.http.get(`${this.base}/vendor-orders`, {
       headers: this.getAuthHeaders(),
     }).pipe(
       catchError((error) => {
@@ -38,11 +39,11 @@ export class OrderService {
   
 
   updateOrderStatus(orderId: number, status: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/update-status/${orderId}`, { status });
+    return this.http.patch(`${this.base}/update-status/${orderId}`, { status });
   }
 
   getAllDrivers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/drivers`, {
+    return this.http.get<any[]>(`${this.base}/drivers`, {
       headers: this.getAuthHeaders(),
     });
   }
@@ -51,7 +52,7 @@ export class OrderService {
 
   assignDriver(orderId: number, driverId: number): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.post(`${this.apiUrl}/orders/${orderId}/assign-driver`, { driverId }, { headers }).pipe(
+    return this.http.post(`${this.base}/orders/${orderId}/assign-driver`, { driverId }, { headers }).pipe(
       catchError((error) => {
         console.error('Error assigning driver:', error);
         return throwError(() => new Error('Failed to assign driver'));
@@ -61,7 +62,7 @@ export class OrderService {
   
   getAvailableDrivers(): Observable<any[]> {
   const headers = this.getAuthHeaders();
-  return this.http.get<any[]>(`${this.apiUrl}/drivers/available`, { headers }).pipe(
+  return this.http.get<any[]>(`${this.base}/drivers/available`, { headers }).pipe(
     catchError((error) => {
       console.error('Error fetching available drivers:', error);
       return throwError(() => new Error('Failed to fetch drivers'));
@@ -71,7 +72,7 @@ export class OrderService {
 
 
   getDriverOrders(driverId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/driver-orders/${driverId}`);
+    return this.http.get(`${this.base}/driver-orders/${driverId}`);
   }
 
  

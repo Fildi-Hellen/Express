@@ -1,13 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DriverService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+private base = environment.apiBase;
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +25,7 @@ export class DriverService {
  
 
   getAllDrivers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/drivers`, {
+    return this.http.get<any[]>(`${this.base}/drivers`, {
       headers: this.getAuthHeaders(),
     });
   }
@@ -32,7 +33,7 @@ export class DriverService {
   
   getAvailableDrivers(): Observable<any[]> {
   const headers = this.getAuthHeaders();
-  return this.http.get<any[]>(`${this.apiUrl}/drivers/available`, { headers }).pipe(
+  return this.http.get<any[]>(`${this.base}/drivers/available`, { headers }).pipe(
     catchError((error) => {
       console.error('Error fetching available drivers:', error);
       return throwError(() => new Error('Failed to fetch drivers'));
@@ -45,7 +46,7 @@ export class DriverService {
 
  
   toggleDriverStatus(id: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/drivers/${id}/toggle-status`, {});
+    return this.http.put(`${this.base}/drivers/${id}/toggle-status`, {});
   }
 
  

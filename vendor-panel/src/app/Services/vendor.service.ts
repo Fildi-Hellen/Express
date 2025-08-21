@@ -1,31 +1,32 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VendorService {
 
-   private baseUrl = 'http://localhost:8000/api/vendor';
+private base = environment.apiBase;
 
   constructor(private http: HttpClient) {}
 
   register(data: any) {
-    return this.http.post(`${this.baseUrl}/register`, data);
+    return this.http.post(`${this.base}/register`, data);
   }
 
   login(data: any) {
-    return this.http.post(`${this.baseUrl}/login`, data);
+    return this.http.post(`${this.base}/login`, data);
   }
 
   getProfile() {
-    return this.http.get(`${this.baseUrl}/profile`, {
+    return this.http.get(`${this.base}/profile`, {
       headers: this.getAuthHeaders()
     });
   }
 
   logout() {
-    return this.http.post(`${this.baseUrl}/logout`, {}, {
+    return this.http.post(`${this.base}/logout`, {}, {
       headers: this.getAuthHeaders()
     });
   }

@@ -1,13 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DriverService {
 
-   private baseUrl = 'http://localhost:8000/api'; // Your Laravel backend base URL
+private base = environment.apiBase;
+
 
   constructor(private http: HttpClient) {}
 
@@ -29,7 +31,7 @@ export class DriverService {
  getDriverOrders(driverId: number): Observable<any[]> {
   const headers = this.getAuthHeaders();
   return this.http.get<any[]>(
-    `${this.baseUrl}/drivers/${driverId}/orders`,
+    `${this.base}/drivers/${driverId}/orders`,
     { headers }
   );
 }
@@ -49,7 +51,7 @@ export class DriverService {
     'Accept': 'application/json'
   });
   
-  return this.http.post(`${this.baseUrl}/drivers/register`, driverData, { headers }).pipe(
+  return this.http.post(`${this.base}/drivers/register`, driverData, { headers }).pipe(
     tap((response: any) => {
       console.log('Registration response:', response);
       // Auto-store token if provided
@@ -67,7 +69,7 @@ export class DriverService {
 
 
   loginDriver(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/drivers/login`, credentials).pipe(
+    return this.http.post(`${this.base}/drivers/login`, credentials).pipe(
       tap((response: any) => {
         if (response.token && response.driver) {
           localStorage.setItem('authToken', response.token);
@@ -85,7 +87,7 @@ export class DriverService {
 
   // Logout a driver
   logoutDriver(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/drivers/logout`, {});
+    return this.http.post(`${this.base}/drivers/logout`, {});
   }
   
   
@@ -93,14 +95,14 @@ export class DriverService {
   getDriverProfile(driverId?: number): Observable<any> {
     const headers = this.getAuthHeaders();
     const id = driverId || localStorage.getItem('driverId');
-    return this.http.get<any>(`${this.baseUrl}/drivers/${id}/profile`, { headers });
+    return this.http.get<any>(`${this.base}/drivers/${id}/profile`, { headers });
   }
   
   // Update driver profile
   updateDriverProfile(profileData: any): Observable<any> {
     const headers = this.getAuthHeaders();
     const driverId = localStorage.getItem('driverId');
-    return this.http.put<any>(`${this.baseUrl}/drivers/${driverId}/profile`, profileData, { headers });
+    return this.http.put<any>(`${this.base}/drivers/${driverId}/profile`, profileData, { headers });
   }
 
   // Upload profile picture
@@ -116,7 +118,7 @@ export class DriverService {
     
     const driverId = localStorage.getItem('driverId');
     return this.http.post<any>(
-      `${this.baseUrl}/drivers/${driverId}/profile-picture`, 
+      `${this.base}/drivers/${driverId}/profile-picture`, 
       formData, 
       { headers: authHeaders }
     );
@@ -126,12 +128,12 @@ export class DriverService {
   removeProfilePicture(): Observable<any> {
     const headers = this.getAuthHeaders();
     const driverId = localStorage.getItem('driverId');
-    return this.http.delete<any>(`${this.baseUrl}/drivers/${driverId}/profile-picture`, { headers });
+    return this.http.delete<any>(`${this.base}/drivers/${driverId}/profile-picture`, { headers });
   }
   
   updateOrderStatus(orderId: number, status: string): Observable<any> {
     const headers = this.getAuthHeaders(); // Include the authorization headers
-    return this.http.put(`${this.baseUrl}/orders/${orderId}/status`, { status }, { headers });
+    return this.http.put(`${this.base}/orders/${orderId}/status`, { status }, { headers });
   }
   
   // getAvailableDrivers(pickup: string, destination: string): Observable<Driver[]> {
@@ -147,7 +149,7 @@ export class DriverService {
 
   findDrivers(rideId: number): Observable<any> {
   const headers = this.getAuthHeaders();
-  return this.http.get(`${this.baseUrl}/find-drivers/${rideId}`, { headers });
+  return this.http.get(`${this.base}/find-drivers/${rideId}`, { headers });
 }
 
   

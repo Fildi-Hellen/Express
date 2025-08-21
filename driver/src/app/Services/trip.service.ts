@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 export interface TripRequest {
   id: number;
@@ -64,7 +65,7 @@ export interface DriverInfo {
 })
 export class TripService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+private base = environment.apiBase;
   private currentDriverId: string | null = null;
   private currentDriverName: string | null = null;
 
@@ -195,7 +196,7 @@ export class TripService {
     }
     
     return this.http.get<any>(
-      `${this.apiUrl}/driver/trip-requests`,
+      `${this.base}/driver/trip-requests`,
       { 
         headers: this.getAuthHeaders(),
         params: params
@@ -235,7 +236,7 @@ export class TripService {
     console.log(`📥 Getting current trips for driver ${this.currentDriverId}`);
     
     return this.http.get<any>(
-      `${this.apiUrl}/driver/current-trips`,
+      `${this.base}/driver/current-trips`,
       { headers: this.getAuthHeaders() }
     ).pipe(
       map(response => {
@@ -265,7 +266,7 @@ export class TripService {
     console.log(`📥 Getting trip history for driver ${this.currentDriverId}`);
     
     return this.http.get<any>(
-      `${this.apiUrl}/driver/trip-history`,
+      `${this.base}/driver/trip-history`,
       { headers: this.getAuthHeaders() }
     ).pipe(
       map(response => {
@@ -295,7 +296,7 @@ export class TripService {
     console.log(`🚗 Driver ${this.currentDriverId} accepting trip ${request.id}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/trip-accept/${request.id}`,
+      `${this.base}/driver/trip-accept/${request.id}`,
       {},
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -326,7 +327,7 @@ export class TripService {
     console.log(`❌ Driver ${this.currentDriverId} cancelling trip ${tripId} - Reason: ${reason}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/trip-cancel/${tripId}`,
+      `${this.base}/driver/trip-cancel/${tripId}`,
       { reason },
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -345,7 +346,7 @@ export class TripService {
     console.log(`💰 Driver ${this.currentDriverId} making price offer: $${newPrice} for trip ${tripId}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/rides/${tripId}/price-offer`,
+      `${this.base}/driver/rides/${tripId}/price-offer`,
       { 
         proposed_price: newPrice, 
         message: message || 'Driver price adjustment' 
@@ -367,7 +368,7 @@ export class TripService {
     console.log(`🏁 Driver ${this.currentDriverId} starting trip ${tripId}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/trip-start/${tripId}`,
+      `${this.base}/driver/trip-start/${tripId}`,
       {},
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -386,7 +387,7 @@ export class TripService {
     console.log(`🏁 Driver ${this.currentDriverId} completing trip ${tripId}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/rides/${tripId}/complete`,
+      `${this.base}/driver/rides/${tripId}/complete`,
       {},
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -404,7 +405,7 @@ export class TripService {
     console.log(`🔄 Driver ${this.currentDriverId} updating availability to: ${isAvailable}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/availability`,
+      `${this.base}/driver/availability`,
       { is_available: isAvailable },
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -424,7 +425,7 @@ export class TripService {
     console.log(`👤 Getting profile for driver ${this.currentDriverId}`);
     
     return this.http.get<any>(
-      `${this.apiUrl}/driver/profile`,
+      `${this.base}/driver/profile`,
       { headers: this.getAuthHeaders() }
     ).pipe(
       tap(response => {
@@ -441,7 +442,7 @@ export class TripService {
     console.log(`📍 Driver ${this.currentDriverId} updating location: ${latitude}, ${longitude}`);
     
     return this.http.post<any>(
-      `${this.apiUrl}/driver/location`,
+      `${this.base}/driver/location`,
       { latitude, longitude },
       { headers: this.getAuthHeaders() }
     ).pipe(
