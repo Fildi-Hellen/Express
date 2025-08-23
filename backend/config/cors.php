@@ -2,33 +2,31 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Cross-Origin Resource Sharing (CORS) Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure your settings for cross-origin resource sharing
-    | or "CORS". This determines what cross-origin operations may execute
-    | in web browsers. You are free to adjust these settings as needed.
-    |
-    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    |
-    */
-
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    // Include any browser-hit endpoints (api/* plus auth/csrf routes)
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://www.expressud.com/#','https://vendor.expressud.com/','https://admin.expressud.com/','https://driver.expressud.com/'],
+    // IMPORTANT: origin must be just scheme + host (no trailing slash, no hash)
+    'allowed_origins' => [
+        'https://www.expressud.com',
+        'https://vendor.expressud.com',
+        'https://admin.expressud.com',
+        'https://driver.expressud.com',
+    ],
 
-    'allowed_origins_patterns' => [],
+    // Optional: allow any subdomain of expressud.com in the future (keeps things flexible)
+    'allowed_origins_patterns' => [
+        '#^https://([a-z0-9-]+\.)*expressud\.com$#i',
+    ],
 
     'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
-    'max_age' => 0,
+    // Cache preflight for a day (0 = no caching)
+    'max_age' => 86400,
 
+    // Using cookies/sessions/Sanctum => must be true (and no '*' in allowed_origins)
     'supports_credentials' => true,
-
 ];
