@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { environment } from 'src/environments/environment'; // Import environment for API URL
 import { IUserLogin } from '../Shared1/interfaces/IUserLogin';
 import { IUserRegister } from '../Shared1/interfaces/IUserRegister';
 import { User } from '../Shared1/models/User';
+import { environment } from 'src/environments/environment.prod';
 
 const USER_KEY = 'User';
 

@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, interval, of } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 interface Message {
   id?: number;
