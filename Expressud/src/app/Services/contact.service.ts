@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
@@ -12,8 +12,14 @@ export class ContactService {
 
   constructor(private http: HttpClient) { }
 
-  sendFormData(formData: any): Observable<any> {
-    return this.http.post<any>(this.base, formData);
+   sendFormData(payload: {name:string; email:string; subject:string; message:string}): Observable<any> {
+    return this.http.post<any>(`${this.base}/contact`, payload)
+      .pipe(catchError((e: HttpErrorResponse) => {
+        console.error('ContactService error:', e);
+        return throwError(() => e);
+      }));
   }
+  
 }
+
 
