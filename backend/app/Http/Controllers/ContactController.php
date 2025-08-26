@@ -27,7 +27,7 @@ class ContactController extends Controller
 
         // Send email (optional)
         Mail::raw($request->message, function ($message) use ($request) {
-            $message->to('support@yourdomain.com')
+            $message->to('intysilva1@gmail.com')
                 ->subject($request->subject)
                 ->from($request->email, $request->name);
         });
