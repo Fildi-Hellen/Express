@@ -5,11 +5,12 @@ return [
     // Include any browser-hit endpoints (api/* plus auth/csrf routes)
     'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
 
     // IMPORTANT: origin must be just scheme + host (no trailing slash, no hash)
     'allowed_origins' => [
         'https://www.expressud.com',
+        'https://expressud.com',
         'https://vendor.expressud.com',
         'https://admin.expressud.com',
         'https://driver.expressud.com',
@@ -20,7 +21,7 @@ return [
         '#^https://([a-z0-9-]+\.)*expressud\.com$#i',
     ],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['Authorization','Content-Type','X-Requested-With','Origin','Accept'],
 
     'exposed_headers' => [],
 

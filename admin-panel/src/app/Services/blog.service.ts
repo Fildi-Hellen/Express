@@ -30,7 +30,7 @@ private base = environment.apiBase;
 
  
   deleteComment(id: number): Observable<any> {
-    return this.http.delete(`http://localhost:8000/api/comments/${id}`);
+    return this.http.delete(`${this.base}/${id}`);
   }
 
 

@@ -95,6 +95,7 @@ Route::prefix('vendor')->group(function () {
     });
 });
 
+
 Route::post('/contact', [ContactController::class, 'store']);
 
 Route::post('/send-feedback', [FeedbackController::class, 'store']);
