@@ -6,35 +6,6 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- App favicon -->
-   <script>
-(function () {
-  const API_BASE = 'https://api.expressud.com/api';
-  const BAD = /^https?:\/\/(localhost|127\.0\.0\.1):8000\/api(.*)$/i;
-
-  function fix(u){ if(typeof u!=='string') return u; const m=u.match(BAD); return m? API_BASE + (m[2].startsWith('/')?m[2]:'/'+m[2]) : u;}
-
-  // Log + rewrite fetch
-  if (window.fetch) {
-    const _f = window.fetch.bind(window);
-    window.fetch = function(input, init){
-      const url = typeof input==='string'? fix(input) : new URL(input.url, location.href).toString();
-      if (/localhost:8000|127\.0\.0\.1:8000/.test(url)) console.warn('Rewrote fetch ->', url, new Error().stack);
-      return _f(typeof input==='string'? url : new Request(url, input), init);
-    };
-  }
-
-  // Log + rewrite XHR
-  (function(){
-    const _open = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(m,u,a,b,c){
-      const nu = fix(u);
-      if (/localhost:8000|127\.0\.0\.1:8000/.test(u)) console.warn('Rewrote XHR ->', nu, new Error().stack);
-      return _open.call(this, m, nu, a, b, c);
-    };
-  })();
-})();
-</script>
-
   <link rel="shortcut icon" href="assets/images/favicon.ico">
 
 
