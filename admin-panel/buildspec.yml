@@ -1,27 +1,56 @@
 version: 0.2
 
+env:
+  variables:
+    PANEL_DIR: "admin-panel"
+    DIST_DIR: "admin-panel/dist/admin-panel"   # where Angular outputs
 phases:
   install:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing Angular CLI...
-      - npm install -g @angular/cli
-      - echo Installing source NPM dependencies...
-      - cd $CODEBUILD_SRC_DIR/admin-panel
-      - npm install --legacy-peer-deps
+      - echo "▶ Installing Angular CLI & deps"
+      - npm i -g @angular/cli
+      - cd $CODEBUILD_SRC_DIR/$PANEL_DIR
+      - npm ci --legacy-peer-deps
+
+  pre_build:
+    commands:
+      - echo "🔎 Checking SOURCE for forbidden localhost URLs..."
+      - cd $CODEBUILD_SRC_DIR/$PANEL_DIR
+      - |
+        if grep -R -E "localhost:8000|127\.0\.0\.1:8000" src/; then
+          echo "❌ Found localhost in SOURCE. Fix before building."; exit 1
+        else
+          echo "✅ SOURCE clean (no localhost)."
+        fi
+      - echo "🔎 Ensuring you DON'T import environments/environment.prod directly..."
+      - |
+        if grep -R "environments/environment\.prod" src/; then
+          echo "❌ Don't import environment.prod directly. Import 'environments/environment'."; exit 1
+        else
+          echo "✅ No direct environment.prod imports."
+        fi
 
   build:
     commands:
-      - echo Build started
-      - cd $CODEBUILD_SRC_DIR/admin-panel
-      - ng build --configuration production --output-path=dist/admin-panel  # Correct output path
+      - echo "🏗 Building PRODUCTION bundle..."
+      - cd $CODEBUILD_SRC_DIR/$PANEL_DIR
+      - ng build --configuration production --output-path=dist/admin-panel
 
   post_build:
     commands:
-      - echo Build completed on $(date)
+      - echo "🔎 Verifying BUILT JS has no localhost..."
+      - cd $CODEBUILD_SRC_DIR/$DIST_DIR
+      - |
+        if grep -R -E "localhost:8000|127\.0\.0\.1:8000" ./*.js; then
+          echo "❌ Built bundle still contains localhost. Fix env/imports or hardcodes."; exit 1
+        else
+          echo "✅ Built bundle clean."
+        fi
+      - echo "✅ Build completed on $(date)"
 
 artifacts:
   files:
-    - '**/*'                          # Include all files within the base directory
-  base-directory: 'admin-panel/dist/admin-panel'  # Correct base directory for artifacts
+    - '**/*'
+  base-directory: 'admin-panel/dist/admin-panel'
