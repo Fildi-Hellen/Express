@@ -51,15 +51,17 @@ phases:
 
   post_build:
     commands:
-     - echo "🔍 Scanning built assets for localhost..."
-      - cd "$CODEBUILD_SRC_DIR/$PANEL_DIR/dist/admin-panel"
-      # FAIL if any localhost/127 calls remain (so we see it in logs)
-      - if grep -R -n -E "http://(localhost|127\.0\.0\.1):8000" . ; then echo "❌ Found localhost in build. Rewriting..."; fi
-      # Rewrite to prod API
-      - find . -type f -name "*.js" -o -name "*.html" -o -name "*.json" -o -name "*.css" \
-        | xargs -I{} sed -i -E 's#http://(localhost|127\.0\.0\.1):8000#https://api.expressud.com#g' {}
-      # Verify again (now must be clean)
-      - if grep -R -n -E "http://(localhost|127\.0\.0\.1):8000" . ; then echo "❌ Rewriter failed"; exit 1; else echo "✅ No localhost in build"; fi
+      - echo "🔎 Verifying BUILT JS has no localhost..."
+      - cd "$CODEBUILD_SRC_DIR/$DIST_DIR"
+      - |
+        if grep -R -n -E "localhost:8000|127\.0\.0\.1:8000" ./*.js ; then
+          echo "❌ Built bundle still contains localhost. Check env swapping and source."
+          exit 1
+        else
+          echo "✅ Built bundle clean (no localhost)."
+        fi
+      - echo "✅ Build completed on $(date)"
+
 artifacts:
   files:
     - '**/*'
