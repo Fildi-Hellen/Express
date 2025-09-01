@@ -3,7 +3,8 @@ version: 0.2
 env:
   variables:
     PANEL_DIR: "admin-panel"
-    DIST_DIR: "admin-panel/dist/admin-panel"   # where Angular outputs
+    DIST_DIR: "admin-panel/dist/admin-panel"
+
 phases:
   install:
     runtime-versions:
@@ -11,23 +12,33 @@ phases:
     commands:
       - echo "▶ Installing Angular CLI & deps"
       - npm i -g @angular/cli
-      - cd $CODEBUILD_SRC_DIR/$PANEL_DIR
+      - cd "$CODEBUILD_SRC_DIR/$PANEL_DIR"
       - npm ci --legacy-peer-deps
 
   pre_build:
     commands:
-      - echo "🔎 Checking SOURCE for forbidden localhost URLs..."
-      - cd $CODEBUILD_SRC_DIR/$PANEL_DIR
+      - echo "🔎 Checking SOURCE for forbidden localhost URLs (excluding environments files)..."
+      - cd "$CODEBUILD_SRC_DIR/$PANEL_DIR"
+
+      # Allow localhost ONLY inside environments/environment.ts (dev).
+      # Fail if localhost appears anywhere else.
       - |
-        if grep -R -E "localhost:8000|127\.0\.0\.1:8000" src/; then
-          echo "❌ Found localhost in SOURCE. Fix before building."; exit 1
+        if grep -R -n -E "localhost:8000|127\.0\.0\.1:8000" src/ \
+          --exclude="environment.ts" \
+          --exclude="environment.development.ts" \
+          --exclude-dir="node_modules" \
+          --exclude-dir="dist" ; then
+          echo "❌ Found localhost in SOURCE outside environments/*.ts. Fix before building."
+          exit 1
         else
-          echo "✅ SOURCE clean (no localhost)."
+          echo "✅ SOURCE clean (no localhost outside environments)."
         fi
+
       - echo "🔎 Ensuring you DON'T import environments/environment.prod directly..."
       - |
-        if grep -R "environments/environment\.prod" src/; then
-          echo "❌ Don't import environment.prod directly. Import 'environments/environment'."; exit 1
+        if grep -R -n "environments/environment\.prod" src/ ; then
+          echo "❌ Don't import environment.prod directly. Import 'environments/environment' instead."
+          exit 1
         else
           echo "✅ No direct environment.prod imports."
         fi
@@ -35,18 +46,19 @@ phases:
   build:
     commands:
       - echo "🏗 Building PRODUCTION bundle..."
-      - cd $CODEBUILD_SRC_DIR/$PANEL_DIR
+      - cd "$CODEBUILD_SRC_DIR/$PANEL_DIR"
       - ng build --configuration production --output-path=dist/admin-panel
 
   post_build:
     commands:
       - echo "🔎 Verifying BUILT JS has no localhost..."
-      - cd $CODEBUILD_SRC_DIR/$DIST_DIR
+      - cd "$CODEBUILD_SRC_DIR/$DIST_DIR"
       - |
-        if grep -R -E "localhost:8000|127\.0\.0\.1:8000" ./*.js; then
-          echo "❌ Built bundle still contains localhost. Fix env/imports or hardcodes."; exit 1
+        if grep -R -n -E "localhost:8000|127\.0\.0\.1:8000" ./*.js ; then
+          echo "❌ Built bundle still contains localhost. Check env swapping and source."
+          exit 1
         else
-          echo "✅ Built bundle clean."
+          echo "✅ Built bundle clean (no localhost)."
         fi
       - echo "✅ Build completed on $(date)"
 
