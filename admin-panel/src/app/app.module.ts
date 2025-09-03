@@ -24,7 +24,7 @@ import { UserManagementComponent } from './Components/user-management/user-manag
 import { SettingsComponent } from './Components/settings/settings.component';
 import { SupportComponent } from './Components/support/support.component';
 import { AuthComponent } from './Components/auth/auth.component';
-import { ApiBaseInterceptor } from './cor/api-base.interceptor';
+import { ApiBaseInterceptor } from './core/api-base.interceptor';
 
 @NgModule({
   declarations: [

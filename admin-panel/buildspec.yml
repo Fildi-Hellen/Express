@@ -4,9 +4,10 @@ env:
   variables:
     PANEL_DIR: "admin-panel"
     DIST_DIR: "admin-panel/dist/admin-panel"
-    S3_BUCKET: "expressud-admin"
-    # Prefer setting this in the CodeBuild project env vars instead of hardcoding:
-    CF_DISTRIBUTION_ID: "YOUR_CLOUDFRONT_DIST_ID"
+    # REQUIRED: your S3 bucket that hosts the admin panel
+    BUCKET: "expressud-admin"
+    # OPTIONAL: set this in CodeBuild env vars to enable invalidation
+    # CLOUDFRONT_DISTRIBUTION_ID: "E123ABC456DEF"
 
 phases:
   install:
@@ -20,21 +21,23 @@ phases:
 
   pre_build:
     commands:
-      - echo "🔎 Checking SOURCE for forbidden localhost URLs (excluding environments files)..."
+      - echo "🔎 Checking SOURCE for forbidden localhost URLs (excluding environments + interceptor)..."
       - cd "$CODEBUILD_SRC_DIR/$PANEL_DIR"
 
-      # Allow localhost ONLY inside environments/environment.ts (dev).
-      # Fail if localhost appears anywhere else.
+      # Allow localhost ONLY inside environments files and the interceptor (which rewrites bad URLs).
+      # Fail if localhost appears anywhere else in source.
       - |
         if grep -R -n -E "localhost:8000|127\.0\.0\.1:8000" src/ \
           --exclude="environment.ts" \
           --exclude="environment.development.ts" \
+          --exclude="environment.prod.ts" \
+          --exclude="api-base.interceptor.ts" \
           --exclude-dir="node_modules" \
           --exclude-dir="dist" ; then
-          echo "❌ Found localhost in SOURCE outside environments/*.ts. Fix before building."
+          echo "❌ Found localhost in SOURCE outside allowed files. Fix before building."
           exit 1
         else
-          echo "✅ SOURCE clean (no localhost outside environments)."
+          echo "✅ SOURCE clean (no localhost outside allowed files)."
         fi
 
       - echo "🔎 Ensuring you DON'T import environments/environment.prod directly..."
@@ -54,37 +57,37 @@ phases:
 
   post_build:
     commands:
-      - echo "🔎 Verifying BUILT JS has no localhost..."
+      - echo "🔎 Verifying BUILT assets have no localhost..."
       - cd "$CODEBUILD_SRC_DIR/$DIST_DIR"
       - |
-        if grep -R -n -E "localhost:8000|127\.0\.0\.1:8000" ./*.js 2>/dev/null ; then
-          echo "❌ Built bundle still contains localhost. Check env swapping and source."
+        if grep -R -n -E "localhost:8000|127\.0\.0\.1:8000" . --include="*.js" --include="*.html" ; then
+          echo "❌ Built bundle contains localhost. Check env swapping and source."
           exit 1
         else
           echo "✅ Built bundle clean (no localhost)."
         fi
 
-      # ---- Deploy to S3 with correct caching ----
-      - echo "☁️  Syncing build to s3://$S3_BUCKET/"
-      - aws s3 sync "$CODEBUILD_SRC_DIR/$DIST_DIR/" "s3://$S3_BUCKET/" --delete
+      - echo "☁️ Uploading static assets to S3 (long cache, immutable)..."
+      - aws s3 sync "$CODEBUILD_SRC_DIR/$DIST_DIR" "s3://$BUCKET" --delete \
+          --cache-control "public, max-age=31536000, immutable" \
+          --exclude "index.html"
 
-      # Set index.html to no-cache (so browsers always revalidate on each visit).
-      - echo "🧠 Setting no-cache on index.html"
-      - aws s3 cp "s3://$S3_BUCKET/index.html" "s3://$S3_BUCKET/index.html" \
-          --metadata-directive REPLACE \
+      - echo "📄 Uploading index.html to S3 (no-cache to avoid stale SPA shell)..."
+      - aws s3 cp "$CODEBUILD_SRC_DIR/$DIST_DIR/index.html" "s3://$BUCKET/index.html" \
           --cache-control "no-cache, no-store, must-revalidate" \
           --content-type "text/html; charset=utf-8"
 
-      # ---- Invalidate CloudFront so users get the fresh index.html immediately ----
       - |
-        if [ -n "$CF_DISTRIBUTION_ID" ]; then
-          echo "🚀 Creating CloudFront invalidation /* on $CF_DISTRIBUTION_ID"
-          aws cloudfront create-invalidation --distribution-id "$CF_DISTRIBUTION_ID" --paths "/*"
+        if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ]; then
+          echo "🚀 Invalidating CloudFront /* ..."
+          aws cloudfront create-invalidation \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
+            --paths "/*"
         else
-          echo "⚠️ CF_DISTRIBUTION_ID is not set; skipping CloudFront invalidation."
+          echo "ℹ️ CLOUDFRONT_DISTRIBUTION_ID not set; skipping invalidation."
         fi
 
-      - echo "✅ Build & deploy completed on $(date)"
+      - echo "✅ Build completed on $(date)"
 
 artifacts:
   files:
