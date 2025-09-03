@@ -4,9 +4,8 @@ env:
   variables:
     PANEL_DIR: "admin-panel"
     DIST_DIR: "admin-panel/dist/admin-panel"
-    # REQUIRED: your S3 bucket that hosts the admin panel
     BUCKET: "expressud-admin"
-    # OPTIONAL: set this in CodeBuild env vars to enable invalidation
+    # Set this in CodeBuild env vars if you want invalidations
     # CLOUDFRONT_DISTRIBUTION_ID: "E123ABC456DEF"
 
 phases:
@@ -18,14 +17,12 @@ phases:
       - npm i -g @angular/cli
       - cd "$CODEBUILD_SRC_DIR/$PANEL_DIR"
       - npm ci --legacy-peer-deps
+      - aws --version
 
   pre_build:
     commands:
       - echo "🔎 Checking SOURCE for forbidden localhost URLs (excluding environments + interceptor)..."
       - cd "$CODEBUILD_SRC_DIR/$PANEL_DIR"
-
-      # Allow localhost ONLY inside environments files and the interceptor (which rewrites bad URLs).
-      # Fail if localhost appears anywhere else in source.
       - |
         if grep -R -n -E "localhost:8000|127\.0\.0\.1:8000" src/ \
           --exclude="environment.ts" \
@@ -39,7 +36,6 @@ phases:
         else
           echo "✅ SOURCE clean (no localhost outside allowed files)."
         fi
-
       - echo "🔎 Ensuring you DON'T import environments/environment.prod directly..."
       - |
         if grep -R -n "environments/environment\.prod" src/ ; then
@@ -68,21 +64,15 @@ phases:
         fi
 
       - echo "☁️ Uploading static assets to S3 (long cache, immutable)..."
-      - aws s3 sync "$CODEBUILD_SRC_DIR/$DIST_DIR" "s3://$BUCKET" --delete \
-          --cache-control "public, max-age=31536000, immutable" \
-          --exclude "index.html"
+      - aws s3 sync "$CODEBUILD_SRC_DIR/$DIST_DIR" "s3://$BUCKET" --delete --cache-control "public, max-age=31536000, immutable" --exclude "index.html"
 
       - echo "📄 Uploading index.html to S3 (no-cache to avoid stale SPA shell)..."
-      - aws s3 cp "$CODEBUILD_SRC_DIR/$DIST_DIR/index.html" "s3://$BUCKET/index.html" \
-          --cache-control "no-cache, no-store, must-revalidate" \
-          --content-type "text/html; charset=utf-8"
+      - aws s3 cp "$CODEBUILD_SRC_DIR/$DIST_DIR/index.html" "s3://$BUCKET/index.html" --cache-control "no-cache, no-store, must-revalidate" --content-type "text/html; charset=utf-8"
 
       - |
         if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ]; then
           echo "🚀 Invalidating CloudFront /* ..."
-          aws cloudfront create-invalidation \
-            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
-            --paths "/*"
+          aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*"
         else
           echo "ℹ️ CLOUDFRONT_DISTRIBUTION_ID not set; skipping invalidation."
         fi
