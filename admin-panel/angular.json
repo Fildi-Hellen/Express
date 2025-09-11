@@ -55,6 +55,8 @@
           },
           "configurations": {
             "production": {
+              "sourceMap": { "scripts": true, "styles": false, "vendor": true },
+
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
