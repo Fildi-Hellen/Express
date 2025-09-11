@@ -10,7 +10,6 @@ return [
     // IMPORTANT: origin must be just scheme + host (no trailing slash, no hash)
     'allowed_origins' => [
         'https://www.expressud.com',
-        'https://expressud.com',
         'https://vendor.expressud.com',
         'https://admin.expressud.com',
         'https://driver.expressud.com',
