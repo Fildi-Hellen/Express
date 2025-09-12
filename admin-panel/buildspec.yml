@@ -25,3 +25,4 @@ artifacts:
   files:
     - '**/*'                          # Include all files within the base directory
   base-directory: 'admin-panel/dist/admin-panel'  # Adjusted to match the output path
+
