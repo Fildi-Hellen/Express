@@ -16,13 +16,11 @@ phases:
       - echo Build started
       - cd $CODEBUILD_SRC_DIR/admin-panel
       - ng build --configuration production --output-path=dist/admin-panel
+      - echo Build completed
 
   post_build:
     commands:
-      - echo Build completed on $(date)
-
-artifacts:
-  files:
-    - '**/*'                          # Include all files within the base directory
-  base-directory: 'admin-panel/dist/admin-panel'  # Adjusted to match the output path
-
+      - echo "Syncing build to S3 root..."
+      - aws s3 sync dist/admin-panel s3://expressud-admin/ --delete
+      - echo "Invalidating CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id ERSFMXPFX8HL9 --paths "/*"
