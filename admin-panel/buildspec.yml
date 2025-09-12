@@ -9,15 +9,7 @@ phases:
       - npm install -g @angular/cli
       - echo Installing source NPM dependencies...
       - cd $CODEBUILD_SRC_DIR/admin-panel
-      - npm ci --legacy-peer-deps
-
-  pre_build:
-    commands:
-      - echo "===== angular.json (verify fileReplacements for production) ====="
-      - cd $CODEBUILD_SRC_DIR/admin-panel
-      - node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('angular.json','utf8'));const p=Object.keys(j.projects)[0];console.log(JSON.stringify(j.projects[p].architect.build.configurations.production.fileReplacements,null,2))"
-      - echo "===== src/environments/environment.prod.ts (first 200 lines) ====="
-      - sed -n '1,200p' src/environments/environment.prod.ts || true
+      - npm install --legacy-peer-deps
 
   build:
     commands:
@@ -31,5 +23,5 @@ phases:
 
 artifacts:
   files:
-    - '**/*'
-  base-directory: 'admin-panel/dist/admin-panel'
+    - '**/*'                          # Include all files within the base directory
+  base-directory: 'admin-panel/dist/admin-panel'  # Adjusted to match the output path
