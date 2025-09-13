@@ -8,13 +8,13 @@ phases:
       - echo Installing Angular CLI...
       - npm install -g @angular/cli
       - echo Installing source NPM dependencies...
-      - cd $CODEBUILD_SRC_DIR/Admin-panel
+      - cd $CODEBUILD_SRC_DIR/admin-panel
       - npm install --legacy-peer-deps
 
   build:
     commands:
       - echo Build started
-      - cd $CODEBUILD_SRC_DIR/Admin-panel
+      - cd $CODEBUILD_SRC_DIR/admin-panel
       - ng build --configuration production --output-path=dist/admin-panel
 
   post_build:
@@ -24,4 +24,4 @@ phases:
 artifacts:
   files:
     - '**/*'                          # Include all files within the base directory
-  base-directory: 'Admin-panel/dist/admin-panel'  # Adjusted to match the output path
+  base-directory: 'admin-panel/dist/admin-panel'  # Adjusted to match the output path
