@@ -25,3 +25,4 @@ artifacts:
   files:
     - '**/*'                          # Include all files within the base directory
   base-directory: 'Expressud/dist/expressud'  # Adjusted to match the output path
+
