@@ -11,6 +11,7 @@ private base = environment.apiBase;
 
   constructor(private http: HttpClient) {}
 
+  
   register(data: any) {
     return this.http.post(`${this.base}/register`, data);
   }

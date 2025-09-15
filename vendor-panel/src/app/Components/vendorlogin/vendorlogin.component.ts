@@ -12,6 +12,7 @@ export class VendorloginComponent {
   name = '';
   email = '';
   password = '';
+  passwordConfirmation = '';
   errorMessage = '';
   successMessage = '';
 
@@ -39,6 +40,7 @@ export class VendorloginComponent {
       name: this.name,
       email: this.email,
       password: this.password,
+       password_confirmation: this.passwordConfirmation,
     };
 
     this.vendorservice.register(data).subscribe({
@@ -47,6 +49,7 @@ export class VendorloginComponent {
         this.isRegisterMode = false;
         this.name = '';
         this.password = '';
+        this.passwordConfirmation = '';
       },
       error: (err) => {
         this.errorMessage = err.error.message || 'Registration failed.';

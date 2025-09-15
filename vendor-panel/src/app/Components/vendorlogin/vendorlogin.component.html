@@ -16,6 +16,10 @@
       <label for="password">Password</label>
       <input type="password" id="password" [(ngModel)]="password" name="password" class="form-control" required />
     </div>
+    <div *ngIf="isRegisterMode" class="mb-3">
+    <label for="password_confirmation">Confirm Password</label>
+    <input type="password" id="password_confirmation" [(ngModel)]="passwordConfirmation" name="passwordConfirmation" class="form-control" required />
+  </div>
 
     <button class="btn btn-primary w-100" type="submit">
       {{ isRegisterMode ? 'Register' : 'Login' }}
