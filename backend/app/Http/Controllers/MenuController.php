@@ -85,6 +85,7 @@ class MenuController extends Controller
     }
   
 
+    
     public function getCategories()
     {
         $categories = Menu::select('category')

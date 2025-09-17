@@ -8,13 +8,13 @@ return [
     'allowed_methods' => ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
 
     // IMPORTANT: origin must be just scheme + host (no trailing slash, no hash)
-    'allowed_origins' => [
-        'https://www.expressud.com',
-        'https://vendor.expressud.com',
-        'https://admin.expressud.com',
-        'https://driver.expressud.com',
-    ],
-//   'allowed_origins' =>  ['http://localhost:4200', 'http://127.0.0.1:4200'],
+    // 'allowed_origins' => [
+    //     'https://www.expressud.com',
+    //     'https://vendor.expressud.com',
+    //     'https://admin.expressud.com',
+    //     'https://driver.expressud.com',
+    // ],
+  'allowed_origins' =>  ['http://localhost:4200', 'http://127.0.0.1:4200'],
 
     // Optional: allow any subdomain of expressud.com in the future (keeps things flexible)
     'allowed_origins_patterns' => [

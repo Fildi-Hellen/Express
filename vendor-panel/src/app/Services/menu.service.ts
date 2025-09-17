@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment.prod';
 })
 export class MenuService {
 
+  
 private base = environment.apiBase;
 
   constructor(private http: HttpClient) {}
